@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { useSessionStore } from '@shared/store/useSessionStore';
 
 export default function LoginScreen() {
   const [id, setId] = useState('');
@@ -8,6 +9,21 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.spacer} />
+
+      {__DEV__ && (
+        <View style={styles.devRow}>
+          <TouchableOpacity
+            style={styles.devButton}
+            onPress={() => useSessionStore.getState().login('PROTECTOR')}>
+            <Text style={styles.devButtonText}>[DEV] 보호자로 바로 진입</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.devButton}
+            onPress={() => useSessionStore.getState().login('WARD')}>
+            <Text style={styles.devButtonText}>[DEV] 어르신으로 바로 진입</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       <Text style={styles.subTitle}>돌봄의 시작, 케어링</Text>
       <Text style={styles.mainTitle}>Caring</Text>
@@ -136,5 +152,23 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
+  },
+  devRow: {
+    width: '100%',
+    gap: 8,
+    marginBottom: 12,
+  },
+  devButton: {
+    width: '100%',
+    paddingVertical: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FF7F00',
+    alignItems: 'center',
+  },
+  devButtonText: {
+    color: '#FF7F00',
+    fontSize: 13,
+    fontWeight: '600',
   },
 });

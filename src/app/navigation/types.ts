@@ -4,12 +4,17 @@ export type AuthStackParamList = {
   LinkAccount: undefined;
 };
 
+export type GuardianTabParamList = {
+  Home: undefined;
+  WardManagement: undefined;
+  Profile: undefined;
+};
+
 export type GuardianStackParamList = {
-  GuardianHome: undefined;
+  Tabs: undefined;
   Map: undefined;
   Medication: undefined;
   Schedule: undefined;
-  Profile: undefined;
 };
 
 export type SeniorStackParamList = {
