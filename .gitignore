@@ -66,6 +66,12 @@ yarn-error.log
 # testing
 /coverage
 
+# env
+.env
+
+# Expo (혹시 남는 캐시 폴더)
+.expo/
+
 # Yarn
 .yarn/*
 !.yarn/patches
