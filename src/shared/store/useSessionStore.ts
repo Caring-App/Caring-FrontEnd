@@ -2,17 +2,19 @@ import { create } from 'zustand';
 import { UserRole } from '@shared/types';
 
 interface SessionState {
+  isLoggedIn: boolean;
   role: UserRole | null;
   linkedCode: string | null;
-  setRole: (role: UserRole) => void;
+  login: (role: UserRole) => void;
+  logout: () => void;
   setLinkedCode: (code: string) => void;
-  clear: () => void;
 }
 
 export const useSessionStore = create<SessionState>(set => ({
+  isLoggedIn: false,
   role: null,
   linkedCode: null,
-  setRole: role => set({ role }),
+  login: role => set({ isLoggedIn: true, role }),
+  logout: () => set({ isLoggedIn: false, role: null, linkedCode: null }),
   setLinkedCode: linkedCode => set({ linkedCode }),
-  clear: () => set({ role: null, linkedCode: null }),
 }));

@@ -11,7 +11,7 @@ export const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(
-  async (config) => {
+  async config => {
     try {
       const token = await EncryptedStorage.getItem('accessToken');
       if (token) {
@@ -22,13 +22,13 @@ axiosInstance.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  error => Promise.reject(error),
 );
 
 axiosInstance.interceptors.response.use(
-  (response) => response,
-  async (error) => {
+  response => response,
+  async error => {
     // TODO: 401(토큰 만료) 에러 발생 시 리프레시 토큰으로 재발급하는 로직 추후 추가
     return Promise.reject(error);
-  }
+  },
 );

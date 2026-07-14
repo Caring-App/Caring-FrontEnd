@@ -20,7 +20,7 @@ export default function SignupScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        
+
         {/* 상단 타이틀 영역 */}
         <View style={styles.headerContainer}>
           <Text style={styles.headerTitle}>회원가입</Text>
