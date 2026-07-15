@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { ScrollView, View, Text, TextInput, TouchableOpacity } from 'react-native';
 // @ts-ignore
 import { Calendar } from 'react-native-calendars';
-import { styles } from '../styles/ScheduleStyles';
-import { TimePickerSection } from '../components/TimePickerSection';
-import { VoiceSettingsSection } from '../components/VoiceSettingsSection';
+import { styles } from '../../styles/ScheduleStyles';
+import { TimePickerSection } from './TimePickerSection';
+import { VoiceSettingsSection } from './VoiceSettingsSection';
 
 export default function ScheduleModal() {
   const [userName, setUserName] = useState('');

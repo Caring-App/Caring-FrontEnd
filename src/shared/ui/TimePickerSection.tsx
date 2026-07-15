@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 // @ts-ignore
 import { WheelPicker } from 'react-native-wheel-pick';
-import { styles } from '../styles/ScheduleStyles';
+import { styles } from '../../styles/ScheduleStyles';
 
 export const TimePickerSection = ({ label, hour, minute, second, amPm, onHourChange, onMinuteChange, onSecondChange, onAmPmChange }: any) => {
   return (

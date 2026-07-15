@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { styles } from '../styles/ScheduleStyles';
+import { styles } from '../../styles/ScheduleStyles';
 
 export const VoiceSettingsSection = ({ voiceOption, setVoiceOption }: any) => (
   <View style={styles.voiceSettingContainer}>
