@@ -1,8 +1,5 @@
-import React from 'react';
-import { RootNavigator } from './src/navigation/RootNavigator';
+/**
+ * @format
+ */
 
-const App = () => {
-  return <RootNavigator />;
-};
-
-export default App;
+export { App as default } from '@app/App';
