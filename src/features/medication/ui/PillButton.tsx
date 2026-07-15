@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
-import { styles } from '../styles/MonitorStyles';
-import { PillItem } from '../types/medication';
+import { styles } from '../../../styles/MonitorStyles';
+import { PillItem } from '../../../types/medication';
 
 interface Props {
   pill: PillItem;
