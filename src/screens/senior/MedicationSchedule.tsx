@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { ScrollView, View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { styles } from '../styles/MedicationStyles';
-import { MealSelector } from '../components/MealSelector';
-import { DaySelector } from '../components/DaySelector';
-import { TimePickerSection } from '../components/TimePickerSection';
+import { styles } from '../../styles/MedicationStyles';
+import { MealSelector } from '../../features/schedule/ui/MealSelector';
+import { DaySelector } from '../../features/schedule/ui/DaySelector';
+import { TimePickerSection } from '../../features/schedule/ui/TimePickerSection';
 
 export default function MedicationSchedule() {
   const [userName, setUserName] = useState('');

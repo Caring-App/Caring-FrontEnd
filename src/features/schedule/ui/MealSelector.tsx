@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
-import { styles } from '../styles/MedicationStyles';
+import { styles } from '../../../styles/MedicationStyles';
 
 interface Props {
   selectedMeal: string;

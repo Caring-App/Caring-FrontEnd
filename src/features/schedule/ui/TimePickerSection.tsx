@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { styles } from '../styles/MedicationStyles';
+import { styles } from '../../../styles/MedicationStyles';
 // @ts-ignore
 import { WheelPicker } from 'react-native-wheel-pick';
 
