@@ -5,8 +5,8 @@ import LoginScreen from '@screens/auth/Login/LoginScreen';
 import SignupScreen from '@screens/auth/Signup/SignupScreen';
 import { LinkAccountScreen } from '@screens/auth/LinkAccount/LinkAccountScreen';
 import { GuardianStackNavigator } from './GuardianStackNavigator';
-import { SeniorHomeScreen } from '@screens/senior/Home/SeniorHomeScreen';
-import { SeniorScheduleScreen } from '@screens/senior/Schedule/SeniorScheduleScreen';
+import  SeniorHomeScreen  from '@screens/senior/Home/SeniorHomeScreen';
+import SeniorScheduleScreen from '../../shared/ui/CalendarSchedule';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,7 +22,6 @@ export function RootNavigator() {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="SeniorHome" component={SeniorHomeScreen} />
-        <Stack.Screen name="SeniorSchedule" component={SeniorScheduleScreen} />
       </Stack.Navigator>
     );
   }
