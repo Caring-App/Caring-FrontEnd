@@ -20,12 +20,17 @@ import PrescriptionIcon from '@assets/icons/section/prescription2.svg';
 import GeoAltFillIcon from '@assets/icons/section/geo-alt-fill.svg';
 import CapsuleOnIcon from '@assets/icons/medication/capsule-on.svg';
 import CapsuleOffIcon from '@assets/icons/medication/capsule-off.svg';
+// 1. 복약 등록 모달 컴포넌트 import 추가
+import { MedicationRegistrationModal } from '../../../features/medication/components/MedicationRegistrationModal';
 
 type GuardianStackNavigationProp = NativeStackNavigationProp<GuardianStackParamList>;
 
 export function GuardianHomeScreen() {
   const navigation = useNavigation();
   const stackNavigation = navigation.getParent<GuardianStackNavigationProp>();
+
+  // 2. 모달 열림/닫힘 상태 추가
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top']}>
@@ -36,10 +41,23 @@ export function GuardianHomeScreen() {
         showsVerticalScrollIndicator={false}>
         <DailyReportCard />
         <ScheduleSection onPressMore={() => stackNavigation?.navigate('Schedule')} />
-        <MedicationSection onPressMore={() => stackNavigation?.navigate('Medication')} />
+        
+        {/* 3. 기존 페이지 이동 대신 모달을 열도록 수정 */}
+        <MedicationSection onPressMore={() => setIsModalVisible(true)} />
+        
         <LocationSection onPressMore={() => stackNavigation?.navigate('Map')} />
         <WelfareSection />
       </ScrollView>
+
+      {/* 4. 화면 하단에 모달 컴포넌트 배치 */}
+      <MedicationRegistrationModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onSave={(data) => {
+          console.log('저장된 복약 정보:', data);
+          setIsModalVisible(false); // 저장 후 모달 닫기
+        }}
+      />
     </SafeAreaView>
   );
 }
