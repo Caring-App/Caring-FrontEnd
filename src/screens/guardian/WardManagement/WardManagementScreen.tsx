@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { GuardianStackParamList } from '@app/navigation/types';
 import { AppHeader } from '@shared/ui';
 import { MOCK_WARDS, Ward } from '@features/ward-management/model';
 import { EditWardModal, WardCard } from '@features/ward-management/ui';
 
+type GuardianStackNavigationProp = NativeStackNavigationProp<GuardianStackParamList>;
+
 export function WardManagementScreen() {
+  const navigation = useNavigation();
+  const stackNavigation = navigation.getParent<GuardianStackNavigationProp>();
   const [wards, setWards] = useState<Ward[]>(MOCK_WARDS);
   const [editingWardId, setEditingWardId] = useState<string | null>(null);
 
@@ -17,7 +24,7 @@ export function WardManagementScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top']}>
-      <AppHeader />
+      <AppHeader onPressBell={() => stackNavigation?.navigate('Notification')} />
       <ScrollView
         className="flex-1 px-4"
         contentContainerClassName="pb-8"
