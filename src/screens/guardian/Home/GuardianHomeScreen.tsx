@@ -7,6 +7,8 @@ import { GuardianStackParamList } from '@app/navigation/types';
 import { AppHeader } from '@shared/ui';
 import { useHealthStatusStore, HealthStatus } from '@features/health/model';
 import { useMedicationStore, MealSlot } from '@features/medication/model';
+import { MOCK_WARD_LOCATION } from '@features/location/model';
+import { NaverMapView, NaverMapMarkerOverlay } from '@mj-studio/react-native-naver-map';
 import EnvelopeFillIcon from '@assets/icons/report/envelope-fill.svg';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 import EmojiSmileOnIcon from '@assets/icons/emoji/emoji-smile-on.svg';
@@ -195,12 +197,27 @@ function MedicationSlot({ label, slot }: { label: string; slot: MealSlot }) {
 function LocationSection({ onPressMore }: { onPressMore?: () => void }) {
   return (
     <SectionCard title="위치 GPS" icon={<GeoAltFillIcon width={15} height={20} />}>
-      {/* TODO: features/location 실제 지도(react-native-maps 등) 컴포넌트로 교체 */}
-      <Pressable
-        onPress={onPressMore}
-        className="mt-3 items-center justify-center rounded-card border border-border bg-surface py-16">
-        <Text className="text-sm text-text-muted">지도 (준비 중, 눌러서 위치 확인으로 이동)</Text>
-      </Pressable>
+      <View className="relative mt-3 overflow-hidden rounded-card border border-border">
+        <NaverMapView
+          style={{ height: 160 }}
+          initialCamera={{
+            latitude: MOCK_WARD_LOCATION.latitude,
+            longitude: MOCK_WARD_LOCATION.longitude,
+            zoom: 15,
+          }}
+          isScrollGesturesEnabled={false}
+          isZoomGesturesEnabled={false}
+          isTiltGesturesEnabled={false}
+          isRotateGesturesEnabled={false}
+          isStopGesturesEnabled={false}
+          isShowLocationButton={false}>
+          <NaverMapMarkerOverlay
+            latitude={MOCK_WARD_LOCATION.latitude}
+            longitude={MOCK_WARD_LOCATION.longitude}
+          />
+        </NaverMapView>
+        <Pressable onPress={onPressMore} className="absolute inset-0" />
+      </View>
     </SectionCard>
   );
 }
