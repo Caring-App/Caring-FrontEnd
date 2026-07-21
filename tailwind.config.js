@@ -10,12 +10,18 @@ module.exports = {
           primary: '#111111',
           strong: '#2a2a2a',
           muted: '#656c6c',
+          // 돌봄대상자 관리 카드의 글자 크기 세그먼트 컨트롤 비선택 텍스트(Figma 41:1997, #A09CAB)
+          disabled: '#a09cab',
         },
         border: {
           DEFAULT: '#e2e5e5',
+          // 돌봄대상자 관리 모달의 입력창 테두리(Figma 60:5411 form input, #CED4DA)
+          input: '#ced4da',
         },
         surface: {
           DEFAULT: '#ffffff',
+          // 돌봄대상자 관리 카드의 글자 크기 세그먼트 컨트롤 배경(Figma 41:1997, #EFF1F5)
+          subtle: '#eff1f5',
         },
         // 브랜드 포인트 컬러 (로그인 화면, 보호자 홈 등에서 실사용 확인된 값)
         primary: {
