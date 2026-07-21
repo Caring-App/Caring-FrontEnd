@@ -31,7 +31,7 @@ export function GuardianHomeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top']}>
-      <AppHeader />
+      <AppHeader onPressBell={() => stackNavigation?.navigate('Notification')} />
       <ScrollView
         className="flex-1 px-4"
         contentContainerClassName="pb-8"

@@ -15,6 +15,7 @@ export type GuardianStackParamList = {
   Map: undefined;
   Medication: undefined;
   Schedule: undefined;
+  Notification: undefined;
 };
 
 export type SeniorStackParamList = {

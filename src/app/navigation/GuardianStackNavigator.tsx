@@ -5,6 +5,7 @@ import { GuardianTabNavigator } from './GuardianTabNavigator';
 import { MapScreen } from '@screens/guardian/Map/MapScreen';
 import { MedicationScreen } from '@screens/guardian/Medication/MedicationScreen';
 import { ScheduleScreen } from '@screens/guardian/Schedule/ScheduleScreen';
+import { NotificationScreen } from '@screens/guardian/Notification/NotificationScreen';
 
 const Stack = createNativeStackNavigator<GuardianStackParamList>();
 
@@ -15,6 +16,7 @@ export function GuardianStackNavigator() {
       <Stack.Screen name="Map" component={MapScreen} />
       <Stack.Screen name="Medication" component={MedicationScreen} />
       <Stack.Screen name="Schedule" component={ScheduleScreen} />
+      <Stack.Screen name="Notification" component={NotificationScreen} />
     </Stack.Navigator>
   );
 }
