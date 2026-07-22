@@ -12,11 +12,15 @@ module.exports = {
           muted: '#656c6c',
           // 돌봄대상자 관리 카드의 글자 크기 세그먼트 컨트롤 비선택 텍스트(Figma 41:1997, #A09CAB)
           disabled: '#a09cab',
+          // "자세히 보기 >" 링크 텍스트(Figma 60:4134 등, #6E6E6E)
+          link: '#6e6e6e',
         },
         border: {
           DEFAULT: '#e2e5e5',
           // 돌봄대상자 관리 모달의 입력창 테두리(Figma 60:5411 form input, #CED4DA)
           input: '#ced4da',
+          // "자세히 보기 >" 링크 밑줄(Figma 60:4133 등, #C9CED1)
+          link: '#c9ced1',
         },
         surface: {
           DEFAULT: '#ffffff',
