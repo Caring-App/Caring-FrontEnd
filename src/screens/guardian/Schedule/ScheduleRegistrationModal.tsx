@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Modal, View, Text, TextInput, TouchableOpacity, ScrollView, NativeSyntheticEvent, NativeScrollEvent, Alert } from 'react-native';
+import { Svg, Circle, Path } from 'react-native-svg';
 import { CalendarComponent } from '../../../features/schedule/ui/CalendarComponent';
 
 interface Props {
@@ -8,7 +9,43 @@ interface Props {
   onSave?: (data: any) => void;
 }
 
-// 스크롤이 원활하게 작동하는 휠 피커 컴포넌트
+// 1. 피그마 스타일 선형 시계 아이콘
+const ClockIcon = () => (
+  <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
+    <Circle cx="12" cy="12" r="9" stroke="#888" strokeWidth="1.8" />
+    <Path d="M12 7V12L15 14" stroke="#888" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+  </Svg>
+);
+
+// 2. 녹음 마이크 아이콘 (피그마 스타일 - 내부 색상 채움 적용)
+const MicIcon = ({ color = '#FF8C00' }: { color?: string }) => (
+  <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+    <Path 
+      d="M12 2C10.3431 2 9 3.34315 9 5V11C9 12.6569 10.3431 14 12 14C13.6569 14 15 12.6569 15 11V5C15 3.34315 13.6569 2 12 2Z" 
+      fill={color} 
+      stroke={color} 
+      strokeWidth="1" 
+    />
+    <Path d="M19 10V11C19 14.866 15.866 18 12 18C8.13401 18 5 14.866 5 11V10" stroke={color} strokeWidth="2.5" strokeLinecap="round" />
+    <Path d="M12 18V22" stroke={color} strokeWidth="2.5" strokeLinecap="round" />
+  </Svg>
+);
+
+// 3. 재생 삼각형 아이콘 (피그마 스타일)
+const PlayIcon = ({ color = '#FF8C00' }: { color?: string }) => (
+  <Svg width={12} height={12} viewBox="0 0 24 24" fill="none">
+    <Path d="M5 3L19 12L5 21V3Z" fill={color} stroke={color} strokeWidth="2" strokeLinejoin="round" />
+  </Svg>
+);
+
+// 4. 삭제 X 아이콘 (피그마 스타일)
+const CloseIcon = ({ color = '#FF8C00' }: { color?: string }) => (
+  <Svg width={12} height={12} viewBox="0 0 24 24" fill="none">
+    <Path d="M18 6L6 18M6 6L18 18" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+  </Svg>
+);
+
+// 스크롤 휠 피커 컴포넌트
 const WheelPicker = ({ data, selectedValue, onSelect }: { data: string[]; selectedValue: string; onSelect: (val: string) => void }) => {
   const itemHeight = 40;
   const scrollViewRef = useRef<ScrollView>(null);
@@ -75,7 +112,7 @@ export const ScheduleRegistrationModal = ({ visible, onClose, onSave }: Props) =
   const [isRecording, setIsRecording] = useState(false);
   const [hasRecorded, setHasRecorded] = useState(false);
 
-  // 녹음 / 재생 / 삭제 핸들러 함수 (Alert 적용)
+  // 녹음 / 재생 / 삭제 핸들러
   const handleRecord = () => {
     const nextState = !isRecording;
     setIsRecording(nextState);
@@ -105,21 +142,22 @@ export const ScheduleRegistrationModal = ({ visible, onClose, onSave }: Props) =
   };
 
   return (
-    <Modal visible={visible} animationType="slide" transparent={true}>
-      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}>
-        <View style={{ height: '90%', backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20 }}>
+    <Modal visible={visible} animationType="fade" transparent={true}>
+      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 40 }}>
+        <View style={{ width: '100%', maxHeight: '85%', backgroundColor: 'white', borderRadius: 20, padding: 20 }}>
           
           {/* 헤더 */}
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15, alignItems: 'center' }}>
             <Text style={{ fontSize: 18, fontWeight: 'bold' }}>일정 등록</Text>
             <TouchableOpacity onPress={onClose}>
-              <Text style={{ fontSize: 22, fontWeight: 'bold', padding: 5 }}>✕</Text>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#666', padding: 5 }}>✕</Text>
             </TouchableOpacity>
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false}>
+          {/* 스크롤 콘텐츠 */}
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 10 }}>
             
-            {/* 1. 일정 이름 */}
+            {/* 1) 일정 이름 */}
             <View style={{ marginBottom: 15 }}>
               <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 5 }}>일정 이름</Text>
               <TextInput
@@ -131,7 +169,7 @@ export const ScheduleRegistrationModal = ({ visible, onClose, onSave }: Props) =
               />
             </View>
 
-            {/* 2. 장소 */}
+            {/* 2) 장소 */}
             <View style={{ marginBottom: 15 }}>
               <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 5 }}>장소</Text>
               <TextInput
@@ -143,13 +181,13 @@ export const ScheduleRegistrationModal = ({ visible, onClose, onSave }: Props) =
               />
             </View>
 
-            {/* 3. 캘린더 */}
+            {/* 3) 캘린더 */}
             <CalendarComponent 
               currentDate={selectedDate} 
               onDateSelect={(date: Date) => setSelectedDate(date)} 
             />
 
-            {/* 4. 일정 시간 */}
+            {/* 4) 일정 시간 */}
             <View style={{ marginBottom: 15 }}>
               <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 5 }}>일정 시간</Text>
               <TouchableOpacity 
@@ -159,7 +197,7 @@ export const ScheduleRegistrationModal = ({ visible, onClose, onSave }: Props) =
                 <Text style={{ color: '#333', fontWeight: 'bold' }}>
                   {`${scheduleTime.hour} : ${scheduleTime.minute} : ${scheduleTime.second}  ${scheduleTime.amPm}`}
                 </Text>
-                <Text style={{ color: '#999' }}>⏰</Text>
+                <ClockIcon />
               </TouchableOpacity>
 
               {showSchedulePicker && (
@@ -176,7 +214,7 @@ export const ScheduleRegistrationModal = ({ visible, onClose, onSave }: Props) =
               )}
             </View>
 
-            {/* 5. 음성 알림 시간 */}
+            {/* 5) 음성 알림 시간 */}
             <View style={{ marginBottom: 15 }}>
               <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 5 }}>음성 알림 시간</Text>
               <TouchableOpacity 
@@ -186,7 +224,7 @@ export const ScheduleRegistrationModal = ({ visible, onClose, onSave }: Props) =
                 <Text style={{ color: '#333', fontWeight: 'bold' }}>
                   {`${alertTime.hour} : ${alertTime.minute} : ${alertTime.second}  ${alertTime.amPm}`}
                 </Text>
-                <Text style={{ color: '#999' }}>⏰</Text>
+                <ClockIcon />
               </TouchableOpacity>
 
               {showAlertPicker && (
@@ -203,11 +241,11 @@ export const ScheduleRegistrationModal = ({ visible, onClose, onSave }: Props) =
               )}
             </View>
 
-            {/* 6. 음성 알림 설정 (TTS vs 보호자 음성 녹음) */}
-            <View style={{ borderWidth: 1, borderColor: '#eee', borderRadius: 10, padding: 15, backgroundColor: '#fcfcfc', marginBottom: 20 }}>
+            {/* 6) 음성 알림 설정 */}
+            <View style={{ borderWidth: 1, borderColor: '#eee', borderRadius: 10, padding: 15, backgroundColor: '#fcfcfc', marginBottom: 15 }}>
               <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 12, color: '#333' }}>음성 알림 설정</Text>
 
-              {/* 기본 알림용 (TTS) 선택 옵션 */}
+              {/* 기본 알림용 (TTS) 선택 */}
               <TouchableOpacity 
                 style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}
                 onPress={() => setSoundType('tts')}
@@ -218,7 +256,7 @@ export const ScheduleRegistrationModal = ({ visible, onClose, onSave }: Props) =
                 <Text style={{ fontSize: 14, color: '#333' }}>기본 알림용 (TTS)</Text>
               </TouchableOpacity>
 
-              {/* 보호자 음성 녹음 선택 옵션 */}
+              {/* 보호자 음성 녹음 선택 */}
               <TouchableOpacity 
                 style={{ flexDirection: 'row', alignItems: 'center', marginBottom: soundType === 'voice' ? 12 : 0 }}
                 onPress={() => setSoundType('voice')}
@@ -229,47 +267,53 @@ export const ScheduleRegistrationModal = ({ visible, onClose, onSave }: Props) =
                 <Text style={{ fontSize: 14, color: '#333' }}>보호자 음성 녹음</Text>
               </TouchableOpacity>
 
-              {/* '보호자 음성 녹음' 선택 시에만 나타나는 녹음/재생/삭제 버튼 영역 */}
+              {/* 음성 녹음 버튼 그룹 */}
               {soundType === 'voice' && (
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, paddingLeft: 26 }}>
-                  {/* 녹음 버튼 */}
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 8, paddingLeft: 26 }}>
+                  
+                  {/* 녹음 버튼 (내부 채움 마이크 적용) */}
                   <TouchableOpacity 
-                    style={{ flex: 1, borderWidth: 1, borderColor: isRecording ? '#ff4d4f' : '#FF8C00', borderRadius: 8, paddingVertical: 8, alignItems: 'center', marginRight: 6, backgroundColor: isRecording ? '#fff1f0' : '#fff' }}
+                    style={{ flex: 1, borderWidth: 1.5, borderColor: isRecording ? '#ff4d4f' : '#FF9800', borderRadius: 8, paddingVertical: 8, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginRight: 6, backgroundColor: '#fff' }}
                     onPress={handleRecord}
                   >
-                    <Text style={{ fontSize: 13, color: isRecording ? '#ff4d4f' : '#FF8C00', fontWeight: 'bold' }}>
-                      {isRecording ? '⏹ 정지' : '🎙️ 녹음'}
+                    <MicIcon color={isRecording ? '#ff4d4f' : '#FF9800'} />
+                    <Text style={{ fontSize: 13, color: isRecording ? '#ff4d4f' : '#FF9800', fontWeight: 'bold', marginLeft: 5 }}>
+                      {isRecording ? '정지' : '녹음'}
                     </Text>
                   </TouchableOpacity>
 
                   {/* 재생 버튼 */}
                   <TouchableOpacity 
-                    style={{ flex: 1, borderWidth: 1, borderColor: '#fa8c16', borderRadius: 8, paddingVertical: 8, alignItems: 'center', marginHorizontal: 6, backgroundColor: '#fff' }}
+                    style={{ flex: 1, borderWidth: 1.5, borderColor: '#FF9800', borderRadius: 8, paddingVertical: 8, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginHorizontal: 3, backgroundColor: '#fff' }}
                     onPress={handlePlay}
                   >
-                    <Text style={{ fontSize: 13, color: '#fa8c16', fontWeight: 'bold' }}>▶ 재생</Text>
+                    <PlayIcon color="#FF9800" />
+                    <Text style={{ fontSize: 13, color: '#FF9800', fontWeight: 'bold', marginLeft: 5 }}>재생</Text>
                   </TouchableOpacity>
 
                   {/* 삭제 버튼 */}
                   <TouchableOpacity 
-                    style={{ flex: 1, borderWidth: 1, borderColor: '#ff4d4f', borderRadius: 8, paddingVertical: 8, alignItems: 'center', marginLeft: 6, backgroundColor: '#fff' }}
+                    style={{ flex: 1, borderWidth: 1.5, borderColor: '#FF9800', borderRadius: 8, paddingVertical: 8, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginLeft: 6, backgroundColor: '#fff' }}
                     onPress={handleDelete}
                   >
-                    <Text style={{ fontSize: 13, color: '#ff4d4f', fontWeight: 'bold' }}>✕ 삭제</Text>
+                    <CloseIcon color="#FF9800" />
+                    <Text style={{ fontSize: 13, color: '#FF9800', fontWeight: 'bold', marginLeft: 5 }}>삭제</Text>
                   </TouchableOpacity>
+
                 </View>
               )}
             </View>
 
+            {/* 저장하기 버튼 */}
+            <TouchableOpacity 
+              style={{ backgroundColor: '#FF8C00', padding: 15, borderRadius: 10, alignItems: 'center', marginTop: 10 }} 
+              onPress={handleSave}
+            >
+              <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>저장하기</Text>
+            </TouchableOpacity>
+
           </ScrollView>
 
-          {/* 저장하기 버튼 */}
-          <TouchableOpacity 
-            style={{ backgroundColor: '#FF8C00', padding: 15, borderRadius: 10, alignItems: 'center', marginTop: 10 }} 
-            onPress={handleSave}
-          >
-            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>저장하기</Text>
-          </TouchableOpacity>
         </View>
       </View>
     </Modal>
