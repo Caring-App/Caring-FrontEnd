@@ -1,12 +1,14 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useSessionStore } from '@shared/store/useSessionStore';
-import LoginScreen from '@screens/auth/Login/LoginScreen';
-import SignupScreen from '@screens/auth/Signup/SignupScreen';
-import { LinkAccountScreen } from '@screens/auth/LinkAccount/LinkAccountScreen';
-import { GuardianStackNavigator } from './GuardianStackNavigator';
-import { SeniorHomeScreen } from '@screens/senior/Home/SeniorHomeScreen';
-import { SeniorScheduleScreen } from '@screens/senior/Schedule/SeniorScheduleScreen';
+import { useSessionStore } from '../../shared/store/useSessionStore';
+import LoginScreen from '../../screens/auth/Login/LoginScreen';
+// 👇 방금 분리한 역할 선택 화면 경로에 맞춰 임포트
+import SignupTypeSelectScreen from '../../screens/auth/Signup/component/SignupTypeSelectScreen'; 
+import SignupScreen from '../../screens/auth/Signup/component/SignupScreen';
+import {LinkAccountScreen} from '../../screens/auth/LinkAccount/LinkAccountScreen';
+import {GuardianStackNavigator} from './GuardianStackNavigator';
+import { SeniorHomeScreen } from '../../screens/senior/Home/SeniorHomeScreen';
+import { SeniorScheduleScreen } from '../../screens/senior/Schedule/SeniorScheduleScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,8 +31,10 @@ export function RootNavigator() {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name="login" component={LoginScreen} />
+      {/* 👇 역할 선택 화면 스택 추가 */}
+      <Stack.Screen name="SignupTypeSelect" component={SignupTypeSelectScreen} />
+      <Stack.Screen name="SignupScreen" component={SignupScreen} />
       <Stack.Screen name="LinkAccount" component={LinkAccountScreen} />
     </Stack.Navigator>
   );
