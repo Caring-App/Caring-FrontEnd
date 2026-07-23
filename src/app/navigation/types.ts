@@ -18,6 +18,12 @@ export type GuardianStackParamList = {
   Notification: undefined;
   WelfareFacilities: undefined;
   WelfareFacilityDetail: { facilityId: string };
+  Settings: undefined;
+  Withdrawal: undefined;
+  Inquiry: undefined;
+  InquiryChat: undefined;
+  Faq: undefined;
+  Policy: undefined;
 };
 
 export type SeniorStackParamList = {
