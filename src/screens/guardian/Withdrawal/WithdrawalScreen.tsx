@@ -28,21 +28,12 @@ export function WithdrawalScreen() {
           회원 탈퇴를 신청하기 전에 아래의 유의사항을 확인해 주세요.
         </Text>
 
-        <View className="mt-4 gap-3 rounded-card border border-border p-3">
-          <View>
-            <Text className="text-md font-pretendard-bold text-text-heading">회원 탈퇴 시 처리내용</Text>
-            <Text className="mt-2 text-xs font-pretendard-medium text-text-muted">
-              탈퇴 시 보호자님이 관리하시던 돌봄대상자의 복약 일정, 건강 기록 등 모든 케어 데이터가
-              즉시 삭제되며 복구가 불가능합니다.
-            </Text>
-          </View>
-          <View>
-            <Text className="text-md font-pretendard-bold text-text-heading">회원 탈퇴 시 처리내용</Text>
-            <Text className="mt-2 text-xs font-pretendard-medium text-text-muted">
-              탈퇴 후 30일(또는 서비스 운영 정책에 따른 기간)동안은 동일한 아이디 또는 휴대전화로
-              재가입이 제한될 수 있습니다.
-            </Text>
-          </View>
+        <View className="mt-4 rounded-card border border-border p-3">
+          <Text className="text-md font-pretendard-bold text-text-heading">회원 탈퇴 시 처리내용</Text>
+          <Text className="mt-2 text-xs font-pretendard-medium text-text-muted">
+            탈퇴 시 보호자님이 관리하시던 돌봄대상자의 복약 일정, 건강 기록 등 모든 케어 데이터가 즉시
+            삭제되며 복구가 불가능합니다.
+          </Text>
         </View>
 
         <View className="mt-4 gap-1 rounded-card border border-border p-3">

@@ -17,6 +17,7 @@ export function EditPersonalInfoModal({
 }) {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
@@ -24,6 +25,7 @@ export function EditPersonalInfoModal({
     if (visible) {
       setPhone(profile.phone);
       setAddress(profile.address);
+      setCurrentPassword('');
       setPassword('');
       setPasswordConfirm('');
     }
@@ -54,19 +56,13 @@ export function EditPersonalInfoModal({
               value={address}
               onChangeText={setAddress}
             />
-            <View className="flex-row items-end gap-2">
-              <View className="flex-1">
-                <FormField
-                  label="비밀번호 변경"
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry
-                />
-              </View>
-              <Pressable className="items-center justify-center rounded-[8px] bg-primary px-4 py-1.5">
-                <Text className="text-sm font-pretendard-semibold text-surface">변경</Text>
-              </Pressable>
-            </View>
+            <FormField
+              label="현재 비밀번호"
+              value={currentPassword}
+              onChangeText={setCurrentPassword}
+              secureTextEntry
+            />
+            <FormField label="비밀번호" value={password} onChangeText={setPassword} secureTextEntry />
             <FormField
               label="비밀번호 확인"
               value={passwordConfirm}
