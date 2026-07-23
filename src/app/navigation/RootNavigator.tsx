@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import LoginScreen from '@screens/auth/Login/LoginScreen';
 import SignupScreen from '@screens/auth/Signup/SignupScreen';
-import { LinkAccountScreen } from '@screens/auth/LinkAccount/LinkAccountScreen';
+import LinkAccountScreen from '@screens/auth/LinkAccount/LinkAccountScreen';
 import { GuardianStackNavigator } from './GuardianStackNavigator';
 import { SeniorHomeScreen } from '@screens/senior/Home/SeniorHomeScreen';
 import { SeniorScheduleScreen } from '@screens/senior/Schedule/SeniorScheduleScreen';
