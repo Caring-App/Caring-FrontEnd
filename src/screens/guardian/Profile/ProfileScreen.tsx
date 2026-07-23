@@ -29,7 +29,7 @@ export function ProfileScreen() {
         className="flex-1 px-4"
         contentContainerClassName="pb-8"
         showsVerticalScrollIndicator={false}>
-        <Text className="mt-4 text-xl font-pretendard-semibold text-text-primary">마이페이지</Text>
+        <Text className="mt-4 pl-4 text-xl font-pretendard-semibold text-text-primary">마이페이지</Text>
 
         <View className="mt-4">
           <ProfileCard

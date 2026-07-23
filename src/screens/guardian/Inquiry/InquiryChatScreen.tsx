@@ -28,7 +28,7 @@ export function InquiryChatScreen() {
         <Pressable onPress={() => navigation.goBack()} hitSlop={8} className="-rotate-180">
           <ChevronRightIcon width={24} height={24} />
         </Pressable>
-        <Text className="text-xl font-bold text-text-primary">1:1 문의 하기</Text>
+        <Text className="text-xl font-pretendard-semibold text-text-primary">1:1 문의 하기</Text>
       </View>
 
       <KeyboardAvoidingView

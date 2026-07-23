@@ -14,7 +14,7 @@ export function PolicyScreen() {
         <Pressable onPress={() => navigation.goBack()} hitSlop={8} className="-rotate-180">
           <ChevronRightIcon width={24} height={24} />
         </Pressable>
-        <Text className="text-xl font-bold text-text-primary">정책 및 약관</Text>
+        <Text className="text-xl font-pretendard-semibold text-text-primary">정책 및 약관</Text>
       </View>
 
       <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false}>

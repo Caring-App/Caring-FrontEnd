@@ -17,7 +17,7 @@ export function InquiryScreen() {
         <Pressable onPress={() => navigation.goBack()} hitSlop={8} className="-rotate-180">
           <ChevronRightIcon width={24} height={24} />
         </Pressable>
-        <Text className="text-xl font-bold text-text-primary">문의하기</Text>
+        <Text className="text-xl font-pretendard-semibold text-text-primary">문의하기</Text>
       </View>
 
       <ScrollView className="flex-1 px-4" contentContainerClassName="pb-8" showsVerticalScrollIndicator={false}>
@@ -51,7 +51,7 @@ export function InquiryScreen() {
         <Pressable
           className="mt-6 items-center justify-center rounded-card bg-primary py-4"
           onPress={() => navigation.navigate('InquiryChat')}>
-          <Text className="text-md font-pretendard-semibold text-surface">1:1 문의하기</Text>
+          <Text className="text-2xl font-pretendard-semibold text-surface">1:1 문의하기</Text>
         </Pressable>
 
         <Pressable className="mt-3 items-center" onPress={() => navigation.navigate('Faq')}>

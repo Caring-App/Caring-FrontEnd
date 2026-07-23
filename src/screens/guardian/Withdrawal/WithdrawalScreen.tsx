@@ -19,7 +19,7 @@ export function WithdrawalScreen() {
         <Pressable onPress={() => navigation.goBack()} hitSlop={8} className="-rotate-180">
           <ChevronRightIcon width={24} height={24} />
         </Pressable>
-        <Text className="text-xl font-bold text-text-primary">회원 탈퇴</Text>
+        <Text className="text-xl font-pretendard-semibold text-text-primary">회원 탈퇴</Text>
       </View>
 
       <ScrollView className="flex-1 px-4" contentContainerClassName="pb-8" showsVerticalScrollIndicator={false}>
@@ -73,7 +73,7 @@ export function WithdrawalScreen() {
           disabled={!canWithdraw}
           className="mt-6 items-center justify-center rounded-card bg-primary py-4"
           style={{ opacity: canWithdraw ? 1 : 0.4 }}>
-          <Text className="text-md font-pretendard-semibold text-surface">탈퇴하기</Text>
+          <Text className="text-2xl font-pretendard-semibold text-surface">탈퇴하기</Text>
         </Pressable>
       </ScrollView>
     </SafeAreaView>

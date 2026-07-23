@@ -62,31 +62,25 @@ export function EditPersonalInfoModal({
               onChangeText={setCurrentPassword}
               secureTextEntry
             />
-            <View className="flex-row items-end gap-2">
-              <View className="flex-1">
-                <FormField
-                  label="비밀번호"
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry
-                />
-              </View>
-              <Pressable className="items-center justify-center rounded-[8px] bg-primary px-4 py-1.5">
-                <Text className="text-sm font-pretendard-semibold text-surface">변경</Text>
-              </Pressable>
-            </View>
+            <FormField label="비밀번호" value={password} onChangeText={setPassword} secureTextEntry />
             <FormField
               label="비밀번호 확인"
               value={passwordConfirm}
               onChangeText={setPasswordConfirm}
               secureTextEntry
             />
+            <View className="flex-row justify-end">
+              {/* TODO: 현재 비밀번호 검증 후 비밀번호만 별도로 변경하는 API 연동 */}
+              <Pressable className="items-center justify-center rounded-[8px] bg-primary px-4 py-1.5">
+                <Text className="text-sm font-pretendard-semibold text-surface">변경</Text>
+              </Pressable>
+            </View>
           </View>
 
           <Pressable
             className="mt-4 items-center justify-center rounded-card bg-primary py-4"
             onPress={() => onSave({ phone, address, password })}>
-            <Text className="text-md font-pretendard-semibold text-surface">저장하기</Text>
+            <Text className="text-2xl font-pretendard-semibold text-surface">저장하기</Text>
           </Pressable>
         </Pressable>
       </Pressable>
