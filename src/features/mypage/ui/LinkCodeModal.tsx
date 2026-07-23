@@ -37,7 +37,7 @@ export function LinkCodeModal({
             </Pressable>
           </View>
 
-          <Text className="mt-2 text-xs font-pretendard-medium text-text-muted">
+          <Text className="mt-2 text-center text-xs font-pretendard-medium text-text-muted">
             돌봄대상자와의 안전한 연결을 위해 아래 코드를 복사하여 전달해 주세요.
           </Text>
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -29,6 +29,8 @@ export function ProfileScreen() {
         className="flex-1 px-4"
         contentContainerClassName="pb-8"
         showsVerticalScrollIndicator={false}>
+        <Text className="mt-4 text-xl font-pretendard-semibold text-text-primary">마이페이지</Text>
+
         <View className="mt-4">
           <ProfileCard
             profile={profile}
@@ -37,7 +39,7 @@ export function ProfileScreen() {
           />
         </View>
 
-        <View className="mt-6 border-t border-border-divider">
+        <View className="mt-6 border-t border-border-divider pl-4">
           <MenuListItem label="설정" onPress={() => stackNavigation?.navigate('Settings')} />
           <MenuListItem label="문의하기" onPress={() => stackNavigation?.navigate('Inquiry')} />
           <MenuListItem label="사용 가이드 안내" onPress={() => {}} />

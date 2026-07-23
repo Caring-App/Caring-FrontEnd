@@ -62,7 +62,19 @@ export function EditPersonalInfoModal({
               onChangeText={setCurrentPassword}
               secureTextEntry
             />
-            <FormField label="비밀번호" value={password} onChangeText={setPassword} secureTextEntry />
+            <View className="flex-row items-end gap-2">
+              <View className="flex-1">
+                <FormField
+                  label="비밀번호"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                />
+              </View>
+              <Pressable className="items-center justify-center rounded-[8px] bg-primary px-4 py-1.5">
+                <Text className="text-sm font-pretendard-semibold text-surface">변경</Text>
+              </Pressable>
+            </View>
             <FormField
               label="비밀번호 확인"
               value={passwordConfirm}
