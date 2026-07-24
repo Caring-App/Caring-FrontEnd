@@ -4,7 +4,7 @@ export const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center', // 오타 수정완료 (justify -> justifyContent)
+    justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 40,
@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
   modalContainer: {
     width: '100%',
     maxHeight: '85%',
-    backgroundColor: 'white',
+    backgroundColor: '#FFFFFF', // surface.DEFAULT
     borderRadius: 20,
     padding: 20,
   },
@@ -25,11 +25,12 @@ export const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#111111', // text.primary
   },
   closeBtnText: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#666',
+    color: '#656C6C', // text.muted
     padding: 5,
   },
   section: {
@@ -39,35 +40,37 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: '#111111', // text.primary
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#CED4DA', // border.input
     borderRadius: 8,
     padding: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF', // surface.DEFAULT
+    color: '#111111', // text.primary
   },
   timePickerBox: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#CED4DA', // border.input
     borderRadius: 8,
     padding: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF', // surface.DEFAULT
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   timePickerText: {
-    color: '#333',
+    color: '#111111', // text.primary
     fontWeight: 'bold',
   },
   wheelPickerContainer: {
     borderWidth: 1,
-    borderColor: '#eee',
+    borderColor: '#E2E5E5', // border.DEFAULT
     borderRadius: 8,
     padding: 10,
     marginTop: 5,
-    backgroundColor: '#fafafa',
+    backgroundColor: '#EFF1F5', // surface.subtle
     alignItems: 'center',
   },
   wheelPickerRow: {
@@ -80,13 +83,14 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginHorizontal: 2,
+    color: '#111111', // text.primary
   },
   voiceBox: {
     borderWidth: 1,
-    borderColor: '#eee',
+    borderColor: '#E2E5E5', // border.DEFAULT
     borderRadius: 10,
     padding: 15,
-    backgroundColor: '#fcfcfc',
+    backgroundColor: '#EFF1F5', // surface.subtle
     marginBottom: 15,
   },
   radioRow: {
@@ -98,6 +102,7 @@ export const styles = StyleSheet.create({
     height: 18,
     borderRadius: 9,
     borderWidth: 2,
+    borderColor: '#FF7F00', // primary.DEFAULT
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 8,
@@ -106,7 +111,7 @@ export const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#FF8C00',
+    backgroundColor: '#FF7F00', // primary.DEFAULT
   },
   actionButtonGroup: {
     flexDirection: 'row',
@@ -117,29 +122,29 @@ export const styles = StyleSheet.create({
   actionBtn: {
     flex: 1,
     borderWidth: 1.5,
-    borderColor: '#FF9800',
+    borderColor: '#FF7F00', // primary.DEFAULT
     borderRadius: 8,
     paddingVertical: 8,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF', // surface.DEFAULT
   },
   actionBtnText: {
     fontSize: 13,
-    color: '#FF9800',
+    color: '#FF7F00', // primary.DEFAULT
     fontWeight: 'bold',
     marginLeft: 5,
   },
   saveBtn: {
-    backgroundColor: '#FF8C00',
+    backgroundColor: '#FF7F00', // primary.DEFAULT
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
     marginTop: 10,
   },
   saveBtnText: {
-    color: 'white',
+    color: '#FFFFFF', // surface.DEFAULT
     fontWeight: 'bold',
     fontSize: 16,
   },
