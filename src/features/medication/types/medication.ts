@@ -1,20 +1,14 @@
-export interface MedicationFormState {
-  medicationName: string;
-  timeCategory: '아침' | '점심' | '저녁';
-  selectedDays: string[];
-  medTime: {
-    hour: string;
-    minute: string;
-    second: string;
-    amPm: 'AM' | 'PM';
-  };
-  remindInterval: string;
-  soundType: 'tts' | 'voice';
-  hasRecorded: boolean;
+export interface TimeState {
+  hour: string;
+  minute: string;
+  second: string;
+  amPm: 'AM' | 'PM';
 }
 
-export interface MedicationRegistrationModalProps {
+export type SoundType = 'tts' | 'voice';
+
+export interface MedicationModalProps {
   visible: boolean;
   onClose: () => void;
-  onSave?: (data: MedicationFormState) => void;
+  onSave?: (data: any) => void;
 }
