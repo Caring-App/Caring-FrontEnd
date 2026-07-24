@@ -1,5 +1,7 @@
 import { StyleSheet } from 'react-native';
 
+const PRIMARY_COLOR = '#FF7F00';
+
 export const signupStyles = StyleSheet.create({
   container: {
     flex: 1,
@@ -7,21 +9,31 @@ export const signupStyles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingVertical: 24,
+    paddingVertical: 20,
+  },
+
+  // ----------------------------------------------------
+  // 헤더: 로고는 좌측 구석 배치, 타이틀은 가운데 정렬
+  // ----------------------------------------------------
+  headerContainer: {
+    position: 'relative',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  logoWrapper: {
+    position: 'absolute',
+    left: 0, // 왼쪽 구석에 고정
+    top: 0,
   },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#111',
+    color: '#111827',
     textAlign: 'center',
   },
-  subtitle: {
-    fontSize: 13,
-    color: '#666',
-    textAlign: 'center',
-    marginTop: 6,
-    marginBottom: 24,
-  },
+
   inputGroup: {
     marginBottom: 16,
   },
@@ -35,92 +47,65 @@ export const signupStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E2E8F0',
     borderRadius: 8,
-    paddingHorizontal: 14,
+    paddingHorizontal: 12,
     paddingVertical: 12,
     fontSize: 14,
-    backgroundColor: '#F8FAFC',
     color: '#111',
-  },
-  row: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  flexInput: {
-    flex: 1,
-  },
-  actionBtn: {
-    backgroundColor: '#333',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    borderRadius: 8,
-  },
-  actionBtnText: {
-    color: '#FFF',
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginTop: 4,
-  },
-  checkboxRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '30%',
-    marginBottom: 6,
-  },
-  checkbox: {
-    width: 18,
-    height: 18,
-    borderWidth: 1,
-    borderColor: '#CBD5E1',
-    borderRadius: 4,
-    marginRight: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkboxSelected: {
-    backgroundColor: '#FF7A00',
-    borderColor: '#FF7A00',
-  },
-  checkmark: {
-    color: '#FFF',
-    fontSize: 11,
-    fontWeight: 'bold',
-  },
-  checkboxLabel: {
-    fontSize: 13,
-    color: '#333',
+    backgroundColor: '#FFF',
   },
   submitButton: {
-    backgroundColor: '#FF7A00',
-    paddingVertical: 16,
+    backgroundColor: PRIMARY_COLOR,
     borderRadius: 8,
+    paddingVertical: 14,
     alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 24,
+  },
+  submitButtonDisabled: {
+    backgroundColor: '#CBD5E1',
   },
   submitButtonText: {
     color: '#FFF',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  modalHeader: {
+
+  // 기저 질환 선택 3열 정렬 스타일
+  diseaseGrid: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EEE',
+    flexWrap: 'wrap',
+    marginTop: 8,
+    rowGap: 14,
   },
-  modalTitle: {
-    fontSize: 16,
+  diseaseItem: {
+    width: '33.33%',
+  },
+  checkboxRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  checkbox: {
+    width: 18,
+    height: 18,
+    borderWidth: 1.5,
+    borderColor: '#CED4DA',
+    borderRadius: 4,
+    marginRight: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  checkboxActive: {
+    backgroundColor: PRIMARY_COLOR,
+    borderColor: PRIMARY_COLOR,
+  },
+  checkmark: {
+    color: '#FFFFFF',
+    fontSize: 11,
     fontWeight: 'bold',
   },
-  closeBtn: {
-    fontSize: 14,
-    color: '#666',
+  diseaseText: {
+    fontSize: 13,
+    color: '#333333',
   },
 });

@@ -1,21 +1,8 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
-} from 'react-native';
-
 import { SvgXml } from 'react-native-svg';
-import { signupStyles } from '../styles/signup.styles';
-import useSignUp from '../hooks/useSignUp';
-import BirthDatePicker from './BirthDatePicker';
 
-// caring_logo.svg 코드를 여기에 넣어주세요
-const logoXml = `
-<svg width="58" height="58" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+// 피그마에서 케어링 로고 [Copy as SVG]한 코드 또는 로고 SVG 코드
+const logoXml = `<svg width="58" height="58" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <circle cx="29" cy="29" r="28.5" fill="#FFF7EE" stroke="#866650"/>
 <path d="M30.7539 0.914666H31.1524L31.1719 4.20792V6.35938H30.793L30.7539 0.914666Z" fill="#C9CED1"/>
 <path d="M22 35L26.9654 20H35.4144L41 35H22Z" fill="url(#paint0_linear_151_26310)"/>
@@ -73,160 +60,15 @@ const logoXml = `
 <image id="image0_151_26310" width="347" height="527" preserveAspectRatio="none" xlink:href="data:image/png;base64,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"/>
 </defs>
 </svg>
-
 `;
 
-export const SignupScreen = () => {
-  const signUpHook = useSignUp() as any;
+interface CaringLogoProps {
+  width?: number;
+  height?: number;
+}
 
-  // 훅 상태 및 핸들러 추출
-  const form = signUpHook?.form || {};
-  const setName = signUpHook?.setName || signUpHook?.handleNameChange;
-  const setPhone = signUpHook?.setPhone || signUpHook?.handlePhoneChange;
-  const setAddress = signUpHook?.setAddress;
-  const setDetailAddress = signUpHook?.setDetailAddress;
-  const handleSelectAddress = signUpHook?.handleSelectAddress;
-  const handleBirthDateChange = signUpHook?.setBirthDate || signUpHook?.handleBirthDateChange;
-
-  const toggleDisease = signUpHook?.toggleDisease || signUpHook?.handleToggleDisease || (() => {});
-  const handleSubmit = signUpHook?.handleSubmit || signUpHook?.handleSignUp || signUpHook?.onSubmit || (() => {});
-  const isFormValid = signUpHook?.isFormValid ?? true;
-
-  // 기저질환 목록
-  const diseaseList: string[] = signUpHook?.diseaseList || signUpHook?.diseases || [
-    '고혈압',
-    '당뇨병',
-    '치매',
-    '골다공증',
-    '고지혈증',
-    '관절염',
-    '심혈관 질환',
-    '만성 신부전',
-    '파킨슨병',
-    '기타',
-  ];
-
-  const selectedDiseases: string[] = form?.selectedDiseases || signUpHook?.selectedDiseases || [];
-
-  return (
-    <SafeAreaView style={signupStyles.container}>
-      <ScrollView contentContainerStyle={signupStyles.scrollContent} showsVerticalScrollIndicator={false}>
-        
-        {/* 상단 헤더 영역 (피그마 2번째 이미지 레이아웃 반영) */}
-        <View style={signupStyles.headerContainer}>
-          {/* 로고: 왼쪽 구석에 배치 */}
-          <View style={signupStyles.logoWrapper}>
-            <SvgXml xml={logoXml} width={44} height={44} />
-          </View>
-          
-          {/* 타이틀: 중앙 정렬 */}
-          <Text style={signupStyles.title}>회원 가입</Text>
-        </View>
-
-        {/* 1. 이름 입력 */}
-        {form?.name !== undefined && (
-          <View style={signupStyles.inputGroup}>
-            <Text style={signupStyles.label}>이름</Text>
-            <TextInput
-              style={signupStyles.input}
-              placeholder="이름을 입력해 주세요"
-              placeholderTextColor="#A1A1AA"
-              value={form.name}
-              onChangeText={setName}
-            />
-          </View>
-        )}
-
-        {/* 2. 전화번호 입력 */}
-        {form?.phone !== undefined && (
-          <View style={signupStyles.inputGroup}>
-            <Text style={signupStyles.label}>전화번호</Text>
-            <TextInput
-              style={signupStyles.input}
-              placeholder="전화번호를 입력해 주세요 (- 제외)"
-              placeholderTextColor="#A1A1AA"
-              keyboardType="number-pad"
-              value={form.phone}
-              onChangeText={setPhone}
-            />
-          </View>
-        )}
-
-        {/* 3. 생년월일 선택 */}
-        <View style={signupStyles.inputGroup}>
-          <Text style={signupStyles.label}>생년월일</Text>
-          <BirthDatePicker
-            value={form?.birthDate || ''}
-            onChange={(date: string) => {
-              if (handleBirthDateChange) {
-                handleBirthDateChange(date);
-              }
-            }}
-          />
-        </View>
-
-        {/* 4. 주소 입력 */}
-        <View style={signupStyles.inputGroup}>
-          <Text style={signupStyles.label}>주소</Text>
-          <TouchableOpacity onPress={handleSelectAddress} activeOpacity={0.8}>
-            <TextInput
-              style={[signupStyles.input, { marginBottom: 8 }]}
-              placeholder="기본 주소 (예: 서울특별시 마포구 ...)"
-              placeholderTextColor="#A1A1AA"
-              value={form?.address}
-              editable={false}
-              pointerEvents="none"
-            />
-          </TouchableOpacity>
-          <TextInput
-            style={signupStyles.input}
-            placeholder="상세 주소를 입력하세요 (동, 호수 등)"
-            placeholderTextColor="#A1A1AA"
-            value={form?.detailAddress}
-            onChangeText={setDetailAddress}
-          />
-        </View>
-
-        {/* 5. 기저 질환 선택 */}
-        <View style={signupStyles.inputGroup}>
-          <Text style={signupStyles.label}>기저 질환 선택</Text>
-          
-          <View style={signupStyles.diseaseGrid}>
-            {diseaseList.map((disease: string) => {
-              const isSelected = selectedDiseases.includes(disease);
-              return (
-                <View key={disease} style={signupStyles.diseaseItem}>
-                  <TouchableOpacity
-                    style={signupStyles.checkboxRow}
-                    onPress={() => toggleDisease(disease)}
-                    activeOpacity={0.7}
-                  >
-                    <View style={[signupStyles.checkbox, isSelected && signupStyles.checkboxActive]}>
-                      {isSelected && <Text style={signupStyles.checkmark}>✓</Text>}
-                    </View>
-                    <Text style={signupStyles.diseaseText}>{disease}</Text>
-                  </TouchableOpacity>
-                </View>
-              );
-            })}
-          </View>
-        </View>
-
-        {/* 6. 제출 버튼 */}
-        <TouchableOpacity
-          style={[
-            signupStyles.submitButton,
-            !isFormValid && signupStyles.submitButtonDisabled,
-          ]}
-          onPress={handleSubmit}
-          disabled={!isFormValid}
-        >
-          <Text style={signupStyles.submitButtonText}>가입하기</Text>
-        </TouchableOpacity>
-
-      </ScrollView>
-    </SafeAreaView>
-  );
+export const CaringLogo = ({ width = 44, height = 44 }: CaringLogoProps) => {
+  return <SvgXml xml={logoXml} width={width} height={height} />;
 };
 
-export default SignupScreen;
+export default CaringLogo;
