@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import LoginScreen from '@screens/auth/Login/LoginScreen';
 import SignupScreen from '@screens/auth/Signup/SignupScreen';
+import TermsAgreementScreen from '@screens/auth/terms/TermsAgreementScreen';
 import { LinkAccountScreen } from '@screens/auth/LinkAccount/LinkAccountScreen';
 import { GuardianStackNavigator } from './GuardianStackNavigator';
 import { SeniorHomeScreen } from '@screens/senior/Home/SeniorHomeScreen';
@@ -31,6 +32,7 @@ export function RootNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name="TermsAgreement" component={TermsAgreementScreen} />
       <Stack.Screen name="LinkAccount" component={LinkAccountScreen} />
     </Stack.Navigator>
   );
