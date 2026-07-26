@@ -1,37 +1,26 @@
 import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useSessionStore } from '@shared/store/useSessionStore';
-import LoginScreen from '@screens/auth/Login/LoginScreen';
-import SignupScreen from '@screens/auth/Signup/SignupScreen';
-import { LinkAccountScreen } from '@screens/auth/LinkAccount/LinkAccountScreen';
-import { GuardianStackNavigator } from './GuardianStackNavigator';
-import { SeniorHomeScreen } from '@screens/senior/Home/SeniorHomeScreen';
-import { SeniorScheduleScreen } from '@screens/senior/Schedule/SeniorScheduleScreen';
+
+// 화면 컴포넌트들 import
+import LoginScreen from '../../screens/auth/Login/LoginScreen';
+import { SignupWelcomeScreen } from '../../screens/auth/welcome-guide/SignupWelcomeScreen';
 
 const Stack = createNativeStackNavigator();
 
-export function RootNavigator() {
-  const isLoggedIn = useSessionStore(state => state.isLoggedIn);
-  const role = useSessionStore(state => state.role);
-
-  if (isLoggedIn && role === 'PROTECTOR') {
-    return <GuardianStackNavigator />;
-  }
-
-  if (isLoggedIn && role === 'WARD') {
-    return (
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="SeniorHome" component={SeniorHomeScreen} />
-        <Stack.Screen name="SeniorSchedule" component={SeniorScheduleScreen} />
-      </Stack.Navigator>
-    );
-  }
-
+export default function App() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
-      <Stack.Screen name="LinkAccount" component={LinkAccountScreen} />
-    </Stack.Navigator>
+    <NavigationContainer>
+      {/* initialRouteName을 작성하신 화면의 등록 이름으로 임시 변경합니다 */}
+      <Stack.Navigator initialRouteName="SignupWelcome" screenOptions={{ headerShown: false }}>
+        
+        {/* 테스트할 웰컴 가이드 화면 */}
+        <Stack.Screen name="SignupWelcome" component={SignupWelcomeScreen} />
+        
+        {/* 기존 로그인 화면 */}
+        <Stack.Screen name="Login" component={LoginScreen} />
+        
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
