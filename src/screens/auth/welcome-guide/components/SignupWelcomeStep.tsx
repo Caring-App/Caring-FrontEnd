@@ -13,7 +13,7 @@ interface Props {
   onClose?: () => void;
 }
 
-export const SignupWelcomeStep = ({ navigation, userName = '이세연', currentStep, onNext, onClose }: Props) => {
+export const SignupWelcomeStep = ({ navigation, userName = '---', currentStep, onNext, onClose }: Props) => {
   const userCode = 'ABC123-DFG456';
 
   const handleCopyCode = () => {
