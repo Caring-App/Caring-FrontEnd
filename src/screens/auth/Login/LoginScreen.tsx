@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   mainTitle: {
     fontSize: 56,
     fontWeight: 'bold',
-    color: '#FF7F00',
+    color: '#FD7E14',
     marginBottom: 40,
   },
   inputContainer: {
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   loginButton: {
     width: '100%',
     height: 50,
-    backgroundColor: '#FF7F00',
+    backgroundColor: '#FD7E14',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
@@ -163,11 +163,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#FF7F00',
+    borderColor: '#FD7E14',
     alignItems: 'center',
   },
   devButtonText: {
-    color: '#FF7F00',
+    color: '#FD7E14',
     fontSize: 13,
     fontWeight: '600',
   },
