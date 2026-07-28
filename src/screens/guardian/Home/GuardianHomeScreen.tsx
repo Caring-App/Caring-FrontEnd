@@ -5,9 +5,11 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GuardianStackParamList } from '@app/navigation/types';
 import { AppHeader } from '@shared/ui';
+import { useGuardianMenuStore } from '@features/guardian-menu/model';
 import { useHealthStatusStore, HealthStatus } from '@features/health/model';
-import { useMedicationStore, MealSlot } from '@features/medication/model';
-import { MOCK_WARD_LOCATION } from '@features/location/model';
+import { useMedicationStore, MealSlot, MedicationTaken } from '@features/medication/model';
+import { getWardLocation } from '@features/location/model';
+import { MOCK_WARDS, useSelectedWardStore } from '@features/ward-management/model';
 import { DetailLinkText } from '@features/welfare-facility/ui';
 import { NaverMapView, NaverMapMarkerOverlay } from '@mj-studio/react-native-naver-map';
 import EnvelopeFillIcon from '@assets/icons/report/envelope-fill.svg';
@@ -32,18 +34,23 @@ type GuardianStackNavigationProp = NativeStackNavigationProp<GuardianStackParamL
 export function GuardianHomeScreen() {
   const navigation = useNavigation();
   const stackNavigation = navigation.getParent<GuardianStackNavigationProp>();
+  const selectedWardId = useSelectedWardStore(state => state.selectedWardId);
+  const ward = MOCK_WARDS.find(item => item.id === selectedWardId) ?? MOCK_WARDS[0];
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top']}>
-      <AppHeader onPressBell={() => stackNavigation?.navigate('Notification')} />
+      <AppHeader
+        onPressBell={() => stackNavigation?.navigate('Notification')}
+        onPressMenu={() => useGuardianMenuStore.getState().open()}
+      />
       <ScrollView
         className="flex-1 px-4"
         contentContainerClassName="pb-8"
         showsVerticalScrollIndicator={false}>
-        <DailyReportCard />
+        <DailyReportCard wardId={ward.id} wardName={ward.name} />
         <ScheduleSection onPressMore={() => stackNavigation?.navigate('Schedule')} />
-        <MedicationSection onPressMore={() => stackNavigation?.navigate('Medication')} />
-        <LocationSection onPressMore={() => stackNavigation?.navigate('Map')} />
+        <MedicationSection wardId={ward.id} onPressMore={() => stackNavigation?.navigate('Medication')} />
+        <LocationSection wardId={ward.id} onPressMore={() => stackNavigation?.navigate('Map')} />
         <WelfareSection onPressMore={() => stackNavigation?.navigate('WelfareFacilities')} />
       </ScrollView>
     </SafeAreaView>
@@ -81,8 +88,35 @@ const HEALTH_EMOJI_ICONS: Record<HealthStatus, { on: typeof EmojiSmileOnIcon; of
   bad: { on: EmojiTearOnIcon, off: EmojiTearOffIcon },
 };
 
-function DailyReportCard() {
+const HEALTH_STATUS_LABELS: Record<HealthStatus, string> = {
+  good: '좋음',
+  normal: '보통',
+  bad: '안좋음',
+};
+
+const MEAL_SLOT_LABELS: Record<MealSlot, string> = {
+  morning: '아침',
+  lunch: '점심',
+  dinner: '저녁',
+};
+
+function buildDailySummary(wardName: string, status: HealthStatus | null, taken: MedicationTaken | undefined) {
+  if (!status || !taken) {
+    return '아직 오늘의 요약 정보가 없어요.';
+  }
+
+  const missedSlot = (['morning', 'lunch', 'dinner'] as MealSlot[]).find(slot => !taken[slot]);
+  const medicationClause = missedSlot
+    ? `${wardName}님은 오늘 ${MEAL_SLOT_LABELS[missedSlot]}약을 복용하지 않았어요`
+    : `${wardName}님은 오늘 약을 모두 잘 복용했어요`;
+
+  return `${wardName}님의 오늘 건강 상태는 '${HEALTH_STATUS_LABELS[status]}' 이에요! ${medicationClause}`;
+}
+
+function DailyReportCard({ wardId, wardName }: { wardId: string; wardName: string }) {
   const [showDetail, setShowDetail] = useState(false);
+  const status = useHealthStatusStore(state => state.statusByWard[wardId] ?? null);
+  const taken = useMedicationStore(state => state.takenByWard[wardId]);
 
   return (
     <View className="mt-4 rounded-card border border-border bg-surface p-4">
@@ -100,16 +134,15 @@ function DailyReportCard() {
       <View className="mt-4 rounded-card border border-border bg-surface p-4">
         <Text className="text-md font-semibold text-text-primary">오늘의 건강 상태</Text>
         <View className="mt-3 flex-row justify-around">
-          <EmojiState status="good" />
-          <EmojiState status="normal" />
-          <EmojiState status="bad" />
+          <EmojiState wardId={wardId} status="good" />
+          <EmojiState wardId={wardId} status="normal" />
+          <EmojiState wardId={wardId} status="bad" />
         </View>
       </View>
 
       <View className="mt-3 rounded-card border border-border bg-surface p-4">
         <Text className="text-md font-semibold text-text-primary">오늘 하루 요약</Text>
-        {/* TODO: 실제 건강/복약 데이터 연동 전까지 안내 문구만 표시 */}
-        <Text className="mt-2 text-sm text-text-primary">아직 오늘의 요약 정보가 없어요.</Text>
+        <Text className="mt-2 text-sm text-text-primary">{buildDailySummary(wardName, status, taken)}</Text>
       </View>
 
       {showDetail && <CompoundHealthDataSection />}
@@ -117,8 +150,8 @@ function DailyReportCard() {
   );
 }
 
-function EmojiState({ status }: { status: HealthStatus }) {
-  const activeStatus = useHealthStatusStore(state => state.status);
+function EmojiState({ wardId, status }: { wardId: string; status: HealthStatus }) {
+  const activeStatus = useHealthStatusStore(state => state.statusByWard[wardId]);
   const { on: OnIcon, off: OffIcon } = HEALTH_EMOJI_ICONS[status];
   const isOn = activeStatus === status;
 
@@ -167,46 +200,46 @@ function ScheduleSection({ onPressMore }: { onPressMore?: () => void }) {
   );
 }
 
-function MedicationSection({ onPressMore }: { onPressMore?: () => void }) {
+function MedicationSection({ wardId, onPressMore }: { wardId: string; onPressMore?: () => void }) {
   return (
     <SectionCard
       title="복약 관리"
       icon={<PrescriptionIcon width={20} height={20} />}
       action={<AddButton label="복약 관리" onPress={onPressMore} />}>
       <View className="mt-3 flex-row justify-around">
-        <MedicationSlot label="아침" slot="morning" />
-        <MedicationSlot label="점심" slot="lunch" />
-        <MedicationSlot label="저녁" slot="dinner" />
+        <MedicationSlot wardId={wardId} label="아침" slot="morning" />
+        <MedicationSlot wardId={wardId} label="점심" slot="lunch" />
+        <MedicationSlot wardId={wardId} label="저녁" slot="dinner" />
       </View>
     </SectionCard>
   );
 }
 
-function MedicationSlot({ label, slot }: { label: string; slot: MealSlot }) {
-  const taken = useMedicationStore(state => state.taken[slot]);
+function MedicationSlot({ wardId, label, slot }: { wardId: string; label: string; slot: MealSlot }) {
+  const taken = useMedicationStore(state => state.takenByWard[wardId]?.[slot]);
 
   return (
     <View className="items-center gap-1">
       <Text className="text-sm font-semibold text-text-primary">{label}</Text>
-      <View
-        className={`h-[60px] w-[60px] items-center justify-center rounded-card ${
-          taken ? 'bg-primary-100' : 'bg-surface'
-        }`}>
+      <View className="h-[60px] w-[60px] items-center justify-center">
         {taken ? <CapsuleOnIcon width={36} height={36} /> : <CapsuleOffIcon width={36} height={36} />}
       </View>
     </View>
   );
 }
 
-function LocationSection({ onPressMore }: { onPressMore?: () => void }) {
+function LocationSection({ wardId, onPressMore }: { wardId: string; onPressMore?: () => void }) {
+  const location = getWardLocation(wardId);
+
   return (
     <SectionCard title="위치 GPS" icon={<GeoAltFillIcon width={15} height={20} />}>
       <View className="relative mt-3 overflow-hidden rounded-card border border-border">
         <NaverMapView
+          key={wardId}
           style={{ height: 160 }}
           initialCamera={{
-            latitude: MOCK_WARD_LOCATION.latitude,
-            longitude: MOCK_WARD_LOCATION.longitude,
+            latitude: location.latitude,
+            longitude: location.longitude,
             zoom: 15,
           }}
           isScrollGesturesEnabled={false}
@@ -215,10 +248,7 @@ function LocationSection({ onPressMore }: { onPressMore?: () => void }) {
           isRotateGesturesEnabled={false}
           isStopGesturesEnabled={false}
           isShowLocationButton={false}>
-          <NaverMapMarkerOverlay
-            latitude={MOCK_WARD_LOCATION.latitude}
-            longitude={MOCK_WARD_LOCATION.longitude}
-          />
+          <NaverMapMarkerOverlay latitude={location.latitude} longitude={location.longitude} />
         </NaverMapView>
         <Pressable onPress={onPressMore} className="absolute inset-0" />
       </View>
