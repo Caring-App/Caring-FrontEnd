@@ -45,6 +45,8 @@ module.exports = {
         avatar: '#ffd2c2',
         // 마이페이지 알림 설정 토글의 미선택 트랙 색상(Figma 62:7438, #D9D9D9) — Switch는 className 미지원이라 별도 토큰
         switchTrackOff: '#d9d9d9',
+        // 로그아웃 확인 모달의 "취소" 버튼 배경(Figma 149:9580, #D9D9D9)
+        buttonMuted: '#d9d9d9',
         // 브랜드 포인트 컬러 (로그인 화면, 보호자 홈, 보호자 메뉴 탭 등에서 실사용 확인된 값, Figma 40:1868 등 #FD7E14)
         primary: {
           DEFAULT: '#FD7E14',

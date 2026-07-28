@@ -3,6 +3,7 @@ export * from './MenuListItem';
 export * from './FormField';
 export * from './EditPersonalInfoModal';
 export * from './LinkCodeModal';
+export * from './LogoutConfirmModal';
 export * from './SettingsToggleRow';
 export * from './RadioOption';
 export * from './FaqAccordionItem';

@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GuardianStackParamList } from './types';
 import { GuardianTabNavigator } from './GuardianTabNavigator';
 import { GuardianMenuDrawer } from '@features/guardian-menu/ui';
+import { LogoutConfirmModal } from '@features/mypage/ui';
 import { MapScreen } from '@screens/guardian/Map/MapScreen';
 import { MedicationScreen } from '@screens/guardian/Medication/MedicationScreen';
 import { ScheduleScreen } from '@screens/guardian/Schedule/ScheduleScreen';
@@ -38,6 +39,7 @@ export function GuardianStackNavigator() {
         <Stack.Screen name="Policy" component={PolicyScreen} />
       </Stack.Navigator>
       <GuardianMenuDrawer />
+      <LogoutConfirmModal />
     </View>
   );
 }

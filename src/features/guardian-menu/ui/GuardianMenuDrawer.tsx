@@ -47,7 +47,7 @@ export function GuardianMenuDrawer() {
             className="self-start rounded-card border border-border px-4 py-2"
             onPress={() => {
               close();
-              useSessionStore.getState().logout();
+              useSessionStore.getState().requestLogout();
             }}>
             <Text className="font-pretendard-bold text-md text-white">로그아웃</Text>
           </Pressable>
