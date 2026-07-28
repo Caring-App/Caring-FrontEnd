@@ -1,26 +1,26 @@
 import React from 'react';
-import { Pressable, View } from 'react-native';
-import CaringLogo from '@assets/icons/header/caring_logo.svg';
-import BellIcon from '@assets/icons/header/bell.svg';
-import NavMenuIcon from '@assets/icons/header/nav-menu.svg';
+import { View, Text, Pressable } from 'react-native';
+import LogoIcon from '@assets/icons/header/caring_logo.svg';
 
 interface AppHeaderProps {
-  onPressBell?: () => void;
-  onPressMenu?: () => void;
+  onLogout?: () => void;
 }
 
-export function AppHeader({ onPressBell, onPressMenu }: AppHeaderProps) {
+export const AppHeader = ({ onLogout }: AppHeaderProps) => {
   return (
-    <View className="h-16 flex-row items-center justify-between bg-surface px-4">
-      <CaringLogo width={40} height={40} />
-      <View className="flex-row items-center gap-4">
-        <Pressable onPress={onPressBell} hitSlop={8}>
-          <BellIcon width={26} height={26} />
-        </Pressable>
-        <Pressable onPress={onPressMenu} hitSlop={8}>
-          <NavMenuIcon width={26} height={26} />
-        </Pressable>
+    <View className="flex-row items-center justify-between px-5 py-3 bg-white border-b border-gray-100">
+      {/* 로고 */}
+      <View className="flex-row items-center">
+        <LogoIcon width={40} height={40} />
       </View>
+
+      {/* ⭕ 주황색 배경 + 흰색 글씨 로그아웃 버튼 */}
+      <Pressable
+        onPress={onLogout}
+        className="px-3.5 py-1.5 rounded-lg bg-primary active:opacity-80"
+      >
+        <Text className="text-xs font-bold text-white">로그아웃</Text>
+      </Pressable>
     </View>
   );
-}
+};

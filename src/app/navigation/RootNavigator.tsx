@@ -5,7 +5,7 @@ import LoginScreen from '@screens/auth/Login/LoginScreen';
 import SignupScreen from '@screens/auth/Signup/SignupScreen';
 import { LinkAccountScreen } from '@screens/auth/LinkAccount/LinkAccountScreen';
 import { GuardianStackNavigator } from './GuardianStackNavigator';
-import { SeniorHomeScreen } from '@screens/senior/Home/SeniorHomeScreen';
+import SeniorHomeScreen from '../../screens/senior/SeniorHomeScreen';
 import { SeniorScheduleScreen } from '@screens/senior/Schedule/SeniorScheduleScreen';
 
 const Stack = createNativeStackNavigator();
