@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GuardianStackParamList } from '@app/navigation/types';
 import { AppHeader } from '@shared/ui';
+import { useGuardianMenuStore } from '@features/guardian-menu/model';
 import { MOCK_LINK_CODE, MOCK_PROFILE } from '@features/mypage/model';
 import {
   EditPersonalInfoModal,
@@ -24,7 +25,10 @@ export function ProfileScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top']}>
-      <AppHeader onPressBell={() => stackNavigation?.navigate('Notification')} />
+      <AppHeader
+        onPressBell={() => stackNavigation?.navigate('Notification')}
+        onPressMenu={() => useGuardianMenuStore.getState().open()}
+      />
       <ScrollView
         className="flex-1 px-4"
         contentContainerClassName="pb-8"
