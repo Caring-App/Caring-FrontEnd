@@ -13,20 +13,40 @@ LocaleConfig.locales['ko'] = {
 LocaleConfig.defaultLocale = 'ko';
 
 interface CalendarProps {
-  currentDate: Date;
+  currentDate?: Date | null; // null/undefined 허용으로 안전하게 변경
   onDateSelect: (date: Date) => void;
 }
 
 export const CalendarComponent = ({ currentDate, onDateSelect }: CalendarProps) => {
-  const dateString = currentDate.toISOString().split('T')[0];
+  // currentDate가 없으면 오늘 날짜를 기본값으로 사용 (Crash 방지!)
+  const targetDate = currentDate instanceof Date && !isNaN(currentDate.getTime()) 
+    ? currentDate 
+    : new Date();
+
+  // yyyy-mm-dd 포맷 안전하게 추출 (toISOString 시차 문제 완화)
+  const year = targetDate.getFullYear();
+  const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+  const day = String(targetDate.getDate()).padStart(2, '0');
+  const dateString = `${year}-${month}-${day}`;
 
   return (
     <View>
       <Calendar
+        current={dateString}
         markedDates={{
-          [dateString]: { selected: true }
+          [dateString]: { 
+            selected: true, 
+            selectedColor: '#E67200' // 원하는 포인트 색상 지정 가능
+          }
         }}
-        onDayPress={(day) => onDateSelect(new Date(day.dateString))}
+        onDayPress={(day) => {
+          // day.dateString 은 "YYYY-MM-DD" 형태의 문자열입니다.
+          onDateSelect(new Date(day.timestamp));
+        }}
+        theme={{
+          todayTextColor: '#E67200',
+          arrowColor: '#E67200',
+        }}
       />
     </View>
   );

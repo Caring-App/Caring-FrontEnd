@@ -70,7 +70,7 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     marginTop: 5,
-    backgroundColor: '#EFF1F5', // surface.subtle
+    backgroundColor: '#FFFFFF', // surface.subtle
     alignItems: 'center',
   },
   wheelPickerRow: {
@@ -90,7 +90,7 @@ export const styles = StyleSheet.create({
     borderColor: '#E2E5E5', // border.DEFAULT
     borderRadius: 10,
     padding: 15,
-    backgroundColor: '#EFF1F5', // surface.subtle
+    backgroundColor: '#FFFFFF', // surface.subtle
     marginBottom: 15,
   },
   radioRow: {
