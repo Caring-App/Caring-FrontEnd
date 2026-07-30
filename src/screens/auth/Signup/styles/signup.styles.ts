@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform, StatusBar } from 'react-native';
 
 const PRIMARY_COLOR = '#FF7F00';
 
@@ -6,32 +6,37 @@ export const signupStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFF',
+    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + 24 : 60,
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingVertical: 20,
+    paddingTop: 20,
+    paddingBottom: 40,
   },
 
   // ----------------------------------------------------
-  // 헤더: 로고는 좌측 구석 배치, 타이틀은 가운데 정렬
+  // 헤더: 로고와 타이틀을 세로로 완벽히 분리하고 간격 확보
   // ----------------------------------------------------
   headerContainer: {
-    position: 'relative',
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    marginBottom: 32,
+    marginTop: 10,
   },
   logoWrapper: {
-    position: 'absolute',
-    left: 0, // 왼쪽 구석에 고정
-    top: 0,
+    width: 48,
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10, // 로고와 '회원가입' 글자 사이 여백
   },
   title: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#111827',
-    textAlign: 'center',
+    includeFontPadding: false,
+    textAlign: 'left',
+    lineHeight: 32,
   },
 
   inputGroup: {

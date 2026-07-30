@@ -25,11 +25,10 @@ export const SignupTypeSelectScreen = () => {
   return (
     <SafeAreaView style={signupTypeSelectStyles.container}>
       {/* 1. 상단 케어링 로고 */}
-      <View style={signupTypeSelectStyles.headerContainer}>
-        <View style={signupTypeSelectStyles.logoWrapper}>
-          <CaringLogo width={48} height={48} />
-        </View>
+      <View style={[signupTypeSelectStyles.logoWrapper, { marginTop: 50 }]}>
+      <CaringLogo width={50} height={50} />
       </View>
+      
 
       {/* 2. 중앙 컨텐츠 영역 (강아지 + 텍스트 + 버튼) */}
       <View style={signupTypeSelectStyles.contentContainer}>
