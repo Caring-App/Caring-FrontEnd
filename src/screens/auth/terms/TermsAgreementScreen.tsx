@@ -16,13 +16,17 @@ export default function TermsAgreementScreen({ navigation }: any) {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
       <ScrollView contentContainerStyle={styles.container}>
-        {/* 상단 로고 */}
-        <View style={styles.logoContainer}>
-          <LogoIcon width={50} height={50} />
+        
+        {/* 상단 헤더 (로고 왼쪽, 타이틀 가운데 정렬 구조) */}
+        <View style={styles.headerContainer}>
+          <View style={styles.logoContainer}>
+            <LogoIcon width={40} height={40} />
+          </View>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>약관 동의</Text>
+          </View>
         </View>
 
-        {/* 상단 타이틀 */}
-        <Text style={styles.title}>약관 동의</Text>
         <Text style={styles.subtitle}>서비스 이용을 위해 약관에 동의해 주세요.</Text>
 
         {/* 전체 동의 박스 */}
@@ -34,7 +38,7 @@ export default function TermsAgreementScreen({ navigation }: any) {
         </TouchableOpacity>
 
         {/* 필수 약관 타이틀 */}
-        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#666', marginTop: 16, marginBottom: 8, paddingHorizontal: 4 }}>필수 약관</Text>
+        <Text style={styles.sectionHeader}>필수 약관</Text>
 
         {/* 필수 약관 목록 */}
         {TERM_LIST.filter(term => term.required).map(term => (
@@ -48,13 +52,13 @@ export default function TermsAgreementScreen({ navigation }: any) {
               {checkedItems[term.id] && <Text style={styles.checkmark}>✓</Text>}
             </View>
             <Text style={styles.termText}>
-              {term.title} <Text style={{ color: '#FF7F00' }}>(필수)</Text>
+              {term.title} <Text style={styles.requiredText}>(필수)</Text>
             </Text>
           </TouchableOpacity>
         ))}
 
         {/* 선택 약관 타이틀 */}
-        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#666', marginTop: 20, marginBottom: 8, paddingHorizontal: 4 }}>선택 약관</Text>
+        <Text style={styles.sectionHeader}>선택 약관</Text>
 
         {/* 선택 약관 목록 */}
         {TERM_LIST.filter(term => !term.required).map(term => (

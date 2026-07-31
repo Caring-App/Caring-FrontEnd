@@ -11,8 +11,9 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    marginBottom: 24,
+    marginBottom: 20,
     position: 'relative',
+    height: 48,
   },
   titleContainer: {
     position: 'absolute',
@@ -22,8 +23,8 @@ export const styles = StyleSheet.create({
     zIndex: 1,
   },
   logoContainer: {
-    alignItems: 'center',
-    marginBottom: 24,
+    justifyContent: 'center',
+    zIndex: 2,
   },
   title: {
     fontSize: 20,
