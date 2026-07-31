@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -8,6 +8,7 @@ import { AppHeader } from '@shared/ui';
 import { useHealthStatusStore, HealthStatus } from '@features/health/model';
 import { useMedicationStore, MealSlot } from '@features/medication/model';
 import { MOCK_WARD_LOCATION } from '@features/location/model';
+import { DetailLinkText } from '@features/welfare-facility/ui';
 import { NaverMapView, NaverMapMarkerOverlay } from '@mj-studio/react-native-naver-map';
 import EnvelopeFillIcon from '@assets/icons/report/envelope-fill.svg';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
@@ -20,8 +21,11 @@ import EmojiTearOffIcon from '@assets/icons/emoji/emoji-tear-off.svg';
 import CalendarEventIcon from '@assets/icons/section/calendar-event.svg';
 import PrescriptionIcon from '@assets/icons/section/prescription2.svg';
 import GeoAltFillIcon from '@assets/icons/section/geo-alt-fill.svg';
+import BuildingFillIcon from '@assets/icons/section/building-fill.svg';
 import CapsuleOnIcon from '@assets/icons/medication/capsule-on.svg';
 import CapsuleOffIcon from '@assets/icons/medication/capsule-off.svg';
+import nationalSubsidyImage from '@assets/images/welfare/national-subsidy.png';
+import healthWelfareImage from '@assets/images/welfare/health-welfare.png';
 
 type GuardianStackNavigationProp = NativeStackNavigationProp<GuardianStackParamList>;
 
@@ -40,7 +44,7 @@ export function GuardianHomeScreen() {
         <ScheduleSection onPressMore={() => stackNavigation?.navigate('Schedule')} />
         <MedicationSection onPressMore={() => stackNavigation?.navigate('Medication')} />
         <LocationSection onPressMore={() => stackNavigation?.navigate('Map')} />
-        <WelfareSection />
+        <WelfareSection onPressMore={() => stackNavigation?.navigate('WelfareFacilities')} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -222,17 +226,20 @@ function LocationSection({ onPressMore }: { onPressMore?: () => void }) {
   );
 }
 
-function WelfareSection() {
+function WelfareSection({ onPressMore }: { onPressMore?: () => void }) {
   return (
-    <SectionCard title="주변 공공 복지 시설">
-      {/* TODO: features/location 공공 시설 추천 API 연동 */}
+    <SectionCard
+      title="주변 공공 복지 시설"
+      icon={<BuildingFillIcon width={15} height={20} />}
+      action={<DetailLinkText onPress={onPressMore} />}>
+      {/* TODO: features/location 실제 위치 기반 공공 시설 추천 API 연동. 아래 두 배너는
+          고정 안내용이라 자세히 보기 리스트와 별개임. */}
       <View className="mt-3 gap-2">
-        <View className="rounded-card border border-border bg-surface px-4 py-3">
-          <Text className="text-sm font-semibold text-text-strong">국가지원금 확인하기</Text>
-          <Text className="mt-1 text-xs text-text-muted">우리 부모님을 위한 지원금 체크</Text>
+        <View className="h-14 w-full flex-row items-center overflow-hidden rounded-card border border-border pl-3">
+          <Image source={nationalSubsidyImage} style={{ width: 185, height: 40 }} resizeMode="contain" />
         </View>
-        <View className="rounded-card border border-border bg-surface px-4 py-3">
-          <Text className="text-sm font-semibold text-text-strong">보건복지부 지원 서비스 확인</Text>
+        <View className="h-14 w-full flex-row items-center overflow-hidden rounded-card border border-border pl-3">
+          <Image source={healthWelfareImage} style={{ width: 177, height: 34 }} resizeMode="contain" />
         </View>
       </View>
     </SectionCard>
