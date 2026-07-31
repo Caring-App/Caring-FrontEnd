@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 import { ScheduleRegistrationModal } from './ScheduleRegistrationModal';
 
-// 만약 네비게이션 타입 정의가 있다면 해당 타입을 사용하시고, 없다면 아래 구조를 참고하세요.
 export const ScheduleScreen = ({ navigation }: { navigation: any }) => {
   const [isModalVisible, setIsModalVisible] = useState(true);
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'white' }}>
+    <View style={{ flex: 1, backgroundColor: 'transparent', justifyContent: 'center' }}>
       <ScheduleRegistrationModal 
         visible={isModalVisible} 
         onClose={() => {
