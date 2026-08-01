@@ -1,3 +1,5 @@
+import { NavigatorScreenParams } from '@react-navigation/native';
+
 export type AuthStackParamList = {
   Login: undefined;
   Signup: undefined;
@@ -11,10 +13,19 @@ export type GuardianTabParamList = {
 };
 
 export type GuardianStackParamList = {
-  Tabs: undefined;
+  Tabs: NavigatorScreenParams<GuardianTabParamList> | undefined;
   Map: undefined;
   Medication: undefined;
   Schedule: undefined;
+  Notification: undefined;
+  WelfareFacilities: undefined;
+  WelfareFacilityDetail: { facilityId: string };
+  Settings: undefined;
+  Withdrawal: undefined;
+  Inquiry: undefined;
+  InquiryChat: undefined;
+  Faq: undefined;
+  Policy: undefined;
 };
 
 export type SeniorStackParamList = {

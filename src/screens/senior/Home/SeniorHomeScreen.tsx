@@ -2,16 +2,17 @@ import React from 'react';
 import { ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { useSessionStore } from '@shared/store/useSessionStore';
 
 // 공통 UI 컴포넌트
 import { AppHeader } from '@shared/ui';
 
 // 커스텀 훅 및 서브 카드 컴포넌트
-import { useSeniorHome } from './hooks/useSeniorHome';
-import { HealthStatusCard } from './components/HealthStatusCard';
-import { ScheduleCard } from './components/ScheduleCard';
-import { MedicationCard } from './components/MedicationCard';
-import { HealthRecordModal } from './components/HealthRecordModal';
+import { useSeniorHome } from '../hooks/useSeniorHome';
+import { HealthStatusCard } from '../components/HealthStatusCard';
+import { ScheduleCard } from '../components/ScheduleCard';
+import { MedicationCard } from '../components/MedicationCard';
+import { HealthRecordModal } from '../components/HealthRecordModal';
 
 export default function SeniorHomeScreen() {
   const navigation = useNavigation<any>();
@@ -22,7 +23,7 @@ export default function SeniorHomeScreen() {
     todayDateText,
     medicationStatus,
     isModalOpen,
-    userDiseases, // 👈 훅에서 가져온 기저질환 목록
+    userDiseases,
     handleSelectEmotion,
     handleOpenHealthModal,
     handleCloseHealthModal,
@@ -37,7 +38,8 @@ export default function SeniorHomeScreen() {
       {
         text: '확인',
         onPress: () => {
-          navigation.replace('Login');
+          // 💡 여기가 핵심입니다! 세션 상태를 초기화하여 RootNavigator가 로그인 화면을 띄우도록 합니다.
+          useSessionStore.setState({ isLoggedIn: false, role: null });
         },
       },
     ]);
@@ -81,7 +83,7 @@ export default function SeniorHomeScreen() {
       <HealthRecordModal
         isVisible={isModalOpen}
         onClose={handleCloseHealthModal}
-        diseases={userDiseases} // 👈 기저질환 배열 직접 바인딩
+        diseases={userDiseases}
         onSubmit={handleSubmitHealthData}
       />
     </SafeAreaView>

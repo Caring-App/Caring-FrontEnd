@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   cardHeaderTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#FF7F00',
+    color: '#FD7E14',
   },
   cardSubText: {
     fontSize: 11,

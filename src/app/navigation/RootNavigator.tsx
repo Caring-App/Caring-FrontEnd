@@ -5,8 +5,8 @@ import LoginScreen from '@screens/auth/Login/LoginScreen';
 import SignupScreen from '@screens/auth/Signup/SignupScreen';
 import { LinkAccountScreen } from '@screens/auth/LinkAccount/LinkAccountScreen';
 import { GuardianStackNavigator } from './GuardianStackNavigator';
-import SeniorHomeScreen from '../../screens/senior/SeniorHomeScreen';
-import { SeniorScheduleScreen } from '@screens/senior/Schedule/SeniorScheduleScreen';
+// 👇 어르신 메인 화면 컴포넌트 경로를 올바른 메인 화면으로 지정해주세요 (예: SeniorHomeTabs 또는 SeniorMainScreen 등)
+import SeniorHomeScreen from '@screens/senior/Home/SeniorHomeScreen'; 
 
 const Stack = createNativeStackNavigator();
 
@@ -21,8 +21,8 @@ export function RootNavigator() {
   if (isLoggedIn && role === 'WARD') {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {/* 어르신으로 진입 시 보여질 메인 화면 컴포넌트 연결 */}
         <Stack.Screen name="SeniorHome" component={SeniorHomeScreen} />
-        <Stack.Screen name="SeniorSchedule" component={SeniorScheduleScreen} />
       </Stack.Navigator>
     );
   }
@@ -30,7 +30,7 @@ export function RootNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name="Signup" component= {SignupScreen} />
       <Stack.Screen name="LinkAccount" component={LinkAccountScreen} />
     </Stack.Navigator>
   );
