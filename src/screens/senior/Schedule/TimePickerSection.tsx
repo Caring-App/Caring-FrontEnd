@@ -19,37 +19,39 @@ export const TimePickerSection = (props: TimePickerProps) => {
 
   return (
     <View style={{ marginVertical: 20 }}>
-      <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{props.label}</Text>
-      <View style={{ flexDirection: 'row', height: 150, borderWidth: 1, borderColor: '#ddd', borderRadius: 10, overflow: 'hidden' }}>
+      <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 8, color: '#111111' }}>{props.label}</Text>
+      
+      {/* 전체 피커 박스 배경을 완전한 흰색(#ffffff)으로 지정 */}
+      <View style={{ flexDirection: 'row', height: 150, borderWidth: 1, borderColor: '#dee2e6', borderRadius: 10, overflow: 'hidden', backgroundColor: '#ffffff' }}>
         
         {/* 오전/오후 선택 */}
-        <View style={{ flex: 1, borderRightWidth: 1, borderColor: '#eee' }}>
-          <ScrollView>
+        <View style={{ flex: 1, borderRightWidth: 1, borderColor: '#dee2e6', backgroundColor: '#ffffff' }}>
+          <ScrollView showsVerticalScrollIndicator={false}>
             {['AM', 'PM'].map(item => (
-              <TouchableOpacity key={item} onPress={() => props.onAmPmChange(item as 'AM' | 'PM')} style={{ padding: 15 }}>
-                <Text style={{ textAlign: 'center', color: props.amPm === item ? 'orange' : 'black' }}>{item}</Text>
+              <TouchableOpacity key={item} onPress={() => props.onAmPmChange(item as 'AM' | 'PM')} style={{ padding: 15, alignItems: 'center' }}>
+                <Text style={{ textAlign: 'center', color: props.amPm === item ? '#FD7E14' : '#404446', fontWeight: props.amPm === item ? 'bold' : 'normal' }}>{item}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
 
         {/* 시간 스크롤 */}
-        <View style={{ flex: 1, borderRightWidth: 1, borderColor: '#eee' }}>
-          <ScrollView>
+        <View style={{ flex: 1, borderRightWidth: 1, borderColor: '#dee2e6', backgroundColor: '#ffffff' }}>
+          <ScrollView showsVerticalScrollIndicator={false}>
             {hours.map(h => (
-              <TouchableOpacity key={h} onPress={() => props.onHourChange(h)} style={{ padding: 15 }}>
-                <Text style={{ textAlign: 'center', color: props.hour === h ? 'orange' : 'black' }}>{h}</Text>
+              <TouchableOpacity key={h} onPress={() => props.onHourChange(h)} style={{ padding: 15, alignItems: 'center' }}>
+                <Text style={{ textAlign: 'center', color: props.hour === h ? '#FD7E14' : '#404446', fontWeight: props.hour === h ? 'bold' : 'normal' }}>{h}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
 
         {/* 분 스크롤 */}
-        <View style={{ flex: 1 }}>
-          <ScrollView>
+        <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+          <ScrollView showsVerticalScrollIndicator={false}>
             {minutes.map(m => (
-              <TouchableOpacity key={m} onPress={() => props.onMinuteChange(m)} style={{ padding: 15 }}>
-                <Text style={{ textAlign: 'center', color: props.minute === m ? 'orange' : 'black' }}>{m}</Text>
+              <TouchableOpacity key={m} onPress={() => props.onMinuteChange(m)} style={{ padding: 15, alignItems: 'center' }}>
+                <Text style={{ textAlign: 'center', color: props.minute === m ? '#FD7E14' : '#404446', fontWeight: props.minute === m ? 'bold' : 'normal' }}>{m}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>

@@ -87,7 +87,7 @@ export const MedicationRegistrationModal = ({ visible, onClose }: MedicationModa
           <ScrollView showsVerticalScrollIndicator={false}>
             
             {/* 1. 약 이름 카드 */}
-            <View style={styles.cardSection}>
+            <View style={[styles.cardSection, { backgroundColor: '#FFFFFF' }]}>
               <Text style={styles.sectionTitle}>약 이름</Text>
               <View style={styles.quickBtnRow}>
                 {['아침', '점심', '저녁'].map((meal) => {
@@ -95,7 +95,7 @@ export const MedicationRegistrationModal = ({ visible, onClose }: MedicationModa
                   return (
                     <TouchableOpacity
                       key={meal}
-                      style={[styles.quickBtn, isSelected && styles.quickBtnActive]}
+                      style={[styles.quickBtn, isSelected && styles.quickBtnActive, { backgroundColor: '#FFFFFF' }]}
                       onPress={() => toggleMeal(meal)}
                     >
                       <Text style={[styles.quickBtnText, isSelected && styles.quickBtnTextActive]}>
@@ -108,7 +108,7 @@ export const MedicationRegistrationModal = ({ visible, onClose }: MedicationModa
             </View>
 
             {/* 2. 요일 선택 카드 */}
-            <View style={styles.cardSection}>
+            <View style={[styles.cardSection, { backgroundColor: '#FFFFFF' }]}>
               <Text style={styles.sectionTitle}>요일 선택</Text>
               <View style={styles.dayCircleRow}>
                 {daysList.map((day) => {
@@ -116,7 +116,7 @@ export const MedicationRegistrationModal = ({ visible, onClose }: MedicationModa
                   return (
                     <TouchableOpacity
                       key={day}
-                      style={[styles.dayCircle, { borderColor: isSelected ? '#FF8C00' : '#CCCCCC' }]}
+                      style={[styles.dayCircle, { borderColor: isSelected ? '#FF8C00' : '#CCCCCC', backgroundColor: '#FFFFFF' }]}
                       onPress={() => toggleDay(day)}
                     >
                       <Text style={[styles.dayCircleText, { color: isSelected ? '#FF8C00' : '#888888' }]}>
@@ -127,7 +127,7 @@ export const MedicationRegistrationModal = ({ visible, onClose }: MedicationModa
                 })}
               </View>
 
-              {/* 매일 / 주간 / 주말 프리셋 버튼 (선택 시 주황색 적용) */}
+              {/* 매일 / 주간 / 주말 프리셋 버튼 */}
               <View style={styles.presetRow}>
                 <TouchableOpacity
                   style={[
@@ -162,12 +162,12 @@ export const MedicationRegistrationModal = ({ visible, onClose }: MedicationModa
             </View>
 
             {/* 3. 시간 선택 카드 */}
-            <View style={styles.cardSection}>
+            <View style={[styles.cardSection, { backgroundColor: '#FFFFFF' }]}>
               <Text style={styles.sectionTitle}>시간 선택</Text>
-              <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>복용 시간</Text>
+              <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#333333', marginBottom: 8 }}>복용 시간</Text>
               
               <TouchableOpacity
-                style={styles.timePickerBox}
+                style={[styles.timePickerBox, { backgroundColor: '#FFFFFF' }]}
                 onPress={() => {
                   setShowTimePicker(!showTimePicker);
                   setHasTimeSelected(true);
@@ -175,15 +175,15 @@ export const MedicationRegistrationModal = ({ visible, onClose }: MedicationModa
               >
                 <Text style={styles.timePickerText}>
                   {hasTimeSelected
-                    ? `${timeState.hour} : ${timeState.minute} : ${timeState.second}  ${timeState.amPm}`
+                    ? `${timeState.hour} : ${timeState.minute} : ${timeState.second}   ${timeState.amPm}`
                     : '복용 시간을 선택하세요'}
                 </Text>
                 <ClockIcon />
               </TouchableOpacity>
 
-              {/* 복용 시간 무한 휠 피커 */}
+              {/* 복용 시간 무한 휠 피커 (배경 흰색 고정) */}
               {showTimePicker && (
-                <View style={styles.wheelPickerContainer}>
+                <View style={[styles.wheelPickerContainer, { backgroundColor: '#FFFFFF' }]}>
                   <View style={styles.pickerFocusLineTop} />
                   <View style={styles.pickerFocusLineBottom} />
 
@@ -198,21 +198,21 @@ export const MedicationRegistrationModal = ({ visible, onClose }: MedicationModa
                 </View>
               )}
 
-              <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#333', marginTop: 16, marginBottom: 8 }}>
+              <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#333333', marginTop: 16, marginBottom: 8 }}>
                 미복용 시 재알림 기간
               </Text>
               
               <TouchableOpacity 
-                style={styles.selectBox} 
+                style={[styles.selectBox, { backgroundColor: '#FFFFFF' }]} 
                 onPress={() => setShowRemindPicker(!showRemindPicker)}
               >
                 <Text style={styles.selectBoxText}>{selectedRemind}</Text>
                 <ChevronDownIcon />
               </TouchableOpacity>
 
-              {/* 재알림 피커 */}
+              {/* 재알림 피커 (배경 흰색 고정) */}
               {showRemindPicker && (
-                <View style={styles.wheelPickerContainer}>
+                <View style={[styles.wheelPickerContainer, { backgroundColor: '#FFFFFF' }]}>
                   <View style={styles.pickerFocusLineTop} />
                   <View style={styles.pickerFocusLineBottom} />
 
@@ -228,18 +228,18 @@ export const MedicationRegistrationModal = ({ visible, onClose }: MedicationModa
             </View>
 
             {/* 4. 음성 알림 설정 카드 */}
-            <View style={styles.cardSection}>
+            <View style={[styles.cardSection, { backgroundColor: '#FFFFFF' }]}>
               <Text style={styles.sectionTitle}>음성 알림 설정</Text>
 
               <TouchableOpacity style={[styles.radioRow, { marginBottom: 12 }]} onPress={() => setSoundType('tts')}>
-                <View style={[styles.radioOuter, { borderColor: soundType === 'tts' ? '#FF8C00' : '#CCCCCC' }]}>
+                <View style={[styles.radioOuter, { borderColor: soundType === 'tts' ? '#FF8C00' : '#CCCCCC', backgroundColor: '#FFFFFF' }]}>
                   {soundType === 'tts' && <View style={styles.radioInner} />}
                 </View>
                 <Text style={{ fontSize: 14, color: '#333' }}>기본 알림음 (TTS)</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.radioRow} onPress={() => setSoundType('voice')}>
-                <View style={[styles.radioOuter, { borderColor: soundType === 'voice' ? '#FF8C00' : '#CCCCCC' }]}>
+                <View style={[styles.radioOuter, { borderColor: soundType === 'voice' ? '#FF8C00' : '#CCCCCC', backgroundColor: '#FFFFFF' }]}>
                   {soundType === 'voice' && <View style={styles.radioInner} />}
                 </View>
                 <Text style={{ fontSize: 14, color: '#333' }}>보호자 음성 녹음</Text>
@@ -247,19 +247,19 @@ export const MedicationRegistrationModal = ({ visible, onClose }: MedicationModa
 
               {soundType === 'voice' && (
                 <View style={styles.actionButtonGroup}>
-                  <TouchableOpacity style={[styles.actionBtn, { borderColor: isRecording ? '#FF4D4F' : '#FF8C00' }]} onPress={handleRecord}>
+                  <TouchableOpacity style={[styles.actionBtn, { borderColor: isRecording ? '#FF4D4F' : '#FF8C00', backgroundColor: '#FFFFFF' }]} onPress={handleRecord}>
                     <MicIcon color={isRecording ? '#FF4D4F' : '#FF8C00'} />
                     <Text style={[styles.actionBtnText, { color: isRecording ? '#FF4D4F' : '#FF8C00' }]}>
                       {isRecording ? '정지' : '녹음'}
                     </Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity style={styles.actionBtn} onPress={handlePlay}>
+                  <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#FFFFFF' }]} onPress={handlePlay}>
                     <PlayIcon color="#FF8C00" />
                     <Text style={styles.actionBtnText}>재생</Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity style={styles.actionBtn} onPress={handleDelete}>
+                  <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#FFFFFF' }]} onPress={handleDelete}>
                     <CloseIcon color="#FF8C00" />
                     <Text style={styles.actionBtnText}>삭제</Text>
                   </TouchableOpacity>
