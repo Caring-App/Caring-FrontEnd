@@ -19,7 +19,9 @@ export function SectionCard({
           {icon}
           <Text className="text-md font-bold text-text-primary">{title}</Text>
         </View>
-        {action}
+        <View pointerEvents="box-none">
+          {action}
+        </View>
       </View>
       {children}
     </View>
