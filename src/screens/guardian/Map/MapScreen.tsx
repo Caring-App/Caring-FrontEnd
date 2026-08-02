@@ -3,11 +3,14 @@ import { Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NaverMapView, NaverMapMarkerOverlay } from '@mj-studio/react-native-naver-map';
-import { MOCK_WARD_LOCATION } from '@features/location/model';
+import { getWardLocation } from '@features/location/model';
+import { useSelectedWardStore } from '@features/ward-management/model';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 
 export function MapScreen() {
   const navigation = useNavigation();
+  const selectedWardId = useSelectedWardStore(state => state.selectedWardId);
+  const location = getWardLocation(selectedWardId);
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top']}>
@@ -19,16 +22,14 @@ export function MapScreen() {
       </View>
 
       <NaverMapView
+        key={selectedWardId}
         style={{ flex: 1 }}
         initialCamera={{
-          latitude: MOCK_WARD_LOCATION.latitude,
-          longitude: MOCK_WARD_LOCATION.longitude,
+          latitude: location.latitude,
+          longitude: location.longitude,
           zoom: 16,
         }}>
-        <NaverMapMarkerOverlay
-          latitude={MOCK_WARD_LOCATION.latitude}
-          longitude={MOCK_WARD_LOCATION.longitude}
-        />
+        <NaverMapMarkerOverlay latitude={location.latitude} longitude={location.longitude} />
       </NaverMapView>
     </SafeAreaView>
   );

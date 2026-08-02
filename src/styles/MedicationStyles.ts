@@ -1,0 +1,71 @@
+import { StyleSheet } from 'react-native';
+
+export const styles = StyleSheet.create({
+  // --- 새로 추가한 필수 스타일 (CalendarSchedule용) ---
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#FFFFFF',
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 15,
+    marginBottom: 5,
+    color: '#333',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    backgroundColor: '#FFFFFF',
+  },
+  textTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical: 15,
+    textAlign: 'center',
+  },
+
+  // --- 기존에 작성 스타일들 ---
+  textline: { color: '#333333', fontSize: 19, fontWeight: 'bold' },
+  nameInput: { fontSize: 19, fontWeight: 'bold', color: '#333', borderBottomWidth: 1, borderBottomColor: '#EAEAEA', minWidth: 60, padding: 5 },
+  btnClose: { padding: 5 },
+  textClose: { color: '#999999', fontSize: 20 },
+  
+  // cardRox 배경을 확실한 흰색(#FFFFFF)으로 지정
+  cardRox: { borderWidth: 1, borderColor: '#F2F2F2', borderRadius: 12, padding: 16, marginBottom: 20, backgroundColor: '#FFFFFF' },
+  
+  subLabel: { color: '#333333', fontSize: 13, fontWeight: 'bold', marginTop: 10, marginBottom: 8 },
+  mealButtonGroup: { flexDirection: 'row', justifyContent: 'space-between' },
+  mealBtn: { flex: 1, height: 44, borderWidth: 1, borderColor: '#EAEAEA', borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 4, backgroundColor: '#FFFFFF' },
+  mealBtnActive: { borderColor: '#FF7A00', borderWidth: 1.5 },
+  mealBtnText: { color: '#666666', fontSize: 14, fontWeight: '500' },
+  mealBtnTextActive: { color: '#FF7A00', fontWeight: 'bold' },
+  dayCircleGroup: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 },
+  dayCircle: { width: 36, height: 36, borderRadius: 18, borderWidth: 1, borderColor: '#FAFAFA', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF' },
+  dayCircleActive: { borderColor: '#FF7A00', borderWidth: 1.5 },
+  dayCircleText: { color: '#666666', fontSize: 13 },
+  dayCircleTextActive: { color: '#FF7A00', fontWeight: 'bold' },
+  quickDayGroup: { flexDirection: 'row', justifyContent: 'space-between' },
+  quickDayBtn: { flex: 1, height: 34, borderWidth: 1, borderColor: '#FF7A00', borderRadius: 6, alignItems: 'center', justifyContent: 'center', marginHorizontal: 4, backgroundColor: '#FF7A00' },
+  quickDayBtnText: { color: '#FFFFFF', fontSize: 13, fontWeight: 'bold' },
+  infoInputBox: { height: 44, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderWidth: 1, borderColor: '#FAFAFA', backgroundColor: '#FFFFFF' },
+  infoInputText: { color: '#999999', fontSize: 13 },
+  dropdownFake: { height: 44, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderWidth: 1, borderColor: '#FAFAFA', backgroundColor: '#FFFFFF' },
+  pickerCard: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#F2F2F2', borderRadius: 12 },
+  wheel: { flex: 1, height: 120, backgroundColor: '#FFFFFF' },
+  colon: { fontSize: 16, fontWeight: 'bold', color: '#333', textAlign: 'center', width: 10 },
+  
+  // voiceSettingContainer 배경도 흰색(#FFFFFF)으로 지정
+  voiceSettingContainer: { borderWidth: 1, borderColor: '#F2F2F2', borderRadius: 12, padding: 16, marginBottom: 25, backgroundColor: '#FFFFFF' },
+  
+  radioOption: { flexDirection: 'row', alignItems: 'center', marginTop: 12 },
+  radioCircle: { width: 18, height: 18, borderRadius: 9, borderWidth: 2, borderColor: '#EAEAEA', marginRight: 10, backgroundColor: '#FFFFFF' },
+  radioChecked: { borderColor: '#FF7A00', backgroundColor: '#FF7A00' },
+  radioText: { fontSize: 14, color: '#333', fontWeight: '500' },
+  btnSave: { height: 54, backgroundColor: '#FF7A00', borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  blnSaveText: { color: '#FFFFFF', fontSize: 16, fontWeight: 'bold' },
+});

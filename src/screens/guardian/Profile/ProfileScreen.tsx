@@ -5,6 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GuardianStackParamList } from '@app/navigation/types';
 import { AppHeader } from '@shared/ui';
+import { useSessionStore } from '@shared/store/useSessionStore';
+import { useGuardianMenuStore } from '@features/guardian-menu/model';
 import { MOCK_LINK_CODE, MOCK_PROFILE } from '@features/mypage/model';
 import {
   EditPersonalInfoModal,
@@ -24,7 +26,10 @@ export function ProfileScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top']}>
-      <AppHeader onPressBell={() => stackNavigation?.navigate('Notification')} />
+      <AppHeader
+        onPressBell={() => stackNavigation?.navigate('Notification')}
+        onPressMenu={() => useGuardianMenuStore.getState().open()}
+      />
       <ScrollView
         className="flex-1 px-4"
         contentContainerClassName="pb-8"
@@ -44,7 +49,7 @@ export function ProfileScreen() {
           <MenuListItem label="문의하기" onPress={() => stackNavigation?.navigate('Inquiry')} />
           <MenuListItem label="사용 가이드 안내" onPress={() => {}} />
           <MenuListItem label="정책 및 약관" onPress={() => stackNavigation?.navigate('Policy')} />
-          <MenuListItem label="로그아웃" onPress={() => {}} />
+          <MenuListItem label="로그아웃" onPress={() => useSessionStore.getState().requestLogout()} />
         </View>
       </ScrollView>
 

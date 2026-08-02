@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, TextInput, View } from 'react-native';
+import { colors } from '@shared/theme/colors';
 
 export function FormField({
   label,
@@ -21,7 +22,7 @@ export function FormField({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor="#6C757D"
+        placeholderTextColor={colors.textPlaceholder}
         keyboardType={keyboardType}
         className="rounded-[6px] border border-border-input px-3 py-2 text-base text-text-primary"
       />

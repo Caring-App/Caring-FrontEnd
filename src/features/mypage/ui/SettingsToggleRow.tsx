@@ -1,5 +1,6 @@
 import React from 'react';
 import { Switch, Text, View } from 'react-native';
+import { colors } from '@shared/theme/colors';
 
 export function SettingsToggleRow({
   label,
@@ -17,8 +18,8 @@ export function SettingsToggleRow({
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: '#D9D9D9', true: '#FF7F00' }}
-        thumbColor="#FFFFFF"
+        trackColor={{ false: colors.switchTrackOff, true: colors.primary }}
+        thumbColor={colors.surface}
       />
     </View>
   );

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { SafeAreaView, View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { useSessionStore } from '../../../shared/store/useSessionStore';
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
   const [id, setId] = useState('');
@@ -9,16 +10,34 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
     console.log('로그인 시도:', id, password);
   };
 
+  // [DEV] 보호자 진입 핸들러
+  const handleDevProtector = () => {
+    useSessionStore.setState({ isLoggedIn: true, role: 'PROTECTOR' });
+  };
+
+  // [DEV] 어르신 진입 핸들러
+  const handleDevSenior = () => {
+    useSessionStore.setState({ isLoggedIn: true, role: 'WARD' });
+  };
+
   return (
     <SafeAreaView style={loginStyles.safeArea}>
       <ScrollView contentContainerStyle={loginStyles.scrollContainer} showsVerticalScrollIndicator={false}>
         
         {/* 상단 [DEV] 버튼 영역 */}
         <View style={loginStyles.devButtonContainer}>
-          <TouchableOpacity style={loginStyles.devButton} activeOpacity={0.8}>
+          <TouchableOpacity 
+            style={loginStyles.devButton} 
+            activeOpacity={0.8}
+            onPress={handleDevProtector}
+          >
             <Text style={loginStyles.devButtonText}>[DEV] 보호자로 바로 진입</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={loginStyles.devButton} activeOpacity={0.8}>
+          <TouchableOpacity 
+            style={loginStyles.devButton} 
+            activeOpacity={0.8}
+            onPress={handleDevSenior}
+          >
             <Text style={loginStyles.devButtonText}>[DEV] 어르신으로 바로 진입</Text>
           </TouchableOpacity>
         </View>
@@ -70,7 +89,6 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
             
             <Text style={loginStyles.barText}>|</Text>
             
-            {/* 👇 'SignupScreen'에서 역할 선택 화면('SignupTypeSelect')으로 이동하도록 수정 */}
             <TouchableOpacity onPress={() => navigation.navigate('SignupTypeSelect')}>
               <Text style={loginStyles.linkText}>회원가입</Text>
             </TouchableOpacity>
@@ -99,8 +117,8 @@ const loginStyles = StyleSheet.create({
   },
   scrollContainer: {
     padding: 20,
-    justifyContent: 'center',
     flexGrow: 1,
+    justifyContent: 'center',
   },
   devButtonContainer: {
     marginBottom: 20,
@@ -115,8 +133,8 @@ const loginStyles = StyleSheet.create({
   },
   devButtonText: {
     color: '#FF7F00',
-    fontWeight: '600',
     fontSize: 13,
+    fontWeight: '600',
   },
   titleContainer: {
     alignItems: 'center',
@@ -137,20 +155,22 @@ const loginStyles = StyleSheet.create({
     marginBottom: 30,
   },
   input: {
+    width: '100%',
+    height: 50,
     borderWidth: 1,
     borderColor: '#DDD',
     borderRadius: 8,
     paddingHorizontal: 15,
-    height: 50,
     fontSize: 15,
     backgroundColor: '#FAFAFA',
     marginBottom: 12,
     color: '#000',
   },
   loginButton: {
+    width: '100%',
+    height: 50,
     backgroundColor: '#FF7F00',
     borderRadius: 8,
-    height: 50,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 8,

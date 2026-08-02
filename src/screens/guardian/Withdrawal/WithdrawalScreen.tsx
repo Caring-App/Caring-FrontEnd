@@ -57,11 +57,9 @@ export function WithdrawalScreen() {
           onPress={() => setAgreed(prev => !prev)}
           hitSlop={4}>
           <View
-            className="h-4 w-4 items-center justify-center rounded-[2px] border"
-            style={{
-              backgroundColor: agreed ? '#FF7F00' : 'transparent',
-              borderColor: agreed ? '#FF7F00' : '#E2E5E5',
-            }}>
+            className={`h-4 w-4 items-center justify-center rounded-[2px] border ${
+              agreed ? 'border-primary bg-primary' : 'border-border bg-transparent'
+            }`}>
             {agreed && <Text className="text-[10px] leading-none text-surface">✓</Text>}
           </View>
           <Text className="text-xs font-pretendard-medium text-text-muted">

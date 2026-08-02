@@ -7,6 +7,7 @@ import MicrophoneIcon from '@assets/icons/action/microphone.svg';
 import SendIcon from '@assets/icons/action/send.svg';
 import { ChatMessage } from '@features/mypage/model';
 import { ChatBubble } from '@features/mypage/ui';
+import { colors } from '@shared/theme/colors';
 
 export function InquiryChatScreen() {
   const navigation = useNavigation();
@@ -46,7 +47,7 @@ export function InquiryChatScreen() {
               value={draft}
               onChangeText={setDraft}
               placeholder="메세지를 입력하세요!"
-              placeholderTextColor="#A1A1A1"
+              placeholderTextColor={colors.textPlaceholderMuted}
               className="flex-1 text-sm font-pretendard-bold text-text-primary"
             />
             <MicrophoneIcon width={22} height={22} />

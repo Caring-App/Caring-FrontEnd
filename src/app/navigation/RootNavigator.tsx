@@ -8,12 +8,31 @@ import { SignupTypeSelectScreen } from '../../screens/auth/Signup/component/Sign
 import TermsAgreementScreen from '../../screens/auth/terms/TermsAgreementScreen';
 import { LinkAccountScreen } from '../../screens/auth/LinkAccount/LinkAccountScreen';
 import { GuardianStackNavigator } from './GuardianStackNavigator';
-import { SeniorHomeScreen } from '../../screens/senior/Home/SeniorHomeScreen';
+import SeniorHomeScreen from '../../screens/senior/Home/SeniorHomeScreen';
 import { SeniorScheduleScreen } from '../../screens/senior/Schedule/SeniorScheduleScreen';
 
 const Stack = createNativeStackNavigator();
 
 export const RootNavigator = () => {
+  const isLoggedIn = useSessionStore(state => state.isLoggedIn);
+  const role = useSessionStore(state => state.role);
+
+  // 1. 보호자(PROTECTOR)로 로그인된 경우
+  if (isLoggedIn && role === 'PROTECTOR') {
+    return <GuardianStackNavigator />;
+  }
+
+  // 2. 피보호자/어르신(WARD)으로 로그인된 경우
+  if (isLoggedIn && role === 'WARD') {
+    return (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="SeniorHome" component={SeniorHomeScreen} />
+        {/* 필요한 경우 어르신용 추가 스크린을 여기에 배치할 수 있습니다 */}
+      </Stack.Navigator>
+    );
+  }
+
+  // 3. 비로그인 상태 (인증 및 회원가입 관련 스크린 제공)
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
