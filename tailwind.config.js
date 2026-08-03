@@ -24,6 +24,8 @@ module.exports = {
           placeholder: '#6c757d',
           // 1:1 문의하기 채팅 입력창 placeholder(Figma 151:26522, #A1A1A1)
           placeholderMuted: '#a1a1a1',
+          // 일정 등록 모달 인라인 캘린더의 이전/다음 달 날짜(Figma 55:3009 date-picker-dropdown, #ADB5BD)
+          calendarMuted: '#adb5bd',
         },
         border: {
           DEFAULT: '#e2e5e5',
@@ -55,6 +57,15 @@ module.exports = {
           500: '#FD7E14',
           600: '#E67200',
           700: '#B85A00',
+        },
+        // 일정 등록 모달의 시/분/초 휠 피커(Figma 55:3009, iOS 스타일 wheel picker)
+        wheel: {
+          // 가운데 선택된 행 텍스트(#454545)
+          active: '#454545',
+          // 위아래로 흐릿하게 보이는 비선택 행 텍스트(rgba(60,60,60,0.5))
+          muted: 'rgba(60,60,60,0.5)',
+          // 선택된 행 위아래 구분선(#8B8B8B)
+          divider: '#8b8b8b',
         },
       },
       fontFamily: {

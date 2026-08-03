@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -9,7 +9,7 @@ import { useGuardianMenuStore } from '@features/guardian-menu/model';
 import { DailyReportCard } from '@features/health/ui';
 import { MedicationSection } from '@features/medication/ui';
 import { LocationSection } from '@features/location/ui';
-import { ScheduleSection } from '@features/schedule/ui';
+import { ScheduleSection, ScheduleRegistrationModal } from '@features/schedule/ui';
 import { WelfareSection } from '@features/welfare-facility/ui';
 import { MOCK_WARDS, useSelectedWardStore } from '@features/ward-management/model';
 
@@ -20,6 +20,7 @@ export function GuardianHomeScreen() {
   const stackNavigation = navigation.getParent<GuardianStackNavigationProp>();
   const selectedWardId = useSelectedWardStore(state => state.selectedWardId);
   const ward = MOCK_WARDS.find(item => item.id === selectedWardId) ?? MOCK_WARDS[0];
+  const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top']}>
@@ -32,11 +33,18 @@ export function GuardianHomeScreen() {
         contentContainerClassName="pb-8"
         showsVerticalScrollIndicator={false}>
         <DailyReportCard wardId={ward.id} wardName={ward.name} />
-        <ScheduleSection onPressMore={() => stackNavigation?.navigate('Schedule')} />
+        <ScheduleSection onPressMore={() => setIsScheduleModalVisible(true)} />
         <MedicationSection wardId={ward.id} onPressMore={() => stackNavigation?.navigate('Medication')} />
         <LocationSection wardId={ward.id} onPressMore={() => stackNavigation?.navigate('Map')} />
         <WelfareSection onPressMore={() => stackNavigation?.navigate('WelfareFacilities')} />
       </ScrollView>
+
+      <ScheduleRegistrationModal
+        visible={isScheduleModalVisible}
+        wardName={ward.name}
+        onClose={() => setIsScheduleModalVisible(false)}
+        onSave={(data) => console.log('저장된 일정 정보:', data)}
+      />
     </SafeAreaView>
   );
 }
