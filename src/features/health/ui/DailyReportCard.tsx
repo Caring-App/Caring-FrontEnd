@@ -52,7 +52,9 @@ export function DailyReportCard({ wardId, wardName }: { wardId: string; wardName
     <View className="mt-4 rounded-card border border-border bg-surface p-4">
       <View className="flex-row items-center gap-2">
         <Pressable onPress={() => setShowDetail(prev => !prev)} hitSlop={8}>
-          <ChevronRightIcon width={18} height={18} />
+          <View style={{ transform: [{ rotate: showDetail ? '90deg' : '0deg' }] }}>
+            <ChevronRightIcon width={18} height={18} />
+          </View>
         </Pressable>
         <EnvelopeFillIcon width={20} height={15} />
         <Text className="text-xl font-bold text-text-primary">하루 요약 레포트</Text>
