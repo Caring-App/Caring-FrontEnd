@@ -10,6 +10,7 @@ import EmojiNeutralOnIcon from '@assets/icons/emoji/emoji-neutral-on.svg';
 import EmojiNeutralOffIcon from '@assets/icons/emoji/emoji-neutral-off.svg';
 import EmojiTearOnIcon from '@assets/icons/emoji/emoji-tear-on.svg';
 import EmojiTearOffIcon from '@assets/icons/emoji/emoji-tear-off.svg';
+import { HealthMetricsChart } from './HealthMetricsChart';
 
 const HEALTH_EMOJI_ICONS: Record<HealthStatus, { on: typeof EmojiSmileOnIcon; off: typeof EmojiSmileOnIcon }> = {
   good: { on: EmojiSmileOnIcon, off: EmojiSmileOffIcon },
@@ -95,9 +96,8 @@ function CompoundHealthDataSection() {
   return (
     <View className="mt-3 rounded-card border border-border bg-surface p-4">
       <Text className="text-md font-semibold text-text-primary">건강 수치 그래프</Text>
-      {/* TODO: 실제 차트 라이브러리로 최근 혈당 수치 등 그래프 연동 필요 */}
-      <View className="mt-3 items-center justify-center rounded-card border border-border bg-surface py-10">
-        <Text className="text-sm text-text-muted">복합 건강 데이터 (준비 중)</Text>
+      <View className="mt-3">
+        <HealthMetricsChart />
       </View>
     </View>
   );
