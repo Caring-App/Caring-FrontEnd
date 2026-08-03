@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 import { WEEKDAY_LABELS_KO, addMonths, getCalendarWeeks } from '../model/calendarUtils';
+import { MonthYearPickerModal } from './MonthYearPickerModal';
 
 export function HomeScheduleCalendar() {
   const [month, setMonth] = useState(() => new Date());
+  const [isPickerVisible, setIsPickerVisible] = useState(false);
 
   const weeks = getCalendarWeeks(month).filter((week) => week.some(({ inCurrentMonth }) => inCurrentMonth));
 
@@ -19,9 +21,11 @@ export function HomeScheduleCalendar() {
       }}
       className="mt-3 rounded-[15px] border border-border-calendarCard bg-white px-3.5 py-3.5">
       <View className="flex-row items-center justify-between">
-        <Text className="font-pretendard-semibold text-md text-text-calendarDay">
-          {month.getFullYear()}년 {month.getMonth() + 1}월
-        </Text>
+        <Pressable onPress={() => setIsPickerVisible(true)}>
+          <Text className="font-pretendard-semibold text-md text-text-calendarDay">
+            {month.getFullYear()}년 {month.getMonth() + 1}월
+          </Text>
+        </Pressable>
         <View className="flex-row items-center gap-3">
           <Pressable onPress={() => setMonth((prev) => addMonths(prev, -1))} hitSlop={8}>
             <ChevronRightIcon width={13} height={13} style={{ transform: [{ rotate: '180deg' }] }} />
@@ -51,6 +55,17 @@ export function HomeScheduleCalendar() {
           ))}
         </View>
       ))}
+
+      <MonthYearPickerModal
+        visible={isPickerVisible}
+        year={month.getFullYear()}
+        month={month.getMonth() + 1}
+        onClose={() => setIsPickerVisible(false)}
+        onConfirm={(year, selectedMonth) => {
+          setMonth(new Date(year, selectedMonth - 1, 1));
+          setIsPickerVisible(false);
+        }}
+      />
     </View>
   );
 }
