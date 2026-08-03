@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useHealthStatusStore, HealthStatus } from '@features/health/model';
 import { useMedicationStore, MealSlot, MedicationTaken } from '@features/medication/model';
 import EnvelopeFillIcon from '@assets/icons/report/envelope-fill.svg';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
+import ChevronDownIcon from '@assets/icons/action/chevron-down.svg';
 import EmojiSmileOnIcon from '@assets/icons/emoji/emoji-smile-on.svg';
 import EmojiSmileOffIcon from '@assets/icons/emoji/emoji-smile-off.svg';
 import EmojiNeutralOnIcon from '@assets/icons/emoji/emoji-neutral-on.svg';
@@ -11,6 +12,7 @@ import EmojiNeutralOffIcon from '@assets/icons/emoji/emoji-neutral-off.svg';
 import EmojiTearOnIcon from '@assets/icons/emoji/emoji-tear-on.svg';
 import EmojiTearOffIcon from '@assets/icons/emoji/emoji-tear-off.svg';
 import { HealthMetricsChart } from './HealthMetricsChart';
+import { DropdownAnchor, TimeDropdown } from './TimeDropdown';
 
 const HEALTH_EMOJI_ICONS: Record<HealthStatus, { on: typeof EmojiSmileOnIcon; off: typeof EmojiSmileOnIcon }> = {
   good: { on: EmojiSmileOnIcon, off: EmojiSmileOffIcon },
@@ -45,6 +47,9 @@ function buildDailySummary(wardName: string, status: HealthStatus | null, taken:
 
 export function DailyReportCard({ wardId, wardName }: { wardId: string; wardName: string }) {
   const [showDetail, setShowDetail] = useState(false);
+  const [reportTime, setReportTime] = useState('21 : 00');
+  const [timeDropdownAnchor, setTimeDropdownAnchor] = useState<DropdownAnchor | null>(null);
+  const timeButtonRef = useRef<React.ComponentRef<typeof Pressable>>(null);
   const status = useHealthStatusStore(state => state.statusByWard[wardId] ?? null);
   const taken = useMedicationStore(state => state.takenByWard[wardId]);
 
@@ -59,6 +64,30 @@ export function DailyReportCard({ wardId, wardName }: { wardId: string; wardName
         <EnvelopeFillIcon width={20} height={15} />
         <Text className="text-xl font-bold text-text-primary">하루 요약 레포트</Text>
       </View>
+
+      <View className="mt-1 flex-row flex-wrap items-center">
+        <Text className="text-xs text-text-muted">하루 요약 레포트를 매일 </Text>
+        <Pressable
+          ref={timeButtonRef}
+          className="flex-row items-center gap-1 rounded-[6px] border border-border px-2 py-0.5"
+          onPress={() => {
+            timeButtonRef.current?.measureInWindow((x, y, width, height) => {
+              setTimeDropdownAnchor({ x, y, width, height });
+            });
+          }}>
+          <Text className="text-xs font-pretendard-semibold text-text-primary">{reportTime}</Text>
+          <ChevronDownIcon width={10} height={7} />
+        </Pressable>
+        <Text className="text-xs text-text-muted"> 시에 받아요</Text>
+      </View>
+
+      <TimeDropdown
+        visible={timeDropdownAnchor !== null}
+        value={reportTime}
+        anchor={timeDropdownAnchor}
+        onClose={() => setTimeDropdownAnchor(null)}
+        onSelect={setReportTime}
+      />
       <Text className="mt-1 text-xs text-text-muted">
         하루 요약 레포트는 설정한 시간을 기준으로 반영됩니다
       </Text>
