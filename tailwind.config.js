@@ -26,6 +26,10 @@ module.exports = {
           placeholderMuted: '#a1a1a1',
           // 일정 등록 모달 인라인 캘린더의 이전/다음 달 날짜(Figma 55:3009 date-picker-dropdown, #ADB5BD)
           calendarMuted: '#adb5bd',
+          // 보호자 홈 미니 캘린더의 요일 라벨(Figma 55:2459, #BDBDBD)
+          calendarWeekday: '#bdbdbd',
+          // 보호자 홈 미니 캘린더의 날짜 숫자(Figma 55:2459, #020202)
+          calendarDay: '#020202',
         },
         border: {
           DEFAULT: '#e2e5e5',
@@ -35,6 +39,8 @@ module.exports = {
           link: '#c9ced1',
           // 마이페이지 섹션 구분선(Figma 60:6411 등, #DEE2E6)
           divider: '#dee2e6',
+          // 보호자 홈 미니 캘린더 카드 테두리(Figma 55:2459 iOS date-picker, #717171)
+          calendarCard: '#717171',
         },
         surface: {
           DEFAULT: '#ffffff',
