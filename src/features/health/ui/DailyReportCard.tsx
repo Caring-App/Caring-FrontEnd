@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import { useHealthStatusStore, HealthStatus } from '@features/health/model';
+import { useHealthStatusStore, HealthStatus, MOCK_HEALTH_METRICS } from '@features/health/model';
 import { useMedicationStore, MealSlot, MedicationTaken } from '@features/medication/model';
 import EnvelopeFillIcon from '@assets/icons/report/envelope-fill.svg';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
@@ -104,6 +104,13 @@ export function DailyReportCard({ wardId, wardName }: { wardId: string; wardName
       <View className="mt-3 rounded-card border border-border bg-surface p-4">
         <Text className="text-md font-semibold text-text-primary">오늘 하루 요약</Text>
         <Text className="mt-2 text-sm text-text-primary">{buildDailySummary(wardName, status, taken)}</Text>
+        <View className="mt-3 gap-1">
+          {MOCK_HEALTH_METRICS.map(metric => (
+            <Text key={metric.key} className="text-sm text-text-primary">
+              {metric.todayLabel}: {metric.todayValue}
+            </Text>
+          ))}
+        </View>
       </View>
 
       {showDetail && <CompoundHealthDataSection />}
