@@ -1,28 +1,28 @@
 import { create } from 'zustand';
-import { updateMedicationStatus } from '../api'; // Spring Boot 서버 연동 API
+import { MOCK_WARDS } from '@features/ward-management/model';
 
 export type MealSlot = 'morning' | 'lunch' | 'dinner';
+export type MedicationTaken = Record<MealSlot, boolean>;
 
 interface MedicationState {
-  taken: Record<MealSlot, boolean>;
-  setTaken: (slot: MealSlot, value: boolean) => Promise<void>;
+  // TODO: 실서비스에서는 돌봄대상자 앱 → 서버 → 보호자 앱으로 동기화되는 값으로 교체 필요
+  takenByWard: Record<string, MedicationTaken>;
+  setTaken: (wardId: string, slot: MealSlot, value: boolean) => void;
 }
 
-export const useMedicationStore = create<MedicationState>((set) => ({
-  taken: { morning: false, lunch: false, dinner: false },
+// TODO: 백엔드 연동 전 mock 데이터, 어르신별로 다른 값임을 보여주기 위한 임시 시드
+const MOCK_TAKEN_BY_WARD: Record<string, MedicationTaken> = {
+  [MOCK_WARDS[0].id]: { morning: true, lunch: true, dinner: false },
+  [MOCK_WARDS[1].id]: { morning: true, lunch: false, dinner: false },
+};
 
-  setTaken: async (slot, value) => {
-    // 1. 낙관적 업데이트: 서버 응답을 기다리지 않고 UI를 즉시 변경하여 반응 속도를 높임
-    set((state) => ({
-      taken: { ...state.taken, [slot]: value },
-    }));
-
-    try {
-      // 2. Spring Boot 서버로 복약 상태 전송
-      await updateMedicationStatus(slot, value);
-    } catch (error) {
-      // 3. 서버 전송 실패 시 에러 로그 출력 (필요시 원래 상태로 롤백 로직 추가 가능)
-      console.error('서버 동기화 에러 발생:', error);
-    }
-  },
+export const useMedicationStore = create<MedicationState>(set => ({
+  takenByWard: MOCK_TAKEN_BY_WARD,
+  setTaken: (wardId, slot, value) =>
+    set(state => ({
+      takenByWard: {
+        ...state.takenByWard,
+        [wardId]: { ...state.takenByWard[wardId], [slot]: value },
+      },
+    })),
 }));

@@ -34,6 +34,8 @@ local.properties
 *.keystore
 !debug.keystore
 .kotlin/
+# Gradle이 로컬 빌드 시 자동 생성하는 JVM 툴체인 고정 설정(팀원마다 JDK 버전이 다를 수 있어 커밋 대상 아님)
+android/gradle/gradle-daemon-jvm.properties
 
 # node.js
 #

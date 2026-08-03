@@ -29,7 +29,7 @@ export function GuardianMenuDrawer() {
       <View className="w-[66%] bg-surface">
         <View className="bg-primary px-5 pb-5 pt-14">
           <Pressable
-            className="absolute right-4 top-14"
+            className="absolute right-4 top-14 h-11 w-11 items-center justify-center"
             hitSlop={8}
             onPress={() => {
               close();
