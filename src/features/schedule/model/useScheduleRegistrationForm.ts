@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
+import { useVoiceRecording } from '@shared/model';
 import { addMonths } from './calendarUtils';
 import { ScheduleEntry, ScheduleRegistrationData, ScheduleSoundType, TimeState } from './scheduleRegistrationTypes';
 import { useScheduleStore } from './useScheduleStore';
@@ -30,8 +31,7 @@ export const useScheduleRegistrationForm = (
   const [hasAlarmTime, setHasAlarmTime] = useState(false);
 
   const [soundType, setSoundType] = useState<ScheduleSoundType>('tts');
-  const [isRecording, setIsRecording] = useState(false);
-  const [hasRecorded, setHasRecorded] = useState(false);
+  const voiceRecording = useVoiceRecording();
 
   useEffect(() => {
     if (!visible) {
@@ -62,8 +62,8 @@ export const useScheduleRegistrationForm = (
     setShowLocationOptions(false);
     setShowSchedulePicker(false);
     setShowAlarmPicker(false);
-    setIsRecording(false);
-    setHasRecorded(false);
+    voiceRecording.reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, editingSchedule]);
 
   const toggleLocationOptions = () => setShowLocationOptions((prev) => !prev);
@@ -86,25 +86,6 @@ export const useScheduleRegistrationForm = (
   const setAlarmTime = (next: TimeState) => {
     setAlarmTimeState(next);
     setHasAlarmTime(true);
-  };
-
-  const handleRecord = () => {
-    const nextIsRecording = !isRecording;
-    setIsRecording(nextIsRecording);
-    if (!nextIsRecording) {
-      setHasRecorded(true);
-    }
-  };
-  const handlePlay = () => {
-    if (!hasRecorded) {
-      Alert.alert('', '재생할 녹음이 없습니다.');
-      return;
-    }
-    Alert.alert('', '녹음된 음성을 재생합니다.');
-  };
-  const handleDeleteRecording = () => {
-    setIsRecording(false);
-    setHasRecorded(false);
   };
 
   const handleSave = () => {
@@ -148,8 +129,8 @@ export const useScheduleRegistrationForm = (
       showAlarmPicker,
       hasAlarmTime,
       soundType,
-      isRecording,
-      hasRecorded,
+      isRecording: voiceRecording.isRecording,
+      hasRecorded: voiceRecording.hasRecorded,
     },
     actions: {
       setTitle,
@@ -163,9 +144,9 @@ export const useScheduleRegistrationForm = (
       setAlarmTime,
       toggleAlarmPicker,
       setSoundType,
-      handleRecord,
-      handlePlay,
-      handleDeleteRecording,
+      handleRecord: voiceRecording.handleRecord,
+      handlePlay: voiceRecording.handlePlay,
+      handleDeleteRecording: voiceRecording.handleDeleteRecording,
       handleSave,
     },
   };
