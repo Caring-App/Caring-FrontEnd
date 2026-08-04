@@ -16,8 +16,7 @@ export function WheelColumn({ values, selectedValue, onChange, width }: WheelCol
   const scrollRef = useRef<ScrollView>(null);
   const selectedIndex = Math.max(0, values.indexOf(selectedValue));
 
-  // contentOffset은 최초 마운트에만 적용되므로, 마운트된 채로 selectedValue가
-  // 외부에서 바뀌는 경우(예: 모달을 다시 열며 값을 리셋)에도 휠이 따라가도록 한다.
+  // contentOffset은 최초 마운트에만 적용되므로 마운트 후 selectedValue 변경도 따라가게 함
   useEffect(() => {
     scrollRef.current?.scrollTo({ y: selectedIndex * WHEEL_ITEM_HEIGHT, animated: false });
   }, [selectedIndex]);
