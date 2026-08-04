@@ -108,6 +108,23 @@ export const useScheduleRegistrationForm = (
   };
 
   const handleSave = () => {
+    if (!title.trim()) {
+      Alert.alert('', '일정 이름을 입력해주세요.');
+      return;
+    }
+    if (!location) {
+      Alert.alert('', '장소를 선택해주세요.');
+      return;
+    }
+    if (!hasScheduleTime) {
+      Alert.alert('', '일정 시간을 선택해주세요.');
+      return;
+    }
+    if (!hasAlarmTime) {
+      Alert.alert('', '음성 알림 시간을 선택해주세요.');
+      return;
+    }
+
     const data: ScheduleRegistrationData = { title, location, date: selectedDate, scheduleTime, alarmTime, soundType };
     if (editingSchedule) {
       useScheduleStore.getState().updateSchedule(wardId, editingSchedule.id, data);
