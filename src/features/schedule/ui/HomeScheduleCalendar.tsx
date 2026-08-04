@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 import { WEEKDAY_LABELS_KO, addMonths, getCalendarWeeks, isSameDay } from '../model/calendarUtils';
 import { ScheduleEntry } from '../model/scheduleRegistrationTypes';
+import { to24Hour } from '../model/scheduleFormat';
 import { useScheduleStore } from '../model/useScheduleStore';
 import { MonthYearPickerModal } from './MonthYearPickerModal';
 import { ScheduleDetailModal } from './ScheduleDetailModal';
@@ -10,6 +11,11 @@ import { DeleteScheduleConfirmModal } from './DeleteScheduleConfirmModal';
 
 // tailwind.config.js의 text.calendarScheduleDot과 동일한 값 (borderRadius 이슈로 인라인 필요)
 const SCHEDULE_DOT_COLOR = '#8E8E93';
+
+function toMinutes(time: ScheduleEntry['scheduleTime']) {
+  const { hour, minute } = to24Hour(time);
+  return hour * 60 + minute;
+}
 
 interface HomeScheduleCalendarProps {
   wardId: string;
@@ -27,7 +33,10 @@ export function HomeScheduleCalendar({ wardId, wardName, onRequestEdit }: HomeSc
 
   const weeks = getCalendarWeeks(month).filter((week) => week.some(({ inCurrentMonth }) => inCurrentMonth));
 
-  const findSchedulesForDate = (date: Date) => schedules.filter((entry) => isSameDay(entry.date, date));
+  const findSchedulesForDate = (date: Date) =>
+    schedules
+      .filter((entry) => isSameDay(entry.date, date))
+      .sort((a, b) => toMinutes(a.scheduleTime) - toMinutes(b.scheduleTime));
 
   return (
     <View
