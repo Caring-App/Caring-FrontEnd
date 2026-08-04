@@ -8,8 +8,7 @@ import { MonthYearPickerModal } from './MonthYearPickerModal';
 import { ScheduleDetailModal } from './ScheduleDetailModal';
 import { DeleteScheduleConfirmModal } from './DeleteScheduleConfirmModal';
 
-// tailwind.config.js의 text.calendarScheduleDot과 동일한 값. 이 점은 borderRadius
-// 렌더링 문제로 className을 못 쓰고 인라인 style을 써야 해서 별도로 상수화한다.
+// tailwind.config.js의 text.calendarScheduleDot과 동일한 값 (borderRadius 이슈로 인라인 필요)
 const SCHEDULE_DOT_COLOR = '#8E8E93';
 
 interface HomeScheduleCalendarProps {
@@ -21,14 +20,14 @@ interface HomeScheduleCalendarProps {
 export function HomeScheduleCalendar({ wardId, wardName, onRequestEdit }: HomeScheduleCalendarProps) {
   const [month, setMonth] = useState(() => new Date());
   const [isPickerVisible, setIsPickerVisible] = useState(false);
-  const [selectedSchedule, setSelectedSchedule] = useState<ScheduleEntry | null>(null);
+  const [selectedSchedules, setSelectedSchedules] = useState<ScheduleEntry[]>([]);
   const [scheduleToDelete, setScheduleToDelete] = useState<ScheduleEntry | null>(null);
 
   const schedules = useScheduleStore((state) => state.schedulesByWard[wardId]) ?? [];
 
   const weeks = getCalendarWeeks(month).filter((week) => week.some(({ inCurrentMonth }) => inCurrentMonth));
 
-  const findScheduleForDate = (date: Date) => schedules.find((entry) => isSameDay(entry.date, date)) ?? null;
+  const findSchedulesForDate = (date: Date) => schedules.filter((entry) => isSameDay(entry.date, date));
 
   return (
     <View
@@ -61,13 +60,14 @@ export function HomeScheduleCalendar({ wardId, wardName, onRequestEdit }: HomeSc
       {weeks.map((week, weekIndex) => (
         <View key={weekIndex} className="mt-1 flex-row justify-between">
           {week.map(({ date, inCurrentMonth }) => {
-            const scheduleForDate = inCurrentMonth ? findScheduleForDate(date) : null;
+            const schedulesForDate = inCurrentMonth ? findSchedulesForDate(date) : [];
+            const hasSchedule = schedulesForDate.length > 0;
             const isToday = inCurrentMonth && isSameDay(date, new Date());
             return (
               <Pressable
                 key={date.toISOString()}
-                disabled={!scheduleForDate}
-                onPress={() => setSelectedSchedule(scheduleForDate)}
+                disabled={!hasSchedule}
+                onPress={() => setSelectedSchedules(schedulesForDate)}
                 className="w-8 items-center pt-1">
                 {inCurrentMonth && (
                   <>
@@ -86,8 +86,8 @@ export function HomeScheduleCalendar({ wardId, wardName, onRequestEdit }: HomeSc
                         styles.scheduleDot,
                         // eslint-disable-next-line react-native/no-inline-styles -- 일정 존재 여부에 따라 매 렌더마다 바뀌는 값이라 StyleSheet로 뺄 수 없음
                         {
-                          borderColor: scheduleForDate ? SCHEDULE_DOT_COLOR : 'transparent',
-                          backgroundColor: scheduleForDate ? SCHEDULE_DOT_COLOR : 'transparent',
+                          borderColor: hasSchedule ? SCHEDULE_DOT_COLOR : 'transparent',
+                          backgroundColor: hasSchedule ? SCHEDULE_DOT_COLOR : 'transparent',
                         },
                       ]}
                     />
@@ -111,19 +111,17 @@ export function HomeScheduleCalendar({ wardId, wardName, onRequestEdit }: HomeSc
       />
 
       <ScheduleDetailModal
-        visible={!!selectedSchedule}
+        visible={selectedSchedules.length > 0}
         wardName={wardName}
-        schedule={selectedSchedule}
-        onClose={() => setSelectedSchedule(null)}
-        onEdit={() => {
-          if (selectedSchedule) {
-            onRequestEdit(selectedSchedule);
-          }
-          setSelectedSchedule(null);
+        schedules={selectedSchedules}
+        onClose={() => setSelectedSchedules([])}
+        onEdit={(schedule) => {
+          onRequestEdit(schedule);
+          setSelectedSchedules([]);
         }}
-        onDelete={() => {
-          setScheduleToDelete(selectedSchedule);
-          setSelectedSchedule(null);
+        onDelete={(schedule) => {
+          setScheduleToDelete(schedule);
+          setSelectedSchedules([]);
         }}
       />
 
@@ -156,8 +154,7 @@ const styles = StyleSheet.create({
     width: 9,
     height: 9,
     borderRadius: 4.5,
-    // borderWidth 없이 borderRadius만 주면 원이 아니라 사각형으로 렌더링되는
-    // RN Fabric 이슈가 있어 얇은 테두리를 같이 준다.
+    // borderWidth 없이 borderRadius만 쓰면 사각형으로 렌더링되는 Fabric 이슈 우회
     borderWidth: 1,
   },
 });
