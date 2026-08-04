@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
 import { ScheduleEntry } from '../model/scheduleRegistrationTypes';
 import { formatScheduleDateTimeShort } from '../model/scheduleFormat';
@@ -11,7 +11,17 @@ interface DeleteScheduleConfirmModalProps {
 }
 
 export function DeleteScheduleConfirmModal({ visible, schedule, onCancel, onConfirm }: DeleteScheduleConfirmModalProps) {
-  if (!schedule) {
+  // schedule은 닫는 액션과 같은 타이밍에 null이 되므로, fade-out 애니메이션이 끝날 때까지는
+  // 마지막으로 보여준 값을 그대로 유지한다 (바로 null을 반환하면 Modal이 애니메이션 없이 즉시 사라짐).
+  const [displaySchedule, setDisplaySchedule] = useState(schedule);
+
+  useEffect(() => {
+    if (schedule) {
+      setDisplaySchedule(schedule);
+    }
+  }, [schedule]);
+
+  if (!displaySchedule) {
     return null;
   }
 
@@ -21,7 +31,7 @@ export function DeleteScheduleConfirmModal({ visible, schedule, onCancel, onConf
         <Pressable className="w-full rounded-card border border-border bg-surface px-4 pb-6 pt-6" onPress={() => {}}>
           <Text className="text-xl font-pretendard-bold text-text-primary">일정을 삭제 하시겠어요?</Text>
           <Text className="mt-2 text-xs font-pretendard-medium text-text-muted">
-            {formatScheduleDateTimeShort(schedule)} - {schedule.location}
+            {formatScheduleDateTimeShort(displaySchedule)} - {displaySchedule.location}
           </Text>
 
           <View className="mt-6 flex-row gap-4">

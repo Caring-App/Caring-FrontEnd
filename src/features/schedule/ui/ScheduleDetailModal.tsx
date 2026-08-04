@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
 import CalendarEventIcon from '@assets/icons/section/calendar-event.svg';
 import CloseIcon from '@assets/icons/action/close-x.svg';
@@ -15,7 +15,17 @@ interface ScheduleDetailModalProps {
 }
 
 export function ScheduleDetailModal({ visible, wardName, schedule, onClose, onEdit, onDelete }: ScheduleDetailModalProps) {
-  if (!schedule) {
+  // schedule은 닫는 액션과 같은 타이밍에 null이 되므로, fade-out 애니메이션이 끝날 때까지는
+  // 마지막으로 보여준 값을 그대로 유지한다 (바로 null을 반환하면 Modal이 애니메이션 없이 즉시 사라짐).
+  const [displaySchedule, setDisplaySchedule] = useState(schedule);
+
+  useEffect(() => {
+    if (schedule) {
+      setDisplaySchedule(schedule);
+    }
+  }, [schedule]);
+
+  if (!displaySchedule) {
     return null;
   }
 
@@ -34,9 +44,9 @@ export function ScheduleDetailModal({ visible, wardName, schedule, onClose, onEd
           </View>
 
           <View className="gap-2 rounded-card border border-border p-3.5">
-            <Text className="font-pretendard-semibold text-lg text-text-body">{formatScheduleDateTime(schedule)}</Text>
-            <Text className="font-pretendard-semibold text-lg text-text-body">{schedule.location}</Text>
-            <Text className="font-pretendard-semibold text-lg text-text-body">{schedule.title}</Text>
+            <Text className="font-pretendard-semibold text-lg text-text-body">{formatScheduleDateTime(displaySchedule)}</Text>
+            <Text className="font-pretendard-semibold text-lg text-text-body">{displaySchedule.location}</Text>
+            <Text className="font-pretendard-semibold text-lg text-text-body">{displaySchedule.title}</Text>
           </View>
 
           <View className="mt-4 flex-row justify-center gap-2">
