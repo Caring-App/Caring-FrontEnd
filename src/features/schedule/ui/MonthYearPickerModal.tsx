@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { WHEEL_HEIGHT, WHEEL_ITEM_HEIGHT, WheelColumn } from './WheelColumn';
 
@@ -15,6 +15,15 @@ interface MonthYearPickerModalProps {
 export function MonthYearPickerModal({ visible, year, month, onClose, onConfirm }: MonthYearPickerModalProps) {
   const [selectedYear, setSelectedYear] = useState(String(year));
   const [selectedMonth, setSelectedMonth] = useState(String(month));
+
+  // 이 모달은 visible로만 토글되고 항상 마운트 상태를 유지하므로, 열릴 때마다
+  // 현재 캘린더가 보여주고 있는 연/월로 선택값을 다시 맞춰준다.
+  useEffect(() => {
+    if (visible) {
+      setSelectedYear(String(year));
+      setSelectedMonth(String(month));
+    }
+  }, [visible, year, month]);
 
   const years = React.useMemo(
     () => Array.from({ length: YEAR_RANGE * 2 + 1 }, (_, i) => String(year - YEAR_RANGE + i)),
