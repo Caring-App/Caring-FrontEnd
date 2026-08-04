@@ -11,8 +11,7 @@ interface DeleteScheduleConfirmModalProps {
 }
 
 export function DeleteScheduleConfirmModal({ visible, schedule, onCancel, onConfirm }: DeleteScheduleConfirmModalProps) {
-  // schedule은 닫는 액션과 같은 타이밍에 null이 되므로, fade-out 애니메이션이 끝날 때까지는
-  // 마지막으로 보여준 값을 그대로 유지한다 (바로 null을 반환하면 Modal이 애니메이션 없이 즉시 사라짐).
+  // 닫히는 순간 schedule이 바로 null이 되므로 fade-out 동안엔 마지막 값을 유지
   const [displaySchedule, setDisplaySchedule] = useState(schedule);
 
   useEffect(() => {
