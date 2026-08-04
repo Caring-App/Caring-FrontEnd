@@ -15,3 +15,7 @@ export interface ScheduleRegistrationData {
   alarmTime: TimeState;
   soundType: ScheduleSoundType;
 }
+
+export interface ScheduleEntry extends ScheduleRegistrationData {
+  id: string;
+}

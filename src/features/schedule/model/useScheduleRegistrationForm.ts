@@ -1,13 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import { addMonths } from './calendarUtils';
-import { ScheduleRegistrationData, ScheduleSoundType, TimeState } from './scheduleRegistrationTypes';
+import { ScheduleEntry, ScheduleRegistrationData, ScheduleSoundType, TimeState } from './scheduleRegistrationTypes';
+import { useScheduleStore } from './useScheduleStore';
 
 const INITIAL_TIME: TimeState = { hour: '1', minute: '00', second: '00', amPm: 'AM' };
 
 export const LOCATION_OPTIONS = ['장소 1', '장소 2', '장소 3'];
 
-export const useScheduleRegistrationForm = (onClose: () => void, onSave?: (data: ScheduleRegistrationData) => void) => {
+export const useScheduleRegistrationForm = (
+  wardId: string,
+  visible: boolean,
+  editingSchedule: ScheduleEntry | null,
+  onClose: () => void,
+) => {
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [showLocationOptions, setShowLocationOptions] = useState(false);
@@ -26,6 +32,39 @@ export const useScheduleRegistrationForm = (onClose: () => void, onSave?: (data:
   const [soundType, setSoundType] = useState<ScheduleSoundType>('tts');
   const [isRecording, setIsRecording] = useState(false);
   const [hasRecorded, setHasRecorded] = useState(false);
+
+  useEffect(() => {
+    if (!visible) {
+      return;
+    }
+    if (editingSchedule) {
+      setTitle(editingSchedule.title);
+      setLocation(editingSchedule.location);
+      setCalendarMonth(editingSchedule.date);
+      setSelectedDate(editingSchedule.date);
+      setScheduleTimeState(editingSchedule.scheduleTime);
+      setHasScheduleTime(true);
+      setAlarmTimeState(editingSchedule.alarmTime);
+      setHasAlarmTime(true);
+      setSoundType(editingSchedule.soundType);
+    } else {
+      const now = new Date();
+      setTitle('');
+      setLocation('');
+      setCalendarMonth(now);
+      setSelectedDate(now);
+      setScheduleTimeState(INITIAL_TIME);
+      setHasScheduleTime(false);
+      setAlarmTimeState(INITIAL_TIME);
+      setHasAlarmTime(false);
+      setSoundType('tts');
+    }
+    setShowLocationOptions(false);
+    setShowSchedulePicker(false);
+    setShowAlarmPicker(false);
+    setIsRecording(false);
+    setHasRecorded(false);
+  }, [visible, editingSchedule]);
 
   const toggleLocationOptions = () => setShowLocationOptions((prev) => !prev);
   const selectLocation = (option: string) => {
@@ -69,7 +108,12 @@ export const useScheduleRegistrationForm = (onClose: () => void, onSave?: (data:
   };
 
   const handleSave = () => {
-    onSave?.({ title, location, date: selectedDate, scheduleTime, alarmTime, soundType });
+    const data: ScheduleRegistrationData = { title, location, date: selectedDate, scheduleTime, alarmTime, soundType };
+    if (editingSchedule) {
+      useScheduleStore.getState().updateSchedule(wardId, editingSchedule.id, data);
+    } else {
+      useScheduleStore.getState().addSchedule(wardId, data);
+    }
     onClose();
   };
 

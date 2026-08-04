@@ -10,7 +10,7 @@ const AM_PM: Array<'AM' | 'PM'> = ['AM', 'PM'];
 
 function Colon() {
   return (
-    <View style={{ height: WHEEL_ITEM_HEIGHT, width: 4 }} className="items-center justify-center">
+    <View style={{ height: WHEEL_ITEM_HEIGHT, width: 12 }} className="items-center justify-center">
       <Text className="font-pretendard-bold text-md text-wheel-active">:</Text>
     </View>
   );
@@ -24,9 +24,9 @@ interface WheelTimePickerProps {
 export function WheelTimePicker({ value, onChange }: WheelTimePickerProps) {
   const rows = useMemo(
     () => [
-      { values: HOURS, key: 'hour' as const, width: 22 },
-      { values: MINUTES, key: 'minute' as const, width: 22 },
-      { values: SECONDS, key: 'second' as const, width: 22 },
+      { values: HOURS, key: 'hour' as const, width: 56 },
+      { values: MINUTES, key: 'minute' as const, width: 56 },
+      { values: SECONDS, key: 'second' as const, width: 56 },
     ],
     [],
   );
@@ -34,7 +34,7 @@ export function WheelTimePicker({ value, onChange }: WheelTimePickerProps) {
   return (
     <View
       style={{ height: WHEEL_HEIGHT, elevation: 1, alignSelf: 'center' }}
-      className="relative flex-row items-center justify-center rounded-xl border border-border-divider bg-white px-4">
+      className="relative flex-row items-center justify-center rounded-xl border border-border-divider bg-white px-6">
       <View
         pointerEvents="none"
         className="absolute left-3 right-3 border-t border-wheel-divider"
@@ -58,11 +58,11 @@ export function WheelTimePicker({ value, onChange }: WheelTimePickerProps) {
         </React.Fragment>
       ))}
 
-      <View style={{ marginLeft: 6 }}>
+      <View style={{ marginLeft: 32 }}>
         <WheelColumn
           values={AM_PM}
           selectedValue={value.amPm}
-          width={28}
+          width={60}
           onChange={(next) => onChange({ ...value, amPm: next as 'AM' | 'PM' })}
         />
       </View>

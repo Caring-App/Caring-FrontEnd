@@ -5,16 +5,17 @@ import CloseIcon from '@assets/icons/action/close-x.svg';
 import ClockIcon from '@assets/icons/schedule/clock.svg';
 import ChevronDownIcon from '@assets/icons/section/chevron-down-select.svg';
 import { LOCATION_OPTIONS, useScheduleRegistrationForm } from '../model/useScheduleRegistrationForm';
-import { ScheduleRegistrationData } from '../model/scheduleRegistrationTypes';
+import { ScheduleEntry } from '../model/scheduleRegistrationTypes';
 import { ScheduleCalendarPicker } from './ScheduleCalendarPicker';
 import { WheelTimePicker } from './WheelTimePicker';
 import { VoiceRecordingControls } from './VoiceRecordingControls';
 
 interface ScheduleRegistrationModalProps {
   visible: boolean;
+  wardId: string;
   wardName: string;
+  editingSchedule: ScheduleEntry | null;
   onClose: () => void;
-  onSave?: (data: ScheduleRegistrationData) => void;
 }
 
 function FormLabel({ children }: { children: string }) {
@@ -38,8 +39,14 @@ function formatTime(time: { hour: string; minute: string; second: string; amPm: 
   return `${time.amPm} ${time.hour}:${time.minute}:${time.second}`;
 }
 
-export function ScheduleRegistrationModal({ visible, wardName, onClose, onSave }: ScheduleRegistrationModalProps) {
-  const { state, actions } = useScheduleRegistrationForm(onClose, onSave);
+export function ScheduleRegistrationModal({
+  visible,
+  wardId,
+  wardName,
+  editingSchedule,
+  onClose,
+}: ScheduleRegistrationModalProps) {
+  const { state, actions } = useScheduleRegistrationForm(wardId, visible, editingSchedule, onClose);
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
@@ -49,7 +56,9 @@ export function ScheduleRegistrationModal({ visible, wardName, onClose, onSave }
           <View className="mb-4 flex-row items-center justify-between">
             <View className="flex-row items-center gap-2">
               <CalendarEventIcon width={20} height={20} />
-              <Text className="font-pretendard-bold text-xl text-text-primary">{wardName}님 일정 등록</Text>
+              <Text className="font-pretendard-bold text-xl text-text-primary">
+                {wardName}님 일정 {editingSchedule ? '수정' : '등록'}
+              </Text>
             </View>
             <Pressable onPress={onClose} hitSlop={8}>
               <CloseIcon width={16} height={16} />

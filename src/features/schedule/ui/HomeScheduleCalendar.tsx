@@ -1,14 +1,30 @@
 import React, { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
-import { WEEKDAY_LABELS_KO, addMonths, getCalendarWeeks } from '../model/calendarUtils';
+import { WEEKDAY_LABELS_KO, addMonths, getCalendarWeeks, isSameDay } from '../model/calendarUtils';
+import { ScheduleEntry } from '../model/scheduleRegistrationTypes';
+import { useScheduleStore } from '../model/useScheduleStore';
 import { MonthYearPickerModal } from './MonthYearPickerModal';
+import { ScheduleDetailModal } from './ScheduleDetailModal';
+import { DeleteScheduleConfirmModal } from './DeleteScheduleConfirmModal';
 
-export function HomeScheduleCalendar() {
+interface HomeScheduleCalendarProps {
+  wardId: string;
+  wardName: string;
+  onRequestEdit: (schedule: ScheduleEntry) => void;
+}
+
+export function HomeScheduleCalendar({ wardId, wardName, onRequestEdit }: HomeScheduleCalendarProps) {
   const [month, setMonth] = useState(() => new Date());
   const [isPickerVisible, setIsPickerVisible] = useState(false);
+  const [selectedSchedule, setSelectedSchedule] = useState<ScheduleEntry | null>(null);
+  const [scheduleToDelete, setScheduleToDelete] = useState<ScheduleEntry | null>(null);
+
+  const schedules = useScheduleStore((state) => state.schedulesByWard[wardId]) ?? [];
 
   const weeks = getCalendarWeeks(month).filter((week) => week.some(({ inCurrentMonth }) => inCurrentMonth));
+
+  const findScheduleForDate = (date: Date) => schedules.find((entry) => isSameDay(entry.date, date)) ?? null;
 
   return (
     <View
@@ -46,13 +62,48 @@ export function HomeScheduleCalendar() {
 
       {weeks.map((week, weekIndex) => (
         <View key={weekIndex} className="mt-1 flex-row justify-between">
-          {week.map(({ date, inCurrentMonth }) => (
-            <View key={date.toISOString()} className="h-8 w-8 items-center justify-center">
-              {inCurrentMonth && (
-                <Text className="font-pretendard-medium text-base text-text-calendarDay">{date.getDate()}</Text>
-              )}
-            </View>
-          ))}
+          {week.map(({ date, inCurrentMonth }) => {
+            const scheduleForDate = inCurrentMonth ? findScheduleForDate(date) : null;
+            const isToday = inCurrentMonth && isSameDay(date, new Date());
+            return (
+              <Pressable
+                key={date.toISOString()}
+                disabled={!scheduleForDate}
+                onPress={() => setSelectedSchedule(scheduleForDate)}
+                className="w-8 items-center pt-1">
+                {inCurrentMonth && (
+                  <>
+                    <View
+                      style={{
+                        width: 26,
+                        height: 26,
+                        borderRadius: 13,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: isToday ? '#FD7E14' : 'transparent',
+                      }}>
+                      <Text
+                        className="font-pretendard-medium text-base"
+                        style={{ color: isToday ? '#FFFFFF' : '#020202' }}>
+                        {date.getDate()}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        marginTop: 3,
+                        width: 10,
+                        height: 10,
+                        borderRadius: 5,
+                        borderWidth: 1,
+                        borderColor: scheduleForDate ? '#8E8E93' : 'transparent',
+                        backgroundColor: scheduleForDate ? '#8E8E93' : 'transparent',
+                      }}
+                    />
+                  </>
+                )}
+              </Pressable>
+            );
+          })}
         </View>
       ))}
 
@@ -64,6 +115,35 @@ export function HomeScheduleCalendar() {
         onConfirm={(year, selectedMonth) => {
           setMonth(new Date(year, selectedMonth - 1, 1));
           setIsPickerVisible(false);
+        }}
+      />
+
+      <ScheduleDetailModal
+        visible={!!selectedSchedule}
+        wardName={wardName}
+        schedule={selectedSchedule}
+        onClose={() => setSelectedSchedule(null)}
+        onEdit={() => {
+          if (selectedSchedule) {
+            onRequestEdit(selectedSchedule);
+          }
+          setSelectedSchedule(null);
+        }}
+        onDelete={() => {
+          setScheduleToDelete(selectedSchedule);
+          setSelectedSchedule(null);
+        }}
+      />
+
+      <DeleteScheduleConfirmModal
+        visible={!!scheduleToDelete}
+        schedule={scheduleToDelete}
+        onCancel={() => setScheduleToDelete(null)}
+        onConfirm={() => {
+          if (scheduleToDelete) {
+            useScheduleStore.getState().deleteSchedule(wardId, scheduleToDelete.id);
+          }
+          setScheduleToDelete(null);
         }}
       />
     </View>
