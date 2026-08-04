@@ -1,20 +1,42 @@
-import React from 'react';
-import { Pressable, Text } from 'react-native';
+import React, { useState } from 'react';
 import { SectionCard, AddButton } from '@shared/ui';
 import CalendarEventIcon from '@assets/icons/section/calendar-event.svg';
+import { ScheduleEntry } from '../model/scheduleRegistrationTypes';
+import { HomeScheduleCalendar } from './HomeScheduleCalendar';
+import { ScheduleRegistrationModal } from './ScheduleRegistrationModal';
 
-export function ScheduleSection({ onPressMore }: { onPressMore?: () => void }) {
+interface ScheduleSectionProps {
+  wardId: string;
+  wardName: string;
+}
+
+export function ScheduleSection({ wardId, wardName }: ScheduleSectionProps) {
+  const [isRegistrationVisible, setIsRegistrationVisible] = useState(false);
+  const [editingSchedule, setEditingSchedule] = useState<ScheduleEntry | null>(null);
+
+  const openCreate = () => {
+    setEditingSchedule(null);
+    setIsRegistrationVisible(true);
+  };
+  const openEdit = (schedule: ScheduleEntry) => {
+    setEditingSchedule(schedule);
+    setIsRegistrationVisible(true);
+  };
+
   return (
     <SectionCard
       title="일정 관리"
       icon={<CalendarEventIcon width={20} height={20} />}
-      action={<AddButton label="일정 등록" onPress={onPressMore} />}>
-      {/* TODO: features/schedule 실제 캘린더 컴포넌트로 교체 */}
-      <Pressable
-        onPress={onPressMore}
-        className="mt-3 items-center justify-center rounded-card border border-border bg-surface py-10">
-        <Text className="text-sm text-text-muted">캘린더 (준비 중, 눌러서 일정 관리로 이동)</Text>
-      </Pressable>
+      action={<AddButton label="일정 등록" onPress={openCreate} />}>
+      <HomeScheduleCalendar wardId={wardId} wardName={wardName} onRequestEdit={openEdit} />
+
+      <ScheduleRegistrationModal
+        visible={isRegistrationVisible}
+        wardId={wardId}
+        wardName={wardName}
+        editingSchedule={editingSchedule}
+        onClose={() => setIsRegistrationVisible(false)}
+      />
     </SectionCard>
   );
 }

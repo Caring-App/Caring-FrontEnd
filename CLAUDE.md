@@ -65,6 +65,10 @@ src/
   - 시도했지만 안 됐던 것: Metro 재시작(여러 번), `curl reload`, 앱 콜드 리스타트(여러 번), Dev Menu → Settings → "Debug server host & port for device"를 `localhost:8081`로 변경(같은 에러 재발) — 즉 재시작/재연결 계열 조치로는 안 풀리는 문제였음
   - 다음에 이 에러 만나면: (1) 재시작 반복하지 말 것 — 이미 안 통하는 걸로 확인됨, (2) Windows Defender/백신/VPN의 네트워크(HTTPS/HTTP) 검사 기능이 chunked 응답을 건드리고 있을 가능성이 있으니 일시적으로 꺼보고 재현되는지 확인, (3) 에뮬레이터 재생성 또는 실기기(무선 adb)로 바꿔서 같은 증상인지 확인해서 AVD 고유 문제인지 좁힐 것, (4) `@react-native/dev-middleware` 버전 확인 후 known issue 검색
 
+## 화면 검증 방식
+- **UI 작업 후 Claude가 직접 기기를 켜서 스크린샷으로 검증하지 말 것** — adb 스크린샷/콜드 리스타트 왕복이 토큰을 과도하게 소모함. `tsc --noEmit`, ESLint 통과 여부까지만 확인하고 코드를 전달할 것. 실제 화면 확인은 사용자가 직접 기기에서 하고 피드백을 줌.
+- 사용자가 명시적으로 "네가 직접 확인해봐" 등으로 요청한 경우에만 예외적으로 기기 실행/스크린샷 검증을 수행할 것
+
 ## 로그인 없이 화면 테스트하기
 `src/screens/auth/Login/LoginScreen.tsx`에 `__DEV__` 전용 버튼("[DEV] 보호자로 바로 진입" / "[DEV] 어르신으로 바로 진입")이 있음 — `useSessionStore`의 `login()`을 바로 호출해서 소셜 로그인 없이 역할별 화면 확인 가능. 릴리즈 빌드에는 포함 안 됨.
 

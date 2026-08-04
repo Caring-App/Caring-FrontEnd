@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="add">
+<g id="Group">
+<path id="Line" d="M4.33203 3.3332L13.6647 12.6659" stroke="#FD7E14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Line_2" d="M4.33526 12.6659L13.668 3.3332" stroke="#FD7E14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<path id="Vector" opacity="0" d="M15.5 0.5V15.5H0.5V0.5H15.5Z" stroke="#FD7E14"/>
+</g>
+</svg>

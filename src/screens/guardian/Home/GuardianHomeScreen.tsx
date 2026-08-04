@@ -32,7 +32,7 @@ export function GuardianHomeScreen() {
         contentContainerClassName="pb-8"
         showsVerticalScrollIndicator={false}>
         <DailyReportCard wardId={ward.id} wardName={ward.name} />
-        <ScheduleSection onPressMore={() => stackNavigation?.navigate('Schedule')} />
+        <ScheduleSection wardId={ward.id} wardName={ward.name} />
         <MedicationSection wardId={ward.id} onPressMore={() => stackNavigation?.navigate('Medication')} />
         <LocationSection wardId={ward.id} onPressMore={() => stackNavigation?.navigate('Map')} />
         <WelfareSection onPressMore={() => stackNavigation?.navigate('WelfareFacilities')} />
