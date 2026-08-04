@@ -32,17 +32,21 @@ module.exports = {
           calendarDay: '#020202',
           // 보호자 홈 미니 캘린더의 일정 표시 점(아이폰 캘린더 스타일 회색, #8E8E93)
           calendarScheduleDot: '#8e8e93',
+          // 복약 등록 모달의 매일/주간/주말 프리셋 칩 텍스트(Figma 390:16079, #F3F3F3)
+          onChip: '#f3f3f3',
         },
         border: {
           DEFAULT: '#e2e5e5',
           // 돌봄대상자 관리 모달의 입력창 테두리(Figma 60:5411 form input, #CED4DA)
           input: '#ced4da',
-          // "자세히 보기 >" 링크 밑줄(Figma 60:4133 등, #C9CED1)
+          // "자세히 보기 >" 링크 밑줄(Figma 60:4133 등, #C9CED1). 복약 등록 모달의 미선택 요일 원/라디오 링/식사시간 버튼 테두리도 동일 값이라 공용으로 재사용(Figma 435:16903, 390:16039, 390:16113)
           link: '#c9ced1',
           // 마이페이지 섹션 구분선(Figma 60:6411 등, #DEE2E6)
           divider: '#dee2e6',
           // 보호자 홈 미니 캘린더 카드 테두리(Figma 55:2459 iOS date-picker, #717171)
           calendarCard: '#717171',
+          // 복약 수정 모달의 "복약 정보 삭제하기" 링크 밑줄(Figma 391:12078, #E40004). text.danger와 사실상 동일 색이라 그 값 재사용
+          danger: '#e10004',
         },
         surface: {
           DEFAULT: '#ffffff',
@@ -66,6 +70,10 @@ module.exports = {
           600: '#E67200',
           700: '#B85A00',
         },
+        // 복약 등록 모달의 매일/주간/주말 프리셋 칩(Figma 390:16079, 비선택 배경 #7c7c7c)
+        chip: {
+          inactive: '#7c7c7c',
+        },
         // 일정 등록 모달의 시/분/초 휠 피커(Figma 55:3009, iOS 스타일 wheel picker)
         wheel: {
           // 가운데 선택된 행 텍스트(#454545)
@@ -79,6 +87,7 @@ module.exports = {
       fontFamily: {
         // Pretendard 실사용 확인(38:1281 등). RN은 웨이트별로 별도 PostScript 이름을 써야 함.
         pretendard: ['Pretendard-Regular'],
+        'pretendard-light': ['Pretendard-Light'],
         'pretendard-medium': ['Pretendard-Medium'],
         'pretendard-semibold': ['Pretendard-SemiBold'],
         'pretendard-bold': ['Pretendard-Bold'],

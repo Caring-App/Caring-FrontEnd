@@ -4,7 +4,7 @@ import { Toggle } from '@shared/ui';
 import CapsuleIcon from '@assets/icons/medication/capsule-on.svg';
 import EditIcon from '@assets/icons/action/edit-pencil.svg';
 import { MedicationEntry } from '../model/medicationTypes';
-import { formatMealTiming, formatMedicationTime } from '../utils';
+import { formatDays, formatMedicationTime } from '../utils';
 
 interface MedicationListItemProps {
   entry: MedicationEntry;
@@ -29,7 +29,7 @@ export function MedicationListItem({ entry, onEdit, onToggleEnabled }: Medicatio
           <Text className="font-pretendard-semibold text-text-primary" style={styles.time}>
             {formatMedicationTime(entry.time)}
           </Text>
-          <Text className="font-pretendard-medium text-base text-text-muted">{formatMealTiming(entry)}</Text>
+          <Text className="font-pretendard-medium text-base text-text-muted">{formatDays(entry.days)}</Text>
         </View>
         <Toggle value={entry.enabled} onValueChange={onToggleEnabled} />
       </View>

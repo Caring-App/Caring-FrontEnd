@@ -12,31 +12,37 @@ interface MedicationListState {
 
 const createId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-// TODO: 백엔드 연동 전 mock 데이터(Figma 55:7903 복약 관리 화면 기준 시드)
+// TODO: 백엔드 연동 전 mock 데이터(Figma 296:11264 복약 등록 모달 기준 시드)
 const MOCK_MEDICATIONS_BY_WARD: Record<string, MedicationEntry[]> = {
   [MOCK_WARDS[0].id]: [
     {
       id: 'morning',
       name: '아침 약',
-      time: { hour: '8', minute: '00', period: 'AM' },
-      mealTiming: 'after',
-      mealOffsetMinutes: 30,
+      mealTypes: ['morning'],
+      days: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
+      time: { hour: '08', minute: '00', second: '00', amPm: 'AM' },
+      reminderInterval: '10분 후',
+      soundType: 'tts',
       enabled: false,
     },
     {
       id: 'lunch',
       name: '점심 약',
-      time: { hour: '2', minute: '00', period: 'PM' },
-      mealTiming: 'after',
-      mealOffsetMinutes: 30,
+      mealTypes: ['lunch'],
+      days: ['mon', 'tue', 'wed', 'thu', 'fri'],
+      time: { hour: '02', minute: '00', second: '00', amPm: 'PM' },
+      reminderInterval: '10분 후',
+      soundType: 'tts',
       enabled: false,
     },
     {
       id: 'dinner',
       name: '저녁 약',
-      time: { hour: '8', minute: '00', period: 'PM' },
-      mealTiming: 'after',
-      mealOffsetMinutes: 30,
+      mealTypes: ['dinner'],
+      days: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
+      time: { hour: '08', minute: '00', second: '00', amPm: 'PM' },
+      reminderInterval: '10분 후',
+      soundType: 'tts',
       enabled: false,
     },
   ],
@@ -48,7 +54,7 @@ export const useMedicationListStore = create<MedicationListState>(set => ({
     set(state => ({
       medicationsByWard: {
         ...state.medicationsByWard,
-        [wardId]: [...(state.medicationsByWard[wardId] ?? []), { ...data, id: createId() }],
+        [wardId]: [...(state.medicationsByWard[wardId] ?? []), { ...data, id: createId(), enabled: true }],
       },
     })),
   updateMedication: (wardId, id, data) =>
@@ -56,7 +62,7 @@ export const useMedicationListStore = create<MedicationListState>(set => ({
       medicationsByWard: {
         ...state.medicationsByWard,
         [wardId]: (state.medicationsByWard[wardId] ?? []).map(entry =>
-          entry.id === id ? { ...data, id } : entry,
+          entry.id === id ? { ...entry, ...data } : entry,
         ),
       },
     })),
