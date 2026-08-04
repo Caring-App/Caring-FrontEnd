@@ -1,5 +1,5 @@
 import React from 'react';
-import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import CalendarEventIcon from '@assets/icons/section/calendar-event.svg';
 import CloseIcon from '@assets/icons/action/close-x.svg';
 import ClockIcon from '@assets/icons/schedule/clock.svg';
@@ -36,7 +36,7 @@ function TimeTriggerInput({ placeholder, valueLabel, onPress }: { placeholder: s
 }
 
 function formatTime(time: { hour: string; minute: string; second: string; amPm: 'AM' | 'PM' }) {
-  return `${time.amPm} ${time.hour}:${time.minute}:${time.second}`;
+  return `${time.hour}:${time.minute}:${time.second} ${time.amPm}`;
 }
 
 export function ScheduleRegistrationModal({
@@ -137,7 +137,7 @@ export function ScheduleRegistrationModal({
             </View>
 
             <View className="mt-5 rounded-card border border-border p-4">
-              <Text style={{ marginBottom: 21 }} className="font-pretendard-bold text-base text-text-primary">
+              <Text style={styles.sectionTitle} className="font-pretendard-bold text-base text-text-primary">
                 음성 알림 설정
               </Text>
               {(
@@ -148,10 +148,10 @@ export function ScheduleRegistrationModal({
               ).map(({ type, label }) => {
                 const active = state.soundType === type;
                 return (
-                  <View key={type} style={{ marginBottom: 7 }} className="last:mb-0">
+                  <View key={type} style={styles.soundOption} className="last:mb-0">
                     <Pressable
                       onPress={() => actions.setSoundType(type)}
-                      style={{ gap: 10 }}
+                      style={styles.soundOptionRow}
                       className="flex-row items-center">
                       <View
                         className={`h-6 w-6 items-center justify-center rounded-full border-2 ${
@@ -186,3 +186,9 @@ export function ScheduleRegistrationModal({
     </Modal>
   );
 }
+
+const styles = StyleSheet.create({
+  sectionTitle: { marginBottom: 21 },
+  soundOption: { marginBottom: 7 },
+  soundOptionRow: { gap: 10 },
+});

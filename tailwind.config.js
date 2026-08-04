@@ -30,6 +30,8 @@ module.exports = {
           calendarWeekday: '#bdbdbd',
           // 보호자 홈 미니 캘린더의 날짜 숫자(Figma 55:2459, #020202)
           calendarDay: '#020202',
+          // 보호자 홈 미니 캘린더의 일정 표시 점(아이폰 캘린더 스타일 회색, #8E8E93)
+          calendarScheduleDot: '#8e8e93',
         },
         border: {
           DEFAULT: '#e2e5e5',

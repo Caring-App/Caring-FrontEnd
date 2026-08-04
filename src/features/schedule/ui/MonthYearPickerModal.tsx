@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Pressable, Text, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { WHEEL_HEIGHT, WHEEL_ITEM_HEIGHT, WheelColumn } from './WheelColumn';
 
 const YEAR_RANGE = 6;
@@ -46,13 +46,13 @@ export function MonthYearPickerModal({ visible, year, month, onClose, onConfirm 
               style={{ top: WHEEL_ITEM_HEIGHT * 2 }}
             />
             <WheelColumn values={years} selectedValue={selectedYear} width={42} onChange={setSelectedYear} />
-            <Text style={{ marginLeft: 3 }} className="font-pretendard-semibold text-md text-wheel-active">
+            <Text style={styles.unitLabel} className="font-pretendard-semibold text-md text-wheel-active">
               년
             </Text>
-            <View style={{ marginLeft: 14 }}>
+            <View style={styles.monthWrapper}>
               <WheelColumn values={months} selectedValue={selectedMonth} width={20} onChange={setSelectedMonth} />
             </View>
-            <Text style={{ marginLeft: 3 }} className="font-pretendard-semibold text-md text-wheel-active">
+            <Text style={styles.unitLabel} className="font-pretendard-semibold text-md text-wheel-active">
               월
             </Text>
           </View>
@@ -72,3 +72,8 @@ export function MonthYearPickerModal({ visible, year, month, onClose, onConfirm 
     </Modal>
   );
 }
+
+const styles = StyleSheet.create({
+  unitLabel: { marginLeft: 3 },
+  monthWrapper: { marginLeft: 14 },
+});

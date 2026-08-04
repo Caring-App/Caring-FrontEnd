@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 import { WEEKDAY_LABELS_KO, addMonths, getCalendarWeeks, isSameDay } from '../model/calendarUtils';
 import { ScheduleEntry } from '../model/scheduleRegistrationTypes';
@@ -7,6 +7,10 @@ import { useScheduleStore } from '../model/useScheduleStore';
 import { MonthYearPickerModal } from './MonthYearPickerModal';
 import { ScheduleDetailModal } from './ScheduleDetailModal';
 import { DeleteScheduleConfirmModal } from './DeleteScheduleConfirmModal';
+
+// tailwind.config.js의 text.calendarScheduleDot과 동일한 값. 이 점은 borderRadius
+// 렌더링 문제로 className을 못 쓰고 인라인 style을 써야 해서 별도로 상수화한다.
+const SCHEDULE_DOT_COLOR = '#8E8E93';
 
 interface HomeScheduleCalendarProps {
   wardId: string;
@@ -28,13 +32,7 @@ export function HomeScheduleCalendar({ wardId, wardName, onRequestEdit }: HomeSc
 
   return (
     <View
-      style={{
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.08,
-        shadowRadius: 32,
-        elevation: 3,
-      }}
+      style={styles.card}
       className="mt-3 rounded-[15px] border border-border-calendarCard bg-white px-3.5 py-3.5">
       <View className="flex-row items-center justify-between">
         <Pressable onPress={() => setIsPickerVisible(true)}>
@@ -74,30 +72,24 @@ export function HomeScheduleCalendar({ wardId, wardName, onRequestEdit }: HomeSc
                 {inCurrentMonth && (
                   <>
                     <View
-                      style={{
-                        width: 26,
-                        height: 26,
-                        borderRadius: 13,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: isToday ? '#FD7E14' : 'transparent',
-                      }}>
+                      style={styles.todayCircle}
+                      className={`items-center justify-center ${isToday ? 'bg-primary' : 'bg-transparent'}`}>
                       <Text
-                        className="font-pretendard-medium text-base"
-                        style={{ color: isToday ? '#FFFFFF' : '#020202' }}>
+                        className={`font-pretendard-medium text-base ${
+                          isToday ? 'text-white' : 'text-text-calendarDay'
+                        }`}>
                         {date.getDate()}
                       </Text>
                     </View>
                     <View
-                      style={{
-                        marginTop: 3,
-                        width: 10,
-                        height: 10,
-                        borderRadius: 5,
-                        borderWidth: 1,
-                        borderColor: scheduleForDate ? '#8E8E93' : 'transparent',
-                        backgroundColor: scheduleForDate ? '#8E8E93' : 'transparent',
-                      }}
+                      style={[
+                        styles.scheduleDot,
+                        // eslint-disable-next-line react-native/no-inline-styles -- 일정 존재 여부에 따라 매 렌더마다 바뀌는 값이라 StyleSheet로 뺄 수 없음
+                        {
+                          borderColor: scheduleForDate ? SCHEDULE_DOT_COLOR : 'transparent',
+                          backgroundColor: scheduleForDate ? SCHEDULE_DOT_COLOR : 'transparent',
+                        },
+                      ]}
                     />
                   </>
                 )}
@@ -149,3 +141,23 @@ export function HomeScheduleCalendar({ wardId, wardName, onRequestEdit }: HomeSc
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 32,
+    elevation: 3,
+  },
+  todayCircle: { width: 26, height: 26, borderRadius: 13 },
+  scheduleDot: {
+    marginTop: 3,
+    width: 9,
+    height: 9,
+    borderRadius: 4.5,
+    // borderWidth 없이 borderRadius만 주면 원이 아니라 사각형으로 렌더링되는
+    // RN Fabric 이슈가 있어 얇은 테두리를 같이 준다.
+    borderWidth: 1,
+  },
+});

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { TimeState } from '../model/scheduleRegistrationTypes';
 import { WHEEL_HEIGHT, WHEEL_ITEM_HEIGHT, WheelColumn } from './WheelColumn';
 
@@ -10,7 +10,7 @@ const AM_PM: Array<'AM' | 'PM'> = ['AM', 'PM'];
 
 function Colon() {
   return (
-    <View style={{ height: WHEEL_ITEM_HEIGHT, width: 12 }} className="items-center justify-center">
+    <View style={[styles.colon, { height: WHEEL_ITEM_HEIGHT }]} className="items-center justify-center">
       <Text className="font-pretendard-bold text-md text-wheel-active">:</Text>
     </View>
   );
@@ -33,7 +33,7 @@ export function WheelTimePicker({ value, onChange }: WheelTimePickerProps) {
 
   return (
     <View
-      style={{ height: WHEEL_HEIGHT, elevation: 1, alignSelf: 'center' }}
+      style={[styles.container, { height: WHEEL_HEIGHT }]}
       className="relative flex-row items-center justify-center rounded-xl border border-border-divider bg-white px-6">
       <View
         pointerEvents="none"
@@ -58,7 +58,7 @@ export function WheelTimePicker({ value, onChange }: WheelTimePickerProps) {
         </React.Fragment>
       ))}
 
-      <View style={{ marginLeft: 32 }}>
+      <View style={styles.amPmWrapper}>
         <WheelColumn
           values={AM_PM}
           selectedValue={value.amPm}
@@ -69,3 +69,9 @@ export function WheelTimePicker({ value, onChange }: WheelTimePickerProps) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  colon: { width: 12 },
+  container: { elevation: 1, alignSelf: 'center' },
+  amPmWrapper: { marginLeft: 32 },
+});

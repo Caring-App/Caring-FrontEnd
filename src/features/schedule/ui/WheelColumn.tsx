@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, Text, View } from 'react-native';
+import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export const WHEEL_ITEM_HEIGHT = 36;
 export const WHEEL_VISIBLE_ROWS = 3;
@@ -25,7 +25,7 @@ export function WheelColumn({ values, selectedValue, onChange, width }: WheelCol
   return (
     <ScrollView
       ref={scrollRef}
-      style={{ height: WHEEL_HEIGHT, width, flexGrow: 0, flexShrink: 0 }}
+      style={[styles.scroll, { height: WHEEL_HEIGHT, width }]}
       showsVerticalScrollIndicator={false}
       nestedScrollEnabled
       snapToInterval={WHEEL_ITEM_HEIGHT}
@@ -46,3 +46,7 @@ export function WheelColumn({ values, selectedValue, onChange, width }: WheelCol
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  scroll: { flexGrow: 0, flexShrink: 0 },
+});
