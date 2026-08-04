@@ -22,13 +22,13 @@ export function ScheduleDetailModal({ visible, wardName, schedule, onClose, onEd
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable className="flex-1 items-center justify-center bg-black/30 px-5" onPress={onClose}>
-        <Pressable className="w-full rounded-card border border-border bg-surface p-4" onPress={() => {}}>
+        <Pressable className="w-full rounded-card border border-border bg-surface px-4 pb-6 pt-6" onPress={() => {}}>
           <View className="mb-4 flex-row items-center justify-between">
             <View className="flex-row items-center gap-2">
               <CalendarEventIcon width={20} height={20} />
               <Text className="font-pretendard-bold text-xl text-text-primary">{wardName}님 일정</Text>
             </View>
-            <Pressable onPress={onClose} hitSlop={8}>
+            <Pressable onPress={onClose} hitSlop={8} className="-mt-1">
               <CloseIcon width={16} height={16} />
             </Pressable>
           </View>

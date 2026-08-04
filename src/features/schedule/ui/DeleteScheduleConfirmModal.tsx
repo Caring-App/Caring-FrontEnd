@@ -18,7 +18,7 @@ export function DeleteScheduleConfirmModal({ visible, schedule, onCancel, onConf
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
       <Pressable className="flex-1 items-center justify-center bg-black/30 px-5" onPress={onCancel}>
-        <Pressable className="w-full rounded-card border border-border bg-surface p-4" onPress={() => {}}>
+        <Pressable className="w-full rounded-card border border-border bg-surface px-4 pb-6 pt-6" onPress={() => {}}>
           <Text className="text-xl font-pretendard-bold text-text-primary">일정을 삭제 하시겠어요?</Text>
           <Text className="mt-2 text-xs font-pretendard-medium text-text-muted">
             {formatScheduleDateTimeShort(schedule)} - {schedule.location}
