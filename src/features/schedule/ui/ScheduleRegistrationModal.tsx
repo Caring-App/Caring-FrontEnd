@@ -1,14 +1,12 @@
 import React from 'react';
-import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import CalendarEventIcon from '@assets/icons/section/calendar-event.svg';
 import CloseIcon from '@assets/icons/action/close-x.svg';
-import ClockIcon from '@assets/icons/schedule/clock.svg';
 import ChevronDownIcon from '@assets/icons/section/chevron-down-select.svg';
+import { FormLabel, SoundSettingsCard, TimeTriggerInput, WheelTimePicker, formatTime } from '@shared/ui';
 import { LOCATION_OPTIONS, useScheduleRegistrationForm } from '../model/useScheduleRegistrationForm';
 import { ScheduleEntry } from '../model/scheduleRegistrationTypes';
 import { ScheduleCalendarPicker } from './ScheduleCalendarPicker';
-import { WheelTimePicker } from './WheelTimePicker';
-import { VoiceRecordingControls } from './VoiceRecordingControls';
 
 interface ScheduleRegistrationModalProps {
   visible: boolean;
@@ -16,27 +14,6 @@ interface ScheduleRegistrationModalProps {
   wardName: string;
   editingSchedule: ScheduleEntry | null;
   onClose: () => void;
-}
-
-function FormLabel({ children }: { children: string }) {
-  return <Text className="mb-2 font-pretendard-semibold text-lg text-text-body">{children}</Text>;
-}
-
-function TimeTriggerInput({ placeholder, valueLabel, onPress }: { placeholder: string; valueLabel?: string; onPress: () => void }) {
-  return (
-    <Pressable
-      onPress={onPress}
-      className="flex-row items-center justify-between rounded-md border border-border-input bg-surface px-3.5 py-2">
-      <Text className={`font-pretendard text-lg ${valueLabel ? 'text-text-primary' : 'text-text-placeholder'}`}>
-        {valueLabel ?? placeholder}
-      </Text>
-      <ClockIcon width={20} height={20} />
-    </Pressable>
-  );
-}
-
-function formatTime(time: { hour: string; minute: string; second: string; amPm: 'AM' | 'PM' }) {
-  return `${time.hour}:${time.minute}:${time.second} ${time.amPm}`;
 }
 
 export function ScheduleRegistrationModal({
@@ -136,43 +113,14 @@ export function ScheduleRegistrationModal({
               )}
             </View>
 
-            <View className="mt-5 rounded-card border border-border p-4">
-              <Text style={styles.sectionTitle} className="font-pretendard-bold text-base text-text-primary">
-                음성 알림 설정
-              </Text>
-              {(
-                [
-                  { type: 'tts' as const, label: '기본 알림음 (TTS)' },
-                  { type: 'voice' as const, label: '보호자 음성 녹음' },
-                ]
-              ).map(({ type, label }) => {
-                const active = state.soundType === type;
-                return (
-                  <View key={type} style={styles.soundOption} className="last:mb-0">
-                    <Pressable
-                      onPress={() => actions.setSoundType(type)}
-                      style={styles.soundOptionRow}
-                      className="flex-row items-center">
-                      <View
-                        className={`h-6 w-6 items-center justify-center rounded-full border-2 ${
-                          active ? 'border-primary' : 'border-border-input'
-                        }`}>
-                        {active && <View className="h-3 w-3 rounded-full bg-primary" />}
-                      </View>
-                      <Text className="font-pretendard-semibold text-lg text-text-body">{label}</Text>
-                    </Pressable>
-                    {type === 'voice' && active && (
-                      <VoiceRecordingControls
-                        isRecording={state.isRecording}
-                        onRecord={actions.handleRecord}
-                        onPlay={actions.handlePlay}
-                        onDelete={actions.handleDeleteRecording}
-                      />
-                    )}
-                  </View>
-                );
-              })}
-            </View>
+            <SoundSettingsCard
+              soundType={state.soundType}
+              onChangeSoundType={actions.setSoundType}
+              isRecording={state.isRecording}
+              onRecord={actions.handleRecord}
+              onPlay={actions.handlePlay}
+              onDelete={actions.handleDeleteRecording}
+            />
 
             <Pressable
               onPress={actions.handleSave}
@@ -186,9 +134,3 @@ export function ScheduleRegistrationModal({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  sectionTitle: { marginBottom: 21 },
-  soundOption: { marginBottom: 7 },
-  soundOptionRow: { gap: 10 },
-});

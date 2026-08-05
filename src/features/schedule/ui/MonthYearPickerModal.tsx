@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
-import { WHEEL_HEIGHT, WHEEL_ITEM_HEIGHT, WheelColumn } from './WheelColumn';
+import { WHEEL_HEIGHT, WHEEL_ITEM_HEIGHT, WheelColumn } from '@shared/ui';
 
 const YEAR_RANGE = 6;
 
