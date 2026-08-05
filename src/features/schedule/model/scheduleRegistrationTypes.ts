@@ -1,8 +1,8 @@
-import type { TimeState } from '@shared/types';
+import type { SoundType, TimeState } from '@shared/types';
 
 export type { TimeState };
 
-export type ScheduleSoundType = 'tts' | 'voice';
+export type ScheduleSoundType = SoundType;
 
 export interface ScheduleRegistrationData {
   title: string;

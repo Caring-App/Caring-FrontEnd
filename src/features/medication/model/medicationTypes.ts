@@ -1,10 +1,10 @@
-import type { TimeState } from '@shared/types';
+import type { SoundType, TimeState } from '@shared/types';
 
 export type MealType = 'morning' | 'lunch' | 'dinner';
 
 export type Weekday = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
 
-export type MedicationSoundType = 'tts' | 'voice';
+export type MedicationSoundType = SoundType;
 
 export interface MedicationRegistrationData {
   name: string;

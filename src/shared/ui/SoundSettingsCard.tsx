@@ -1,9 +1,8 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import type { SoundType } from '@shared/types';
 import { RadioButton } from './RadioButton';
 import { VoiceRecordingControls } from './VoiceRecordingControls';
-
-type SoundType = 'tts' | 'voice';
 
 interface SoundSettingsCardProps {
   soundType: SoundType;
