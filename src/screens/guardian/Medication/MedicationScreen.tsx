@@ -28,6 +28,10 @@ export function MedicationScreen() {
     setEditingMedication(entry);
     setIsRegistrationVisible(true);
   };
+  const closeRegistration = () => {
+    setIsRegistrationVisible(false);
+    setEditingMedication(null);
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top']}>
@@ -65,7 +69,7 @@ export function MedicationScreen() {
         wardId={selectedWardId}
         wardName={ward.name}
         editingMedication={editingMedication}
-        onClose={() => setIsRegistrationVisible(false)}
+        onClose={closeRegistration}
       />
     </SafeAreaView>
   );
