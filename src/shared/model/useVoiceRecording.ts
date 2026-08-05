@@ -26,10 +26,5 @@ export function useVoiceRecording() {
     Alert.alert('', '녹음된 음성을 재생합니다.');
   };
 
-  const handleDeleteRecording = () => {
-    setIsRecording(false);
-    setHasRecorded(false);
-  };
-
-  return { isRecording, hasRecorded, handleRecord, handlePlay, handleDeleteRecording, reset };
+  return { isRecording, hasRecorded, handleRecord, handlePlay, handleDeleteRecording: reset, reset };
 }
