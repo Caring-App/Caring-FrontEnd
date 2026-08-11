@@ -56,14 +56,14 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
           {/* 로그인 입력 폼 */}
           <View className="mt-14 gap-3">
             <TextInput
-              className="h-[43px] rounded-card border border-border-loginInput px-6 font-pretendard-semibold text-base text-text-primary"
+              className="h-[43px] rounded-card border border-border-loginInput px-6 text-center font-pretendard-semibold text-base text-text-primary"
               placeholder="휴대폰 번호를 입력하세요."
               placeholderTextColor="#AEB5B5"
               value={id}
               onChangeText={setId}
             />
             <TextInput
-              className="h-[43px] rounded-card border border-border-loginInput px-6 font-pretendard-semibold text-base text-text-primary"
+              className="h-[43px] rounded-card border border-border-loginInput px-6 text-center font-pretendard-semibold text-base text-text-primary"
               placeholder="비밀번호를 입력하세요."
               placeholderTextColor="#AEB5B5"
               secureTextEntry
