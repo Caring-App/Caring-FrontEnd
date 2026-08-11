@@ -10,5 +10,6 @@ export { formatTime } from './formatTime';
 export { VoiceRecordingControls } from './VoiceRecordingControls';
 export { SoundSettingsCard } from './SoundSettingsCard';
 export { FormLabel } from './FormLabel';
+export { FormField } from './FormField';
 export { TimeTriggerInput } from './TimeTriggerInput';
 export { ConfirmModal } from './ConfirmModal';

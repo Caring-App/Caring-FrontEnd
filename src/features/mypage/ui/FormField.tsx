@@ -1,5 +1,6 @@
 import React from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { TextInput } from 'react-native';
+import { FormField as SharedFormField } from '@shared/ui';
 import { colors } from '@shared/theme/colors';
 
 export function FormField({
@@ -18,8 +19,7 @@ export function FormField({
   keyboardType?: 'default' | 'phone-pad';
 }) {
   return (
-    <View className="gap-2">
-      <Text className="text-lg font-pretendard-semibold text-text-body">{label}</Text>
+    <SharedFormField label={label} containerClassName="gap-2">
       <TextInput
         value={value}
         onChangeText={onChangeText}
@@ -29,6 +29,6 @@ export function FormField({
         keyboardType={keyboardType}
         className="rounded-[6px] border border-border-input px-3 py-2 text-lg text-text-body"
       />
-    </View>
+    </SharedFormField>
   );
 }

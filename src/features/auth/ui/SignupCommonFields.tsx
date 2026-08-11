@@ -1,7 +1,13 @@
 import React from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FormField } from '@shared/ui';
+import { colors } from '@shared/theme/colors';
 import BirthDatePicker from './BirthDatePicker';
-import { FormField, FORM_INPUT_CLASSNAME, FORM_INPUT_PLACEHOLDER_COLOR } from './FormField';
+
+// 회원가입 폼 입력창 공용 스타일 (SignupScreen, WardSignupScreen)
+const FORM_INPUT_CLASSNAME =
+  'rounded-md border border-border-input bg-surface px-3.5 py-2 font-pretendard-light text-lg text-text-body';
+const FORM_INPUT_PLACEHOLDER_COLOR = colors.textPlaceholder;
 
 // 보호자/돌봄대상자 회원가입 폼이 공유하는 필드(이름/전화번호/인증번호/비밀번호/생년월일/주소)
 interface SignupCommonFieldsProps {
