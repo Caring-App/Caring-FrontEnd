@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { BirthDatePickerProps } from '../model/types';
 
@@ -69,29 +69,29 @@ export default function BirthDatePicker({ value, onChange }: BirthDatePickerProp
   };
 
   return (
-    <View style={customStyles.container}>
+    <View className="overflow-hidden rounded-card border border-border bg-surface">
       {/* 상단 고정 커스텀 헤더 (년도 및 월 조작) */}
-      <View style={customStyles.headerContainer}>
+      <View className="flex-row items-center justify-between border-b border-border-divider bg-surface px-3 py-2.5">
         {/* 이전 연도 / 이전 월 버튼 */}
-        <View style={customStyles.btnGroup}>
-          <TouchableOpacity onPress={() => changeYear(-1)} style={customStyles.arrowBtn}>
-            <Text style={customStyles.yearBtnText}>«</Text>
+        <View className="flex-row items-center">
+          <TouchableOpacity onPress={() => changeYear(-1)} className="px-1.5 py-0.5">
+            <Text className="font-pretendard-bold text-xl text-primary">«</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => changeMonth(-1)} style={customStyles.arrowBtn}>
-            <Text style={customStyles.monthBtnText}>‹</Text>
+          <TouchableOpacity onPress={() => changeMonth(-1)} className="px-1.5 py-0.5">
+            <Text className="font-pretendard-bold text-2xl text-text-muted">‹</Text>
           </TouchableOpacity>
         </View>
 
         {/* 현재 년도 및 월 표시 */}
-        <Text style={customStyles.headerTitle}>{`${currentYear}년 ${currentMonth}월`}</Text>
+        <Text className="font-pretendard-bold text-lg text-text-body">{`${currentYear}년 ${currentMonth}월`}</Text>
 
         {/* 다음 월 / 다음 연도 버튼 */}
-        <View style={customStyles.btnGroup}>
-          <TouchableOpacity onPress={() => changeMonth(1)} style={customStyles.arrowBtn}>
-            <Text style={customStyles.monthBtnText}>›</Text>
+        <View className="flex-row items-center">
+          <TouchableOpacity onPress={() => changeMonth(1)} className="px-1.5 py-0.5">
+            <Text className="font-pretendard-bold text-2xl text-text-muted">›</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => changeYear(1)} style={customStyles.arrowBtn}>
-            <Text style={customStyles.yearBtnText}>»</Text>
+          <TouchableOpacity onPress={() => changeYear(1)} className="px-1.5 py-0.5">
+            <Text className="font-pretendard-bold text-xl text-primary">»</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -105,7 +105,7 @@ export default function BirthDatePicker({ value, onChange }: BirthDatePickerProp
             ? {
                 [selectedDate]: {
                   selected: true,
-                  selectedColor: '#FF7A00',
+                  selectedColor: '#FD7E14',
                   selectedTextColor: '#FFFFFF',
                 },
               }
@@ -115,53 +115,12 @@ export default function BirthDatePicker({ value, onChange }: BirthDatePickerProp
         renderHeader={() => null}
         onDayPress={handleDayPress}
         theme={{
-          todayTextColor: '#FF7A00',
+          todayTextColor: '#FD7E14',
+          textSectionTitleColor: '#212529',
+          dayTextColor: '#212529',
+          textDisabledColor: '#ADB5BD',
         }}
       />
     </View>
   );
 }
-
-const customStyles = StyleSheet.create({
-  container: {
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
-    overflow: 'hidden',
-    backgroundColor: '#fff',
-    marginTop: 4,
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  btnGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  arrowBtn: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-  },
-  yearBtnText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#FF7A00',
-  },
-  monthBtnText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#555',
-  },
-});

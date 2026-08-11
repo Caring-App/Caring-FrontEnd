@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 export default function useSignUp() {
-  // 입력 폼 상태 관리
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [authCode, setAuthCode] = useState('');
@@ -9,39 +8,22 @@ export default function useSignUp() {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [address, setAddress] = useState('');
-  const [selectedDiseases, setSelectedDiseases] = useState<string[]>([]);
 
-  // 주소 모달 상태
-  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
-
-  // 기저 질환 체크박스 토글 함수
-  const toggleDisease = (disease: string) => {
-    if (selectedDiseases.includes(disease)) {
-      setSelectedDiseases(selectedDiseases.filter((item) => item !== disease));
-    } else {
-      setSelectedDiseases([...selectedDiseases, disease]);
-    }
+  const handleSendAuthCode = () => {
+    // TODO: 백엔드 인증번호 발송 API 연동
+    console.log('인증번호 발송 요청:', phone);
   };
 
-  // 다음 주소 검색 선택 핸들러
-  const handleSelectAddress = (data: any) => {
-    setAddress(data.address);
-    setIsAddressModalOpen(false);
+  const handleSubmit = () => {
+    // TODO: 백엔드 회원가입 API 연동
+    console.log('회원가입 제출:', { name, phone, authCode, password, passwordConfirm, birthDate, address });
   };
+
+  const isFormValid =
+    !!name && !!phone && !!authCode && !!password && password === passwordConfirm && !!birthDate && !!address;
 
   return {
-    // 상태값 모음
-    form: {
-      name,
-      phone,
-      authCode,
-      password,
-      passwordConfirm,
-      birthDate,
-      address,
-      selectedDiseases,
-    },
-    // Setters
+    form: { name, phone, authCode, password, passwordConfirm, birthDate, address },
     setName,
     setPhone,
     setAuthCode,
@@ -49,10 +31,8 @@ export default function useSignUp() {
     setPasswordConfirm,
     setBirthDate,
     setAddress,
-    // 모달 및 핸들러
-    isAddressModalOpen,
-    setIsAddressModalOpen,
-    toggleDisease,
-    handleSelectAddress,
+    handleSendAuthCode,
+    handleSubmit,
+    isFormValid,
   };
 }
