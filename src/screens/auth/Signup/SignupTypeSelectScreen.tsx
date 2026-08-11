@@ -12,7 +12,7 @@ export const SignupTypeSelectScreen = () => {
   const { handleRoleSelect } = useSignupTypeSelect(navigation);
 
   return (
-    <SafeAreaView className="flex-1 bg-surface">
+    <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
       {/* 상단 케어링 로고 */}
       <View className="px-6 py-4">
         <CaringLogo size={44} />
