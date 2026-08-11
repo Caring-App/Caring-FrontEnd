@@ -14,8 +14,10 @@ import { LinkAccountCompleteScreen } from '@screens/auth/LinkAccount/LinkAccount
 import { GuardianStackNavigator } from './GuardianStackNavigator';
 import { SeniorHomeScreen } from '@screens/senior/Home/SeniorHomeScreen';
 import { SeniorScheduleScreen } from '@screens/senior/Schedule/SeniorScheduleScreen';
+import { AuthStackParamList, SeniorStackParamList } from './types';
 
-const Stack = createNativeStackNavigator();
+const AuthStack = createNativeStackNavigator<AuthStackParamList>();
+const SeniorStack = createNativeStackNavigator<SeniorStackParamList>();
 
 export const RootNavigator = () => {
   const isLoggedIn = useSessionStore(state => state.isLoggedIn);
@@ -29,25 +31,25 @@ export const RootNavigator = () => {
   // 2. 피보호자/어르신(WARD)으로 로그인된 경우
   if (isLoggedIn && role === 'WARD') {
     return (
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="SeniorHome" component={SeniorHomeScreen} />
-        <Stack.Screen name="SeniorSchedule" component={SeniorScheduleScreen} />
-      </Stack.Navigator>
+      <SeniorStack.Navigator screenOptions={{ headerShown: false }}>
+        <SeniorStack.Screen name="SeniorHome" component={SeniorHomeScreen} />
+        <SeniorStack.Screen name="SeniorSchedule" component={SeniorScheduleScreen} />
+      </SeniorStack.Navigator>
     );
   }
 
   // 3. 비로그인 상태 (인증 및 회원가입 관련 스크린 제공)
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="SignupTypeSelect" component={SignupTypeSelectScreen} />
-      <Stack.Screen name="TermsAgreement" component={TermsAgreementScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
-      <Stack.Screen name="SignupWelcome" component={SignupWelcomeScreen} />
-      <Stack.Screen name="WardSignup" component={WardSignupScreen} />
-      <Stack.Screen name="WardSignupWelcome" component={WardSignupWelcomeScreen} />
-      <Stack.Screen name="LinkAccount" component={LinkAccountScreen} />
-      <Stack.Screen name="LinkAccountComplete" component={LinkAccountCompleteScreen} />
-    </Stack.Navigator>
+    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
+      <AuthStack.Screen name="Login" component={LoginScreen} />
+      <AuthStack.Screen name="SignupTypeSelect" component={SignupTypeSelectScreen} />
+      <AuthStack.Screen name="TermsAgreement" component={TermsAgreementScreen} />
+      <AuthStack.Screen name="Signup" component={SignupScreen} />
+      <AuthStack.Screen name="SignupWelcome" component={SignupWelcomeScreen} />
+      <AuthStack.Screen name="WardSignup" component={WardSignupScreen} />
+      <AuthStack.Screen name="WardSignupWelcome" component={WardSignupWelcomeScreen} />
+      <AuthStack.Screen name="LinkAccount" component={LinkAccountScreen} />
+      <AuthStack.Screen name="LinkAccountComplete" component={LinkAccountCompleteScreen} />
+    </AuthStack.Navigator>
   );
 };
