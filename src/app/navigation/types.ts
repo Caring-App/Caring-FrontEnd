@@ -2,8 +2,14 @@ import { NavigatorScreenParams } from '@react-navigation/native';
 
 export type AuthStackParamList = {
   Login: undefined;
+  SignupTypeSelect: undefined;
+  TermsAgreement: { role?: 'PROTECTOR' | 'WARD' } | undefined;
   Signup: undefined;
+  SignupWelcome: { userName?: string } | undefined;
+  WardSignup: undefined;
+  WardSignupWelcome: { userName?: string } | undefined;
   LinkAccount: undefined;
+  LinkAccountComplete: { protectorName?: string } | undefined;
 };
 
 export type GuardianTabParamList = {

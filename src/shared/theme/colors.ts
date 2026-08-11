@@ -6,5 +6,8 @@ export const colors = {
   border: '#e2e5e5',
   textPlaceholder: '#6c757d',
   textPlaceholderMuted: '#a1a1a1',
+  textBody: '#212529',
+  textLoginPlaceholder: '#aeb5b5',
+  textCalendarMuted: '#adb5bd',
   switchTrackOff: '#d9d9d9',
 } as const;

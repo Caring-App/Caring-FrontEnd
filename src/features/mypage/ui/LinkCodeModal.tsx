@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
+import { colors } from '@shared/theme/colors';
 import RssIcon from '@assets/icons/action/rss.svg';
 import CloseXIcon from '@assets/icons/action/close-x.svg';
 
@@ -27,7 +28,7 @@ export function LinkCodeModal({
         <Pressable className="w-full max-w-[375px] rounded-card bg-surface p-4" onPress={() => {}}>
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-2">
-              <RssIcon width={18} height={18} />
+              <RssIcon width={18} height={18} color={colors.primary} />
               <Text className="text-xl font-pretendard-bold text-text-primary">
                 {name} 고유 연동 코드
               </Text>

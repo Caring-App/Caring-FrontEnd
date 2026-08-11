@@ -1,119 +1,73 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput } from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-export function LinkAccountScreen() {
-  const [linkCode, setLinkCode] = useState('');
+import { useLinkAccount } from '@features/auth/model';
+import { CodeInputField } from '@features/auth/ui';
+import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
+import { colors } from '@shared/theme/colors';
+import RssIcon from '@assets/icons/action/rss.svg';
+
+export default function LinkAccountScreen({ navigation }: { navigation: any }) {
+  const { code, setCode, handlePaste, handleSubmit, isValidCode } = useLinkAccount();
+
+  const handleNext = () => {
+    if (!isValidCode) return;
+    handleSubmit();
+    // TODO: 백엔드 연동 시 실제 보호자 이름으로 교체
+    navigation.navigate('LinkAccountComplete', { protectorName: '이세연' });
+  };
 
   return (
-    <View style={styles.container}>
-      {/* TODO: 로고 이미지 assets/images에 추가 후 연결 (원본에 있던 require('../../assets/logo.png')는 파일이 없어 제거함) */}
-
-      {/* 안내 텍스트 */}
-      <Text style={styles.title}>Caring은</Text>
-      <Text style={styles.description}>
-        개인의 고유 코드를 사용하여{"\n"}보호자와의{"\n"}간편한 연동을 제공합니다.
-      </Text>
-
-      {/* 연동 코드 입력 카드 박스 */}
-      <View style={styles.cardContainer}>
-        <View style={styles.cardHeader}>
-          <Text style={styles.cardHeaderIcon}>🔑</Text>
-          <Text style={styles.cardHeaderTitle}>연동 코드 입력</Text>
-        </View>
-        <Text style={styles.cardSubText}>보호자 앱에서 확인한 연동 코드를 적어주세요.</Text>
-
-        <Text style={styles.inputLabel}>연동 코드</Text>
-        <TextInput
-          style={styles.input}
-          value={linkCode}
-          onChangeText={setLinkCode}
-          placeholder="코드를 입력하세요"
-          placeholderTextColor="#CCCCCC"
-          textAlign="center"
-        />
+    <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
+      {/* 상단 헤더 */}
+      <View className="px-6 py-4">
+        <CaringLogo size={44} />
       </View>
 
-      {/* 하단 안내 문구 */}
-      <Text style={styles.footerText}>
-        연동을 진행할{"\n"}보호자의 연동 코드를{"\n"}입력해주세요!
-      </Text>
-    </View>
+      <View className="flex-1 justify-center px-6">
+        <Text className="text-center font-pretendard-bold text-2xl text-text-strong">
+          Caring은{'\n'}개인의 고유 코드를 사용하여{'\n'}보호자와의{'\n'}간편한 연동을 제공합니다
+        </Text>
+
+        {/* 연동 코드 입력 카드 */}
+        <View className="mt-8 rounded-card border border-border bg-surface p-4">
+          <View className="mb-2 flex-row items-center gap-2">
+            <RssIcon width={20} height={20} color={colors.primary} />
+            <Text className="font-pretendard-bold text-xl text-text-primary">연동 코드 입력</Text>
+          </View>
+          <Text className="mb-4 font-pretendard-medium text-xs text-text-muted">
+            보호자 마이페이지 {'>'} 연동 코드 확인 {'>'} 코드 복사
+          </Text>
+
+          {/* 연동 코드 입력란 (안쪽 테두리 박스) */}
+          <CodeInputField
+            value={code}
+            onChangeText={setCode}
+            buttonLabel="붙여넣기"
+            onButtonPress={handlePaste}
+            placeholder="연동 코드를 입력하세요"
+            autoCapitalize="characters"
+          />
+        </View>
+
+        <Text className="mt-10 text-center font-pretendard-bold text-lg text-text-primary">
+          연동을 진행할{'\n'}보호자의 연동 코드를{'\n'}입력해주세요!
+        </Text>
+      </View>
+
+      <View className="items-center px-6 pb-10 pt-2">
+        <TouchableOpacity
+          className={`h-[52px] w-full items-center justify-center rounded-card ${
+            isValidCode ? 'bg-primary' : 'bg-border-link'
+          }`}
+          onPress={handleNext}
+          disabled={!isValidCode}
+          activeOpacity={0.8}
+        >
+          <Text className="font-pretendard-semibold text-lg text-white">다음</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 24,
-    alignItems: 'center',
-    paddingTop: 60,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333333',
-    textAlign: 'center',
-  },
-  description: {
-    fontSize: 16,
-    color: '#333333',
-    textAlign: 'center',
-    lineHeight: 24,
-    marginTop: 10,
-    marginBottom: 40,
-  },
-  cardContainer: {
-    width: '100%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-    marginBottom: 40,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  cardHeaderIcon: {
-    marginRight: 6,
-  },
-  cardHeaderTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#FD7E14',
-  },
-  cardSubText: {
-    fontSize: 11,
-    color: '#999999',
-    marginBottom: 20,
-  },
-  inputLabel: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#333333',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  input: {
-    width: '100%',
-    height: 48,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    borderRadius: 8,
-    fontSize: 16,
-    color: '#333333',
-    backgroundColor: '#FAFAFA',
-  },
-  footerText: {
-    fontSize: 14,
-    color: '#666666',
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-});

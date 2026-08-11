@@ -2,11 +2,25 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import useSignUp from '@features/auth/model/useSignUp';
+import { useWardSignUp } from '@features/auth/model';
 import { SignupCommonFields } from '@features/auth/ui';
 import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
 
-export const SignupScreen = ({ navigation }: { navigation: any }) => {
+// 기저 질환 목록 (Figma 504:13234) — 중복 선택 가능
+const DISEASE_LIST = [
+  '고혈압',
+  '당뇨병',
+  '치매',
+  '골다공증',
+  '고지혈증',
+  '관절염',
+  '심혈관 질환',
+  '만성 신부전',
+  '파킨슨병',
+  '기타',
+];
+
+export const WardSignupScreen = ({ navigation }: { navigation: any }) => {
   const {
     form,
     setName,
@@ -16,10 +30,11 @@ export const SignupScreen = ({ navigation }: { navigation: any }) => {
     setPasswordConfirm,
     setBirthDate,
     setAddress,
+    toggleDisease,
     handleSendAuthCode,
     handleSubmit,
     isFormValid,
-  } = useSignUp(navigation);
+  } = useWardSignUp(navigation);
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
@@ -44,6 +59,31 @@ export const SignupScreen = ({ navigation }: { navigation: any }) => {
             setAddress={setAddress}
             handleSendAuthCode={handleSendAuthCode}
           />
+
+          {/* 기저 질환 선택 (중복 선택 가능) */}
+          <View className="mb-4">
+            <Text className="mb-3 font-pretendard-semibold text-lg text-text-body">기저 질환 선택</Text>
+            <View className="flex-row flex-wrap gap-y-3.5">
+              {DISEASE_LIST.map((disease) => {
+                const selected = form.selectedDiseases.includes(disease);
+                return (
+                  <TouchableOpacity
+                    key={disease}
+                    className="w-1/3 flex-row items-center gap-1.5 pr-2"
+                    onPress={() => toggleDisease(disease)}
+                    activeOpacity={0.7}
+                  >
+                    <View
+                      className={`h-[13px] w-[13px] rounded-sm border ${
+                        selected ? 'border-primary bg-primary' : 'border-border-input bg-surface'
+                      }`}
+                    />
+                    <Text className="font-pretendard-semibold text-sm text-text-body">{disease}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
         </View>
 
         <TouchableOpacity
@@ -59,4 +99,4 @@ export const SignupScreen = ({ navigation }: { navigation: any }) => {
   );
 };
 
-export default SignupScreen;
+export default WardSignupScreen;
