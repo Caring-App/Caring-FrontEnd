@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
-import { BirthDatePickerProps } from '../types/birthDatePicker.types';
+import { BirthDatePickerProps } from '../model/types';
 
 // 달력 한국어 설정
 LocaleConfig.locales['kr'] = {

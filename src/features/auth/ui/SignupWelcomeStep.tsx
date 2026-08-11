@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, Clipboard } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { CaringLogo } from './CaringLogo';
 import { CaringDogIcon } from './CaringDogIcon';
 import { RssIcon } from './RssIcon';
-import { styles } from '../styles/SignupWelcomeStep.styles';
 
 interface Props {
   navigation: any;
@@ -13,7 +13,7 @@ interface Props {
   onClose?: () => void;
 }
 
-export const SignupWelcomeStep = ({ navigation, userName = '---', currentStep, onNext, onClose }: Props) => {
+export const SignupWelcomeStep = ({ userName = '---', currentStep, onNext }: Props) => {
   const userCode = 'ABC123-DFG456';
 
   const handleCopyCode = () => {
@@ -106,3 +106,133 @@ export const SignupWelcomeStep = ({ navigation, userName = '---', currentStep, o
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: 50,
+    paddingBottom: 30,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: 50,
+  },
+  closeButton: {
+    padding: 10,
+  },
+  closeText: {
+    fontSize: 20,
+    color: '#000000',
+  },
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  characterContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  textContainer: {
+    alignItems: 'center',
+    paddingHorizontal: 10,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#1E1E1E',
+    textAlign: 'center',
+    lineHeight: 30,
+  },
+  codeViewContainer: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  codeCard: {
+    width: '100%',
+    backgroundColor: '#F8F9FA',
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#E5E5EA',
+  },
+  codeCardHeader: {
+    marginBottom: 20,
+  },
+  codeCardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FF9500',
+    marginBottom: 8,
+  },
+  codeCardSubText: {
+    fontSize: 11,
+    color: '#8E8E93',
+    lineHeight: 16,
+  },
+  codeBoxWrapper: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 15,
+    borderWidth: 1,
+    borderColor: '#E5E5EA',
+  },
+  codeBoxLabelRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  codeBoxLabel: {
+    fontSize: 12,
+    color: '#8E8E93',
+  },
+  copyButton: {
+    backgroundColor: '#FF9500',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  copyButtonText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  codeTextInputBox: {
+    width: '100%',
+    height: 48,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#D1D1D6',
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1E1E1E',
+    letterSpacing: 1,
+  },
+  footer: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  nextButton: {
+    width: '100%',
+    height: 54,
+    backgroundColor: '#FF9500',
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  nextButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+});

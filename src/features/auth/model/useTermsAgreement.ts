@@ -1,5 +1,10 @@
 import { useState } from 'react';
-import { TermItem } from './types';
+
+export interface TermItem {
+  id: string;
+  title: string;
+  required: boolean;
+}
 
 export const TERM_LIST: TermItem[] = [
   { id: 'service', title: '서비스 이용약관 동의', required: true },

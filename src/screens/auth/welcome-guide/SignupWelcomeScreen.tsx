@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { SignupWelcomeStep } from './components/SignupWelcomeStep';
+import { SignupWelcomeStep } from '@features/auth/ui';
 
 export const SignupWelcomeScreen = ({ route, navigation }: { route?: any; navigation: any }) => {
   // 💡 [팁] 개발 및 테스트 중 바로 연동 코드 화면을 보려면 초기값을 2로 설정해보세요!

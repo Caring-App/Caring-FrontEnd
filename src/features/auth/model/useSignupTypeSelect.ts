@@ -1,4 +1,4 @@
-import { UserRole } from '../types/signuptype.types';
+import { UserRole } from '@shared/types';
 
 export function useSignupTypeSelect(navigation: any) {
   const handleRoleSelect = (role: UserRole) => {
@@ -6,7 +6,7 @@ export function useSignupTypeSelect(navigation: any) {
     navigation.navigate('TermsAgreement', { role });
   };
 
-    return {
-      handleRoleSelect,
-    };
+  return {
+    handleRoleSelect,
+  };
 }

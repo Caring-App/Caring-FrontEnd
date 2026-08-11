@@ -3,9 +3,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { useSessionStore } from '@shared/store/useSessionStore';
 import LoginScreen from '@screens/auth/Login/LoginScreen';
-import { SignupTypeSelectScreen } from '@screens/auth/Signup/component/SignupTypeSelectScreen';
+import { SignupTypeSelectScreen } from '@screens/auth/Signup/SignupTypeSelectScreen';
 import TermsAgreementScreen from '@screens/auth/terms/TermsAgreementScreen';
-import SignupScreen from '@screens/auth/Signup/component/SignupScreen';
+import SignupScreen from '@screens/auth/Signup/SignupScreen';
 import { SignupWelcomeScreen } from '@screens/auth/welcome-guide/SignupWelcomeScreen';
 import LinkAccountScreen from '@screens/auth/LinkAccount/LinkAccountScreen';
 import { GuardianStackNavigator } from './GuardianStackNavigator';

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Clipboard } from 'react-native';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 export default function useLinkAccount() {
   const [code, setCode] = useState<string>('');
