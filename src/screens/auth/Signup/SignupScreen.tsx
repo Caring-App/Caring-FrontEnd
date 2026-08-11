@@ -15,7 +15,7 @@ function FormField({ label, children }: { label: string; children: React.ReactNo
   );
 }
 
-export const SignupScreen = () => {
+export const SignupScreen = ({ navigation }: { navigation: any }) => {
   const {
     form,
     setName,
@@ -28,7 +28,7 @@ export const SignupScreen = () => {
     handleSendAuthCode,
     handleSubmit,
     isFormValid,
-  } = useSignUp();
+  } = useSignUp(navigation);
 
   const inputClassName = 'rounded-md border border-border-input bg-surface px-3.5 py-2 font-pretendard-light text-lg text-text-body';
 
