@@ -1,19 +1,27 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
 import { CaringDogImage } from './CaringDogImage';
 import { RssIcon } from './RssIcon';
+import CloseIcon from '@assets/icons/action/close-x.svg';
 
-interface Props {
-  navigation: any;
-  userName?: string;
-  currentStep?: any;
-  onNext?: () => void;
-  onClose?: () => void;
+export interface WelcomeStep {
+  type: 'character' | 'code';
+  title: string;
+  description?: string;
+  showClose?: boolean;
 }
 
-export const SignupWelcomeStep = ({ userName = '---', currentStep, onNext }: Props) => {
+interface Props {
+  userName?: string;
+  currentStep: WelcomeStep;
+  onNext: () => void;
+  onClose: () => void;
+}
+
+export const SignupWelcomeStep = ({ userName = '---', currentStep, onNext, onClose }: Props) => {
   const userCode = 'ABC123-DFG456';
 
   const handleCopyCode = () => {
@@ -21,218 +29,81 @@ export const SignupWelcomeStep = ({ userName = '---', currentStep, onNext }: Pro
     Alert.alert('복사 완료', '연동 코드가 복사되었습니다.');
   };
 
-  const step = currentStep as any;
-
-  if (!step) {
-    return null;
-  }
-
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <CaringLogo />
+    <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
+      {/* 상단 헤더 */}
+      <View className="flex-row items-center justify-between px-6 py-4">
+        <CaringLogo size={44} />
+        {currentStep.showClose && (
+          <TouchableOpacity onPress={onClose} hitSlop={12}>
+            <CloseIcon width={16} height={16} />
+          </TouchableOpacity>
+        )}
       </View>
 
-      <View style={styles.contentContainer}>
-        {step.type === 'character' && (
-          <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 200 }}>
-            <View style={styles.characterContainer}>
-              <CaringDogImage size={260} />
-            </View>
-            {step.title && (
-              <View style={[styles.textContainer, { marginTop: -80 }]}>
-                <Text style={[styles.title, { textAlign: 'center' }]}>{step.title}</Text>
-              </View>
-            )}
-          </View>
+      <View className="flex-1 items-center px-6">
+        {currentStep.type === 'character' && (
+          <>
+            <CaringDogImage size={400} />
+            <Text className="-mt-10 text-center font-pretendard-bold text-[32px] text-text-strong">
+              {currentStep.title}
+            </Text>
+          </>
         )}
 
-        {step.type === 'code' && (
-          <View style={[styles.codeViewContainer, { justifyContent: 'center', marginTop: -20, paddingHorizontal: 20 }]}>
-            {/* 상단 타이틀 */}
-            <Text style={[styles.title, { fontSize: 25, lineHeight: 26, marginBottom: 16, textAlign: 'center', fontWeight: 'bold', color: '#1E1E1E' }]}>
-              {step.title}
-            </Text>
+        {currentStep.type === 'code' && (
+          <View className="w-full flex-1 justify-center">
+            <Text className="text-center font-pretendard-bold text-2xl text-text-strong">{currentStep.title}</Text>
 
-            {/* 연동 코드 카드 박스 */}
-            <View style={styles.codeCard}>
-              <View style={styles.codeCardHeader}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
-                  <RssIcon width={18} height={18} color="#FF9500" style={{ marginRight: 6 }} />
-                  <Text style={[styles.codeCardTitle, { color: '#1E1E1E', fontSize: 18, fontWeight: 'bold', marginBottom: 0 }]}>
-                    {userName}님 고유 연동 코드
-                  </Text>
-                </View>
-
-                <Text style={[styles.codeCardSubText, { fontSize: 9, color: '#8E8E93' }]}>
-                  돌봄 대상자의 안전한 연결을 위해 아래 코드를 복사하여 전달해 주세요.
-                </Text>
+            {/* 연동 코드 카드 */}
+            <View className="mt-8 rounded-card border border-border bg-surface p-4">
+              <View className="mb-2 flex-row items-center gap-2">
+                <RssIcon width={20} height={20} color="#FD7E14" />
+                <Text className="font-pretendard-bold text-xl text-text-primary">{userName}님 고유 연동 코드</Text>
               </View>
+              <Text className="mb-4 font-pretendard-medium text-xs text-text-muted">
+                돌봄대상자와의 안전한 연결을 위해 아래 코드를 복사하여 전달해 주세요.
+              </Text>
 
-              <View style={styles.codeBoxWrapper}>
-                <View style={styles.codeBoxLabelRow}>
-                  <Text style={styles.codeBoxLabel}>연동 코드</Text>
-                  <TouchableOpacity style={styles.copyButton} onPress={handleCopyCode}>
-                    <Text style={styles.copyButtonText}>복사</Text>
+              {/* 연동 코드 입력란 (안쪽 테두리 박스) */}
+              <View className="rounded-card border border-border p-4">
+                <View className="relative flex-row items-center justify-center">
+                  <Text className="font-pretendard-semibold text-lg text-text-body">연동 코드</Text>
+                  <TouchableOpacity
+                    className="absolute right-0 rounded-lg bg-primary px-3 py-1.5"
+                    onPress={handleCopyCode}
+                    activeOpacity={0.8}
+                  >
+                    <Text className="font-pretendard-semibold text-sm text-white">복사</Text>
                   </TouchableOpacity>
                 </View>
-
                 <TextInput
-                  style={styles.codeTextInputBox}
+                  className="mt-2 h-[44px] rounded-md border border-border-input px-4 text-center font-pretendard-semibold text-lg text-text-body"
+                  style={{ letterSpacing: 1 }}
                   value={userCode}
                   editable={false}
-                  selectTextOnFocus={true}
                 />
               </View>
             </View>
 
-            {/* 하단 설명 문구 */}
-            {!!step.description && (
-              <View style={{ marginTop: 20, alignItems: 'center' }}>
-                <Text style={{ fontSize: 18, color: '#4A4A4A', textAlign: 'center', lineHeight: 22, fontWeight: '600' }}>
-                  {step.description}
-                </Text>
-              </View>
+            {!!currentStep.description && (
+              <Text className="mt-10 text-center font-pretendard-bold text-lg text-text-primary">
+                {currentStep.description}
+              </Text>
             )}
           </View>
         )}
       </View>
 
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.nextButton} onPress={onNext} activeOpacity={0.8}>
-          <Text style={styles.nextButtonText}>다음</Text>
+      <View className="items-center pb-10 pt-2">
+        <TouchableOpacity
+          className="h-[51px] w-[200px] items-center justify-center rounded-[10px] bg-primary"
+          onPress={onNext}
+          activeOpacity={0.8}
+        >
+          <Text className="font-pretendard-medium text-base text-white">다음</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 50,
-    paddingBottom: 30,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: 50,
-  },
-  closeButton: {
-    padding: 10,
-  },
-  closeText: {
-    fontSize: 20,
-    color: '#000000',
-  },
-  contentContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-  characterContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  textContainer: {
-    alignItems: 'center',
-    paddingHorizontal: 10,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1E1E1E',
-    textAlign: 'center',
-    lineHeight: 30,
-  },
-  codeViewContainer: {
-    width: '100%',
-    alignItems: 'center',
-  },
-  codeCard: {
-    width: '100%',
-    backgroundColor: '#F8F9FA',
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: '#E5E5EA',
-  },
-  codeCardHeader: {
-    marginBottom: 20,
-  },
-  codeCardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FF9500',
-    marginBottom: 8,
-  },
-  codeCardSubText: {
-    fontSize: 11,
-    color: '#8E8E93',
-    lineHeight: 16,
-  },
-  codeBoxWrapper: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 15,
-    borderWidth: 1,
-    borderColor: '#E5E5EA',
-  },
-  codeBoxLabelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  codeBoxLabel: {
-    fontSize: 12,
-    color: '#8E8E93',
-  },
-  copyButton: {
-    backgroundColor: '#FF9500',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
-  },
-  copyButtonText: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-  codeTextInputBox: {
-    width: '100%',
-    height: 48,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#D1D1D6',
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1E1E1E',
-    letterSpacing: 1,
-  },
-  footer: {
-    width: '100%',
-    alignItems: 'center',
-  },
-  nextButton: {
-    width: '100%',
-    height: 54,
-    backgroundColor: '#FF9500',
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  nextButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-});
