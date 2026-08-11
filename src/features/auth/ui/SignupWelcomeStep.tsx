@@ -12,6 +12,7 @@ export interface WelcomeStep {
   title: string;
   description?: string;
   showClose?: boolean;
+  buttonLabel?: string;
 }
 
 interface Props {
@@ -101,7 +102,7 @@ export const SignupWelcomeStep = ({ userName = '---', currentStep, onNext, onClo
           onPress={onNext}
           activeOpacity={0.8}
         >
-          <Text className="font-pretendard-medium text-base text-white">다음</Text>
+          <Text className="font-pretendard-medium text-base text-white">{currentStep.buttonLabel || '다음'}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
