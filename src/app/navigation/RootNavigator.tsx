@@ -6,6 +6,7 @@ import LoginScreen from '@screens/auth/Login/LoginScreen';
 import { SignupTypeSelectScreen } from '@screens/auth/Signup/component/SignupTypeSelectScreen';
 import TermsAgreementScreen from '@screens/auth/terms/TermsAgreementScreen';
 import SignupScreen from '@screens/auth/Signup/component/SignupScreen';
+import { SignupWelcomeScreen } from '@screens/auth/welcome-guide/SignupWelcomeScreen';
 import LinkAccountScreen from '@screens/auth/LinkAccount/LinkAccountScreen';
 import { GuardianStackNavigator } from './GuardianStackNavigator';
 import { SeniorHomeScreen } from '@screens/senior/Home/SeniorHomeScreen';
@@ -39,6 +40,7 @@ export const RootNavigator = () => {
       <Stack.Screen name="SignupTypeSelect" component={SignupTypeSelectScreen} />
       <Stack.Screen name="TermsAgreement" component={TermsAgreementScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name="SignupWelcome" component={SignupWelcomeScreen} />
       <Stack.Screen name="LinkAccount" component={LinkAccountScreen} />
     </Stack.Navigator>
   );

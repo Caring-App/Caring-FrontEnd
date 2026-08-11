@@ -5,6 +5,7 @@ export type AuthStackParamList = {
   SignupTypeSelect: undefined;
   TermsAgreement: undefined;
   Signup: undefined;
+  SignupWelcome: { userName?: string } | undefined;
   LinkAccount: undefined;
 };
 
