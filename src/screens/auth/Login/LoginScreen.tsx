@@ -1,174 +1,214 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
-import { useSessionStore } from '@shared/store/useSessionStore';
+import { SafeAreaView, View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { useSessionStore } from '../../../shared/store/useSessionStore';
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }: { navigation: any }) {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
 
+  const handleLogin = () => {
+    console.log('로그인 시도:', id, password);
+  };
+
+  // [DEV] 보호자 진입 핸들러
+  const handleDevProtector = () => {
+    useSessionStore.setState({ isLoggedIn: true, role: 'PROTECTOR' });
+  };
+
+  // [DEV] 어르신 진입 핸들러
+  const handleDevSenior = () => {
+    useSessionStore.setState({ isLoggedIn: true, role: 'WARD' });
+  };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.spacer} />
-
-      {__DEV__ && (
-        <View style={styles.devRow}>
-          <TouchableOpacity
-            style={styles.devButton}
-            onPress={() => useSessionStore.getState().login('PROTECTOR')}>
-            <Text style={styles.devButtonText}>[DEV] 보호자로 바로 진입</Text>
+    <SafeAreaView style={loginStyles.safeArea}>
+      <ScrollView contentContainerStyle={loginStyles.scrollContainer} showsVerticalScrollIndicator={false}>
+        
+        {/* 상단 [DEV] 버튼 영역 */}
+        <View style={loginStyles.devButtonContainer}>
+          <TouchableOpacity 
+            style={loginStyles.devButton} 
+            activeOpacity={0.8}
+            onPress={handleDevProtector}
+          >
+            <Text style={loginStyles.devButtonText}>[DEV] 보호자로 바로 진입</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.devButton}
-            onPress={() => useSessionStore.getState().login('WARD')}>
-            <Text style={styles.devButtonText}>[DEV] 어르신으로 바로 진입</Text>
+          <TouchableOpacity 
+            style={loginStyles.devButton} 
+            activeOpacity={0.8}
+            onPress={handleDevSenior}
+          >
+            <Text style={loginStyles.devButtonText}>[DEV] 어르신으로 바로 진입</Text>
           </TouchableOpacity>
         </View>
-      )}
 
-      <Text style={styles.subTitle}>돌봄의 시작, 케어링</Text>
-      <Text style={styles.mainTitle}>Caring</Text>
-
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="아이디를 입력하세요."
-          value={id}
-          onChangeText={setId}
-          placeholderTextColor="#999"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="비밀번호를 입력하세요."
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          placeholderTextColor="#999"
-        />
-      </View>
-
-      <TouchableOpacity style={styles.loginButton}>
-        <Text style={styles.loginButtonText}>로그인</Text>
-      </TouchableOpacity>
-
-      <View style={styles.findMenuContainer}>
-        <TouchableOpacity><Text style={styles.findMenuText}>아이디 찾기</Text></TouchableOpacity>
-        <Text style={styles.divider}>|</Text>
-        <TouchableOpacity><Text style={styles.findMenuText}>비밀번호 찾기</Text></TouchableOpacity>
-        <Text style={styles.divider}>|</Text>
-        <TouchableOpacity><Text style={styles.findMenuText}>회원가입</Text></TouchableOpacity>
-      </View>
-
-      <View style={styles.socialContainer}>
-        <Text style={styles.socialTitle}>간편 로그인</Text>
-        <View style={styles.socialButtonsRow}>
-          <View style={[styles.circleButton, { backgroundColor: '#FEE500' }]} />
-          <View style={[styles.circleButton, { backgroundColor: '#EAEAEA' }]} />
-          <View style={[styles.circleButton, { backgroundColor: '#03C75A' }]} />
+        {/* 타이틀 영역 */}
+        <View style={loginStyles.titleContainer}>
+          <Text style={loginStyles.subTitle}>돌봄의 시작, 케어링</Text>
+          <Text style={loginStyles.mainTitle}>Caring</Text>
         </View>
-      </View>
-    </View>
+
+        {/* 로그인 입력 폼 */}
+        <View style={loginStyles.formContainer}>
+          <TextInput 
+            style={loginStyles.input} 
+            placeholder="아이디를 입력하세요."
+            placeholderTextColor="#A0A0A0"
+            value={id}
+            onChangeText={setId}
+          />
+
+          <TextInput 
+            style={loginStyles.input} 
+            placeholder="비밀번호를 입력하세요."
+            placeholderTextColor="#A0A0A0"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+
+          <TouchableOpacity 
+            style={loginStyles.loginButton} 
+            activeOpacity={0.8}
+            onPress={handleLogin}
+          >
+            <Text style={loginStyles.loginButtonText}>로그인</Text>
+          </TouchableOpacity>
+
+          {/* 하단 링크 영역 */}
+          <View style={loginStyles.linkRow}>
+            <TouchableOpacity>
+              <Text style={loginStyles.linkText}>아이디 찾기</Text>
+            </TouchableOpacity>
+            
+            <Text style={loginStyles.barText}>|</Text>
+            
+            <TouchableOpacity>
+              <Text style={loginStyles.linkText}>비밀번호 찾기</Text>
+            </TouchableOpacity>
+            
+            <Text style={loginStyles.barText}>|</Text>
+            
+            <TouchableOpacity onPress={() => navigation.navigate('SignupTypeSelect')}>
+              <Text style={loginStyles.linkText}>회원가입</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* 간편 로그인 원형 버튼 영역 */}
+        <View style={loginStyles.socialContainer}>
+          <Text style={loginStyles.socialTitle}>간편 로그인</Text>
+          <View style={loginStyles.socialIconRow}>
+            <View style={[loginStyles.socialCircle, { backgroundColor: '#FEE500' }]} />
+            <View style={[loginStyles.socialCircle, { backgroundColor: '#E0E0E0' }]} />
+            <View style={[loginStyles.socialCircle, { backgroundColor: '#03C75A' }]} />
+          </View>
+        </View>
+
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
+const loginStyles = StyleSheet.create({
+  safeArea: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 24,
+  },
+  scrollContainer: {
+    padding: 20,
+    flexGrow: 1,
+    justifyContent: 'center',
+  },
+  devButtonContainer: {
+    marginBottom: 20,
+    gap: 8,
+  },
+  devButton: {
+    borderWidth: 1,
+    borderColor: '#FF7F00',
+    borderRadius: 8,
+    paddingVertical: 10,
     alignItems: 'center',
   },
-  spacer: {
-    flex: 0.5,
+  devButtonText: {
+    color: '#FF7F00',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  titleContainer: {
+    alignItems: 'center',
+    marginBottom: 30,
   },
   subTitle: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 8,
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 5,
   },
   mainTitle: {
-    fontSize: 56,
+    fontSize: 32,
     fontWeight: 'bold',
-    color: '#FD7E14',
-    marginBottom: 40,
+    color: '#FF7F00',
   },
-  inputContainer: {
+  formContainer: {
     width: '100%',
-    marginBottom: 20,
+    marginBottom: 30,
   },
   input: {
     width: '100%',
     height: 50,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: '#DDD',
     borderRadius: 8,
     paddingHorizontal: 15,
-    marginBottom: 12,
+    fontSize: 15,
     backgroundColor: '#FAFAFA',
+    marginBottom: 12,
+    color: '#000',
   },
   loginButton: {
     width: '100%',
     height: 50,
-    backgroundColor: '#FD7E14',
+    backgroundColor: '#FF7F00',
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
-    marginBottom: 20,
+    marginTop: 8,
   },
   loginButtonText: {
-    color: '#FFFFFF',
+    color: '#FFF',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  findMenuContainer: {
+  linkRow: {
     flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 40,
+    marginTop: 15,
   },
-  findMenuText: {
-    fontSize: 12,
-    color: '#666666',
+  linkText: {
+    color: '#666',
+    fontSize: 13,
   },
-  divider: {
+  barText: {
+    color: '#DDD',
     marginHorizontal: 10,
-    color: '#CCCCCC',
-    fontSize: 12,
   },
   socialContainer: {
-    width: '100%',
     alignItems: 'center',
   },
   socialTitle: {
-    fontSize: 12,
-    color: '#999999',
-    marginBottom: 15,
-  },
-  socialButtonsRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 20,
-  },
-  circleButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-  },
-  devRow: {
-    width: '100%',
-    gap: 8,
+    fontSize: 13,
+    color: '#888',
     marginBottom: 12,
   },
-  devButton: {
-    width: '100%',
-    paddingVertical: 10,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#FD7E14',
-    alignItems: 'center',
+  socialIconRow: {
+    flexDirection: 'row',
+    gap: 15,
   },
-  devButtonText: {
-    color: '#FD7E14',
-    fontSize: 13,
-    fontWeight: '600',
+  socialCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
 });

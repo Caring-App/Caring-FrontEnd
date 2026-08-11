@@ -1,48 +1,90 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import { useTermsAgreement, TERM_LIST } from './useTermsAgreement';
 import { styles } from './TermsAgreement.styles';
-import { CaringLogo } from './CaringLogo';
+import LogoIcon from '@assets/icons/header/caring_logo.svg';
 
 export default function TermsAgreementScreen({ navigation }: any) {
   const { checkedItems, isAllChecked, isRequiredChecked, handleCheckItem, handleCheckAll } = useTermsAgreement();
 
+  const handleNextPress = () => {
+    if (isRequiredChecked) {
+      navigation.navigate('Signup');
+    }
+  };
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.logoContainer}>
-        <CaringLogo />
-      </View>
-      
-      <Text style={styles.title}>서비스 이용을 위해{'\n'}약관에 동의해 주세요.</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+      <ScrollView contentContainerStyle={styles.container}>
+        
+        {/* 상단 헤더 (로고 왼쪽, 타이틀 가운데 정렬 구조) */}
+        <View style={styles.headerContainer}>
+          <View style={styles.logoContainer}>
+            <LogoIcon width={40} height={40} />
+          </View>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>약관 동의</Text>
+          </View>
+        </View>
 
-      {/* 전체 동의 버튼 (스타일 이름을 allAgreeBox로 수정) */}
-      <TouchableOpacity style={styles.allAgreeBox} onPress={handleCheckAll}>
-        <Text style={styles.allAgreeText}>모든 약관에 동의합니다.</Text>
-      </TouchableOpacity>
+        <Text style={styles.subtitle}>서비스 이용을 위해 약관에 동의해 주세요.</Text>
 
-      {/* 개별 약관 목록 */}
-      {TERM_LIST.map(term => (
-        <TouchableOpacity
-          key={term.id}
-          style={styles.termItem}
-          onPress={() => handleCheckItem(term.id)}
-        >
-          <Text style={styles.termText}>
-            {term.required ? '[필수]' : '[선택]'} {term.title} {checkedItems[term.id] ? '✓' : ''}
-          </Text>
+        {/* 전체 동의 박스 */}
+        <TouchableOpacity style={styles.allAgreeBox} onPress={handleCheckAll} activeOpacity={0.8}>
+          <View style={[styles.checkbox, isAllChecked && styles.checkedBox]}>
+            {isAllChecked && <Text style={styles.checkmark}>✓</Text>}
+          </View>
+          <Text style={styles.allAgreeText}>전체 동의</Text>
         </TouchableOpacity>
-      ))}
 
-      {/* 다음 버튼 */}
-      <TouchableOpacity
-        style={[styles.nextButton, { backgroundColor: isRequiredChecked ? '#FF7E00' : '#DDDDDD' }]}
-        disabled={!isRequiredChecked}
-        onPress={() => {
-          navigation.navigate('Signup');
-        }}
-      >
-        <Text style={styles.nextButtonText}>다음</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        {/* 필수 약관 타이틀 */}
+        <Text style={styles.sectionHeader}>필수 약관</Text>
+
+        {/* 필수 약관 목록 */}
+        {TERM_LIST.filter(term => term.required).map(term => (
+          <TouchableOpacity
+            key={term.id}
+            style={styles.termItem}
+            onPress={() => handleCheckItem(term.id)}
+            activeOpacity={0.8}
+          >
+            <View style={[styles.checkbox, checkedItems[term.id] && styles.checkedBox]}>
+              {checkedItems[term.id] && <Text style={styles.checkmark}>✓</Text>}
+            </View>
+            <Text style={styles.termText}>
+              {term.title} <Text style={styles.requiredText}>(필수)</Text>
+            </Text>
+          </TouchableOpacity>
+        ))}
+
+        {/* 선택 약관 타이틀 */}
+        <Text style={styles.sectionHeader}>선택 약관</Text>
+
+        {/* 선택 약관 목록 */}
+        {TERM_LIST.filter(term => !term.required).map(term => (
+          <TouchableOpacity
+            key={term.id}
+            style={styles.termItem}
+            onPress={() => handleCheckItem(term.id)}
+            activeOpacity={0.8}
+          >
+            <View style={[styles.checkbox, checkedItems[term.id] && styles.checkedBox]}>
+              {checkedItems[term.id] && <Text style={styles.checkmark}>✓</Text>}
+            </View>
+            <Text style={styles.termText}>{term.title}</Text>
+          </TouchableOpacity>
+        ))}
+
+        {/* 다음 버튼 */}
+        <TouchableOpacity
+          style={[styles.nextButton, !isRequiredChecked && styles.disabledButton]}
+          onPress={handleNextPress}
+          disabled={!isRequiredChecked}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.nextButtonText}>다음</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
   );
 }

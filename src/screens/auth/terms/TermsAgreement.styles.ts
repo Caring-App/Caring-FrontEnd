@@ -11,8 +11,9 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    marginBottom: 24,
+    marginBottom: 20,
     position: 'relative',
+    height: 48,
   },
   titleContainer: {
     position: 'absolute',
@@ -21,10 +22,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 1,
   },
-  /* 👇 로고를 감싸기 위해 추가된 스타일 */
   logoContainer: {
-    alignItems: 'center',
-    marginBottom: 24,
+    justifyContent: 'center',
+    zIndex: 2,
   },
   title: {
     fontSize: 20,
@@ -43,7 +43,6 @@ export const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 24,
-    // 전체 박스 테두리 제거됨
   },
   allAgreeText: {
     fontSize: 16,
@@ -58,11 +57,18 @@ export const styles = StyleSheet.create({
     marginBottom: 12,
     marginTop: 12,
   },
+  sectionHeader: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#666666',
+    marginTop: 16,
+    marginBottom: 8,
+    paddingHorizontal: 4,
+  },
   termItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
-    // 개별 박스 테두리 제거됨
   },
   termText: {
     fontSize: 15,
@@ -72,7 +78,9 @@ export const styles = StyleSheet.create({
   required: {
     color: '#FF7E00',
   },
-  /* 피그마와 동일한 비율/크기의 체크박스 스타일 */
+  requiredText: {
+    color: '#FF7E00',
+  },
   checkbox: {
     width: 22,
     height: 22,
@@ -84,7 +92,11 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   checkboxChecked: {
-    borderColor: '#FF7E00', // 체크되었을 때만 테두리가 주황색
+    borderColor: '#FF7E00',
+    backgroundColor: '#FFF9F5',
+  },
+  checkedBox: {
+    borderColor: '#FF7E00',
     backgroundColor: '#FFF9F5',
   },
   checkmark: {
@@ -100,6 +112,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
     marginBottom: 30,
+  },
+  disabledButton: {
+    backgroundColor: '#DDDDDD',
   },
   nextButtonDisabled: {
     backgroundColor: '#DDDDDD',
