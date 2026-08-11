@@ -3,9 +3,10 @@ import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
+import { colors } from '@shared/theme/colors';
 import { CaringDogImage } from './CaringDogImage';
 import { CodeInputField } from './CodeInputField';
-import { RssIcon } from './RssIcon';
+import RssIcon from '@assets/icons/action/rss.svg';
 import CloseIcon from '@assets/icons/action/close-x.svg';
 
 export interface WelcomeStep {
@@ -60,7 +61,7 @@ export const SignupWelcomeStep = ({ userName = '---', currentStep, onNext, onClo
             {/* 연동 코드 카드 */}
             <View className="mt-8 rounded-card border border-border bg-surface p-4">
               <View className="mb-2 flex-row items-center gap-2">
-                <RssIcon width={20} height={20} color="#FD7E14" />
+                <RssIcon width={20} height={20} color={colors.primary} />
                 <Text className="font-pretendard-bold text-xl text-text-primary">{userName}님 고유 연동 코드</Text>
               </View>
               <Text className="mb-4 font-pretendard-medium text-xs text-text-muted">

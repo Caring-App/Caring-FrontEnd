@@ -3,8 +3,10 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useLinkAccount } from '@features/auth/model';
-import { CodeInputField, RssIcon } from '@features/auth/ui';
+import { CodeInputField } from '@features/auth/ui';
 import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
+import { colors } from '@shared/theme/colors';
+import RssIcon from '@assets/icons/action/rss.svg';
 
 export default function LinkAccountScreen({ navigation }: { navigation: any }) {
   const { code, setCode, handlePaste, handleSubmit, isValidCode } = useLinkAccount();
@@ -31,7 +33,7 @@ export default function LinkAccountScreen({ navigation }: { navigation: any }) {
         {/* 연동 코드 입력 카드 */}
         <View className="mt-8 rounded-card border border-border bg-surface p-4">
           <View className="mb-2 flex-row items-center gap-2">
-            <RssIcon width={20} height={20} color="#FD7E14" />
+            <RssIcon width={20} height={20} color={colors.primary} />
             <Text className="font-pretendard-bold text-xl text-text-primary">연동 코드 입력</Text>
           </View>
           <Text className="mb-4 font-pretendard-medium text-xs text-text-muted">
