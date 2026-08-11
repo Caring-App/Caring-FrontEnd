@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
+import { colors } from '@shared/theme/colors';
 import { BirthDatePickerProps } from '../model/types';
 
 // 달력 한국어 설정
@@ -105,8 +106,8 @@ export default function BirthDatePicker({ value, onChange }: BirthDatePickerProp
             ? {
                 [selectedDate]: {
                   selected: true,
-                  selectedColor: '#FD7E14',
-                  selectedTextColor: '#FFFFFF',
+                  selectedColor: colors.primary,
+                  selectedTextColor: colors.surface,
                 },
               }
             : {}
@@ -115,10 +116,10 @@ export default function BirthDatePicker({ value, onChange }: BirthDatePickerProp
         renderHeader={() => null}
         onDayPress={handleDayPress}
         theme={{
-          todayTextColor: '#FD7E14',
-          textSectionTitleColor: '#212529',
-          dayTextColor: '#212529',
-          textDisabledColor: '#ADB5BD',
+          todayTextColor: colors.primary,
+          textSectionTitleColor: colors.textBody,
+          dayTextColor: colors.textBody,
+          textDisabledColor: colors.textCalendarMuted,
         }}
       />
     </View>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSessionStore } from '@shared/store/useSessionStore';
+import { colors } from '@shared/theme/colors';
 import GoogleLogo from '@assets/icons/auth/google-logo.svg';
 import KakaoLoginButton from '@assets/images/kakao-login.png';
 import NaverLoginButton from '@assets/images/naver-login.png';
@@ -58,14 +59,14 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
             <TextInput
               className="h-[43px] rounded-card border border-border-loginInput px-6 text-center font-pretendard-semibold text-base text-text-primary"
               placeholder="휴대폰 번호를 입력하세요."
-              placeholderTextColor="#AEB5B5"
+              placeholderTextColor={colors.textLoginPlaceholder}
               value={id}
               onChangeText={setId}
             />
             <TextInput
               className="h-[43px] rounded-card border border-border-loginInput px-6 text-center font-pretendard-semibold text-base text-text-primary"
               placeholder="비밀번호를 입력하세요."
-              placeholderTextColor="#AEB5B5"
+              placeholderTextColor={colors.textLoginPlaceholder}
               secureTextEntry
               value={password}
               onChangeText={setPassword}

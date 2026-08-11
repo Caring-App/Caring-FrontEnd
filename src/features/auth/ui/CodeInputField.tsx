@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
+import { colors } from '@shared/theme/colors';
 
 // "연동 코드" 표시/입력란 공용 UI — 라벨 중앙정렬 + 우측 버튼(복사/붙여넣기) + 코드 텍스트박스
 interface CodeInputFieldProps {
@@ -42,7 +43,7 @@ export function CodeInputField({
         onChangeText={onChangeText}
         editable={editable}
         placeholder={placeholder}
-        placeholderTextColor="#6C757D"
+        placeholderTextColor={colors.textPlaceholder}
         autoCapitalize={autoCapitalize}
       />
     </View>
