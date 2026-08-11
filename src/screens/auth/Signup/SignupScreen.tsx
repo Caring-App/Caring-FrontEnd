@@ -3,7 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-nativ
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import useSignUp from '@features/auth/model/useSignUp';
-import { BirthDatePicker, CaringLogo } from '@features/auth/ui';
+import { BirthDatePicker } from '@features/auth/ui';
+import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
 
 function FormField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -35,8 +36,10 @@ export const SignupScreen = () => {
     <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
       <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
         {/* 상단 헤더 */}
-        <View className="flex-row items-center gap-3 py-4">
-          <CaringLogo width={44} height={44} />
+        <View className="relative flex-row items-center justify-center py-4">
+          <View className="absolute left-0">
+            <CaringLogo size={44} />
+          </View>
           <Text className="font-pretendard-bold text-2xl text-text-primary">회원 가입</Text>
         </View>
 
@@ -51,30 +54,31 @@ export const SignupScreen = () => {
             />
           </FormField>
 
-          <FormField label="전화번호">
-            <View className="flex-row items-center gap-2">
-              <TextInput
-                className={`${inputClassName} flex-1`}
-                placeholder="전화번호를 입력해 주세요"
-                placeholderTextColor="#6C757D"
-                keyboardType="number-pad"
-                value={form.phone}
-                onChangeText={setPhone}
-              />
+          <View className="mb-4">
+            <View className="mb-2 flex-row items-center justify-between">
+              <Text className="font-pretendard-semibold text-lg text-text-body">전화번호</Text>
               <TouchableOpacity
-                className="rounded-card bg-primary px-4 py-2"
+                className="rounded-md bg-primary px-3 py-1"
                 onPress={handleSendAuthCode}
                 activeOpacity={0.8}
               >
-                <Text className="font-pretendard-semibold text-xs text-white">인증</Text>
+                <Text className="font-pretendard-semibold text-[11px] text-white">인증</Text>
               </TouchableOpacity>
             </View>
-          </FormField>
+            <TextInput
+              className={inputClassName}
+              placeholder="전화번호를 입력해 주세요"
+              placeholderTextColor="#6C757D"
+              keyboardType="number-pad"
+              value={form.phone}
+              onChangeText={setPhone}
+            />
+          </View>
 
           <FormField label="인증번호 입력">
             <TextInput
               className={inputClassName}
-              placeholder="인증번호 6자리를 입력해 주세요"
+              placeholder="인증번호를 입력해 주세요"
               placeholderTextColor="#6C757D"
               keyboardType="number-pad"
               value={form.authCode}
