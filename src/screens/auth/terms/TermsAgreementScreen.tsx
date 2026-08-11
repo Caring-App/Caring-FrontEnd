@@ -2,8 +2,21 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTermsAgreement, TERM_LIST } from '@features/auth/model';
-import { CaringLogo } from '@features/auth/ui';
+import { CheckIcon } from '@features/auth/ui';
+import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
 import ChevronRight from '@assets/icons/report/chevron-right.svg';
+
+function TermCheckbox({ checked }: { checked: boolean }) {
+  return (
+    <View
+      className={`h-5 w-5 items-center justify-center rounded border-[1.6px] bg-surface ${
+        checked ? 'border-primary' : 'border-border-checkbox'
+      }`}
+    >
+      {checked && <CheckIcon size={12} />}
+    </View>
+  );
+}
 
 export default function TermsAgreementScreen({ navigation }: any) {
   const { checkedItems, isAllChecked, isRequiredChecked, handleCheckItem, handleCheckAll } = useTermsAgreement();
@@ -19,10 +32,12 @@ export default function TermsAgreementScreen({ navigation }: any) {
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}>
+      <ScrollView className="flex-1" contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}>
         {/* 상단 헤더 */}
-        <View className="flex-row items-center gap-3 py-4">
-          <CaringLogo width={44} height={44} />
+        <View className="relative flex-row items-center justify-center py-4">
+          <View className="absolute left-0">
+            <CaringLogo size={44} />
+          </View>
           <Text className="font-pretendard-bold text-2xl text-text-primary">약관 동의</Text>
         </View>
 
@@ -36,13 +51,7 @@ export default function TermsAgreementScreen({ navigation }: any) {
           onPress={handleCheckAll}
           activeOpacity={0.8}
         >
-          <View
-            className={`h-6 w-6 items-center justify-center rounded-lg border-[1.6px] ${
-              isAllChecked ? 'border-primary' : 'border-border-checkbox'
-            } bg-surface`}
-          >
-            {isAllChecked && <Text className="font-pretendard-bold text-sm text-text-primary">✓</Text>}
-          </View>
+          <TermCheckbox checked={isAllChecked} />
           <Text className="font-pretendard-semibold text-lg text-text-primary">전체 동의</Text>
         </TouchableOpacity>
 
@@ -57,13 +66,7 @@ export default function TermsAgreementScreen({ navigation }: any) {
               activeOpacity={0.7}
             >
               <View className="flex-row items-center gap-3">
-                <View
-                  className={`h-5 w-5 items-center justify-center rounded border-[1.6px] ${
-                    checkedItems[term.id] ? 'border-primary' : 'border-border-checkbox'
-                  } bg-surface`}
-                >
-                  {checkedItems[term.id] && <Text className="text-[11px] text-text-primary">✓</Text>}
-                </View>
+                <TermCheckbox checked={!!checkedItems[term.id]} />
                 <Text className="font-pretendard-medium text-base text-text-primary">
                   {term.title} <Text className="text-text-termsRequired">(필수)</Text>
                 </Text>
@@ -84,23 +87,19 @@ export default function TermsAgreementScreen({ navigation }: any) {
               activeOpacity={0.7}
             >
               <View className="flex-row items-center gap-3">
-                <View
-                  className={`h-5 w-5 items-center justify-center rounded border-[1.6px] ${
-                    checkedItems[term.id] ? 'border-primary' : 'border-border-checkbox'
-                  } bg-surface`}
-                >
-                  {checkedItems[term.id] && <Text className="text-[11px] text-text-primary">✓</Text>}
-                </View>
+                <TermCheckbox checked={!!checkedItems[term.id]} />
                 <Text className="font-pretendard-medium text-base text-text-primary">{term.title}</Text>
               </View>
               <ChevronRight width={16} height={16} />
             </TouchableOpacity>
           ))}
         </View>
+      </ScrollView>
 
-        {/* 다음 버튼 */}
+      {/* 다음 버튼 (하단 고정) */}
+      <View className="bg-surface px-6 pb-10 pt-2">
         <TouchableOpacity
-          className={`mt-10 h-[52px] items-center justify-center rounded-card ${
+          className={`h-[52px] items-center justify-center rounded-card ${
             isRequiredChecked ? 'bg-primary' : 'bg-border-link'
           }`}
           onPress={handleNextPress}
@@ -109,7 +108,7 @@ export default function TermsAgreementScreen({ navigation }: any) {
         >
           <Text className="font-pretendard-semibold text-lg text-white">다음</Text>
         </TouchableOpacity>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
