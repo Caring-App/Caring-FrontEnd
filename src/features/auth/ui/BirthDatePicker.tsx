@@ -26,11 +26,9 @@ export default function BirthDatePicker({ value, onChange }: BirthDatePickerProp
   // 선택된 날짜 문자열 관리
   const [selectedDate, setSelectedDate] = useState<string>(value || '');
 
-  // 외부 props(value) 변경 시 내부 상태 동기화
+  // 외부 props(value) 변경 시 내부 상태 동기화 (빈 값으로 리셋되는 경우도 반영)
   useEffect(() => {
-    if (value) {
-      setSelectedDate(value);
-    }
+    setSelectedDate(value || '');
   }, [value]);
 
   // 달력 표시 기준 Date 객체
