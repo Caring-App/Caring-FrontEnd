@@ -20,9 +20,9 @@ export const SignupTypeSelectScreen = () => {
 
       {/* 중앙 컨텐츠 영역 */}
       <View className="flex-1 items-center px-6">
-        <CaringDogImage size={300} />
+        <CaringDogImage size={400} />
 
-        <Text className="mt-2 text-center font-pretendard-bold text-[32px] text-text-strong">안녕하세요!</Text>
+        <Text className="-mt-10 text-center font-pretendard-bold text-[32px] text-text-strong">안녕하세요!</Text>
         <Text className="text-center font-pretendard-bold text-[32px] text-text-strong">어떤 서비스를 이용하시나요?</Text>
 
         {/* 역할 선택 버튼 */}
