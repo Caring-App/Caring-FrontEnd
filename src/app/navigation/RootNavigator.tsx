@@ -6,7 +6,7 @@ import LoginScreen from '@screens/auth/Login/LoginScreen';
 import { SignupTypeSelectScreen } from '@screens/auth/Signup/component/SignupTypeSelectScreen';
 import TermsAgreementScreen from '@screens/auth/terms/TermsAgreementScreen';
 import SignupScreen from '@screens/auth/Signup/component/SignupScreen';
-import { LinkAccountScreen } from '@screens/auth/LinkAccount/LinkAccountScreen';
+import LinkAccountScreen from '@screens/auth/LinkAccount/LinkAccountScreen';
 import { GuardianStackNavigator } from './GuardianStackNavigator';
 import { SeniorHomeScreen } from '@screens/senior/Home/SeniorHomeScreen';
 import { SeniorScheduleScreen } from '@screens/senior/Schedule/SeniorScheduleScreen';
