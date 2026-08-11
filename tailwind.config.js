@@ -34,9 +34,17 @@ module.exports = {
           calendarScheduleDot: '#8e8e93',
           // 복약 등록 모달의 매일/주간/주말 프리셋 칩 텍스트(Figma 390:16079, #F3F3F3)
           onChip: '#f3f3f3',
+          // 로그인 화면 "돌봄의 시작, 케어링" 서브타이틀(Figma 151:17301, #484848)
+          loginSubtitle: '#484848',
+          // 로그인 화면 입력창 placeholder(Figma 151:17305, #AEB5B5) — 같은 화면의 input border와 동일 값
+          loginPlaceholder: '#aeb5b5',
         },
         border: {
           DEFAULT: '#e2e5e5',
+          // 로그인 화면 입력창 테두리(Figma 151:17304, #AEB5B5)
+          loginInput: '#aeb5b5',
+          // 로그인 화면 Google 버튼 테두리(Figma 182:10988, #E0E0E9)
+          googleButton: '#e0e0e9',
           // 돌봄대상자 관리 모달의 입력창 테두리(Figma 60:5411 form input, #CED4DA)
           input: '#ced4da',
           // "자세히 보기 >" 링크 밑줄(Figma 60:4133 등, #C9CED1). 복약 등록 모달의 미선택 요일 원/라디오 링/식사시간 버튼 테두리도 동일 값이라 공용으로 재사용(Figma 435:16903, 390:16039, 390:16113)

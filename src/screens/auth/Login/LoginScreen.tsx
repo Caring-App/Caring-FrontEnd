@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSessionStore } from '@shared/store/useSessionStore';
+import GoogleLogo from '@assets/icons/auth/google-logo.svg';
+import KakaoLoginButton from '@assets/images/kakao-login.png';
+import NaverLoginButton from '@assets/images/naver-login.png';
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
   const [id, setId] = useState('');
@@ -21,196 +25,97 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   };
 
   return (
-    <SafeAreaView style={loginStyles.safeArea}>
-      <ScrollView contentContainerStyle={loginStyles.scrollContainer} showsVerticalScrollIndicator={false}>
-        
-        {/* 상단 [DEV] 버튼 영역 */}
-        {__DEV__ && (
-          <View style={loginStyles.devButtonContainer}>
-            <TouchableOpacity
-              style={loginStyles.devButton}
-              activeOpacity={0.8}
-              onPress={handleDevProtector}
-            >
-              <Text style={loginStyles.devButtonText}>[DEV] 보호자로 바로 진입</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={loginStyles.devButton}
-              activeOpacity={0.8}
-              onPress={handleDevSenior}
-            >
-              <Text style={loginStyles.devButtonText}>[DEV] 어르신으로 바로 진입</Text>
-            </TouchableOpacity>
+    <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+        <View className="flex-1 px-10">
+          {__DEV__ && (
+            <View className="mt-4 gap-2">
+              <TouchableOpacity
+                className="items-center rounded-card border border-primary py-2.5"
+                activeOpacity={0.8}
+                onPress={handleDevProtector}
+              >
+                <Text className="font-pretendard-semibold text-sm text-primary">[DEV] 보호자로 바로 진입</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="items-center rounded-card border border-primary py-2.5"
+                activeOpacity={0.8}
+                onPress={handleDevSenior}
+              >
+                <Text className="font-pretendard-semibold text-sm text-primary">[DEV] 어르신으로 바로 진입</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/* 타이틀 영역 */}
+          <View className="mt-14 items-center">
+            <Text className="font-pretendard-bold text-[40px] text-text-loginSubtitle">돌봄의 시작, 케어링</Text>
+            <Text className="font-pretendard-bold text-[80px] text-primary">Caring</Text>
           </View>
-        )}
 
-        {/* 타이틀 영역 */}
-        <View style={loginStyles.titleContainer}>
-          <Text style={loginStyles.subTitle}>돌봄의 시작, 케어링</Text>
-          <Text style={loginStyles.mainTitle}>Caring</Text>
-        </View>
+          {/* 로그인 입력 폼 */}
+          <View className="mt-14 gap-3">
+            <TextInput
+              className="h-[43px] rounded-card border border-border-loginInput px-6 font-pretendard-semibold text-base text-text-primary"
+              placeholder="휴대폰 번호를 입력하세요."
+              placeholderTextColor="#AEB5B5"
+              value={id}
+              onChangeText={setId}
+            />
+            <TextInput
+              className="h-[43px] rounded-card border border-border-loginInput px-6 font-pretendard-semibold text-base text-text-primary"
+              placeholder="비밀번호를 입력하세요."
+              placeholderTextColor="#AEB5B5"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+          </View>
 
-        {/* 로그인 입력 폼 */}
-        <View style={loginStyles.formContainer}>
-          <TextInput 
-            style={loginStyles.input} 
-            placeholder="아이디를 입력하세요."
-            placeholderTextColor="#A0A0A0"
-            value={id}
-            onChangeText={setId}
-          />
-
-          <TextInput 
-            style={loginStyles.input} 
-            placeholder="비밀번호를 입력하세요."
-            placeholderTextColor="#A0A0A0"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-
-          <TouchableOpacity 
-            style={loginStyles.loginButton} 
+          <TouchableOpacity
+            className="mt-4 h-[52px] items-center justify-center rounded-card bg-primary"
             activeOpacity={0.8}
             onPress={handleLogin}
           >
-            <Text style={loginStyles.loginButtonText}>로그인</Text>
+            <Text className="font-pretendard-semibold text-lg text-white">로그인</Text>
           </TouchableOpacity>
 
           {/* 하단 링크 영역 */}
-          <View style={loginStyles.linkRow}>
+          <View className="mt-4 flex-row items-center justify-center gap-3">
             <TouchableOpacity>
-              <Text style={loginStyles.linkText}>아이디 찾기</Text>
+              <Text className="font-pretendard-semibold text-xs text-text-muted">아이디 찾기</Text>
             </TouchableOpacity>
-            
-            <Text style={loginStyles.barText}>|</Text>
-            
+            <Text className="text-xs text-border-link">|</Text>
             <TouchableOpacity>
-              <Text style={loginStyles.linkText}>비밀번호 찾기</Text>
+              <Text className="font-pretendard-semibold text-xs text-text-muted">비밀번호 찾기</Text>
             </TouchableOpacity>
-            
-            <Text style={loginStyles.barText}>|</Text>
-            
+            <Text className="text-xs text-border-link">|</Text>
             <TouchableOpacity onPress={() => navigation.navigate('SignupTypeSelect')}>
-              <Text style={loginStyles.linkText}>회원가입</Text>
+              <Text className="font-pretendard-semibold text-xs text-text-muted">회원가입</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* 간편 로그인 구분선 */}
+          <View className="mt-8 flex-row items-center gap-3">
+            <View className="h-px flex-1 bg-border" />
+            <Text className="font-pretendard-semibold text-sm text-text-muted">간편 로그인</Text>
+            <View className="h-px flex-1 bg-border" />
+          </View>
+
+          {/* 간편 로그인 원형 버튼 영역 */}
+          <View className="mb-8 mt-6 flex-row items-center justify-center gap-6">
+            <TouchableOpacity>
+              <Image source={KakaoLoginButton} className="h-16 w-16 rounded-full" />
+            </TouchableOpacity>
+            <TouchableOpacity className="h-16 w-16 items-center justify-center rounded-full border border-border-googleButton bg-surface">
+              <GoogleLogo width={23} height={23} />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Image source={NaverLoginButton} className="h-16 w-16 rounded-full" />
             </TouchableOpacity>
           </View>
         </View>
-
-        {/* 간편 로그인 원형 버튼 영역 */}
-        <View style={loginStyles.socialContainer}>
-          <Text style={loginStyles.socialTitle}>간편 로그인</Text>
-          <View style={loginStyles.socialIconRow}>
-            <View style={[loginStyles.socialCircle, { backgroundColor: '#FEE500' }]} />
-            <View style={[loginStyles.socialCircle, { backgroundColor: '#E0E0E0' }]} />
-            <View style={[loginStyles.socialCircle, { backgroundColor: '#03C75A' }]} />
-          </View>
-        </View>
-
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-const loginStyles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  scrollContainer: {
-    padding: 20,
-    flexGrow: 1,
-    justifyContent: 'center',
-  },
-  devButtonContainer: {
-    marginBottom: 20,
-    gap: 8,
-  },
-  devButton: {
-    borderWidth: 1,
-    borderColor: '#FF7F00',
-    borderRadius: 8,
-    paddingVertical: 10,
-    alignItems: 'center',
-  },
-  devButtonText: {
-    color: '#FF7F00',
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  titleContainer: {
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  subTitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 5,
-  },
-  mainTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#FF7F00',
-  },
-  formContainer: {
-    width: '100%',
-    marginBottom: 30,
-  },
-  input: {
-    width: '100%',
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#DDD',
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    fontSize: 15,
-    backgroundColor: '#FAFAFA',
-    marginBottom: 12,
-    color: '#000',
-  },
-  loginButton: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#FF7F00',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  loginButtonText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  linkRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 15,
-  },
-  linkText: {
-    color: '#666',
-    fontSize: 13,
-  },
-  barText: {
-    color: '#DDD',
-    marginHorizontal: 10,
-  },
-  socialContainer: {
-    alignItems: 'center',
-  },
-  socialTitle: {
-    fontSize: 13,
-    color: '#888',
-    marginBottom: 12,
-  },
-  socialIconRow: {
-    flexDirection: 'row',
-    gap: 15,
-  },
-  socialCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-});
