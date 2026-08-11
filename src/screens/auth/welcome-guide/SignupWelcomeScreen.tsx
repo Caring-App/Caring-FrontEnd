@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import { SignupWelcomeStep, WelcomeStep } from '@features/auth/ui/SignupWelcomeStep';
 
-export const SignupWelcomeScreen = ({ route, navigation }: { route?: any; navigation: any }) => {
+export const SignupWelcomeScreen = ({ route }: { route?: any }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // 가입 시 넘겨받은 유저 이름 (없을 경우 기본값 지정)
@@ -28,18 +28,18 @@ export const SignupWelcomeScreen = ({ route, navigation }: { route?: any; naviga
     },
   ];
 
+  const handleComplete = () => {
+    // 온보딩 종료 → 보호자 홈으로 진입 (세션 전환 시 RootNavigator가 GuardianStackNavigator로 자동 전환)
+    // TODO: 사용가이드(안내 다음 단계)는 별도 작업 중 — 완료 시 해당 화면으로 이동하도록 교체 필요
+    useSessionStore.getState().login('PROTECTOR');
+  };
+
   const handleNext = () => {
     if (currentIndex < steps.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      // TODO: 사용가이드(안내 다음 단계)는 별도 작업 중 — 완료 시 해당 화면으로 이동하도록 교체 필요
-      navigation.goBack();
+      handleComplete();
     }
-  };
-
-  const handleClose = () => {
-    // 온보딩 종료 → 보호자 홈으로 진입 (세션 전환 시 RootNavigator가 GuardianStackNavigator로 자동 전환)
-    useSessionStore.getState().login('PROTECTOR');
   };
 
   return (
@@ -47,7 +47,7 @@ export const SignupWelcomeScreen = ({ route, navigation }: { route?: any; naviga
       userName={userName}
       currentStep={steps[currentIndex]}
       onNext={handleNext}
-      onClose={handleClose}
+      onClose={handleComplete}
     />
   );
 };
