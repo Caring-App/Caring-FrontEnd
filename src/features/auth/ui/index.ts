@@ -1,4 +1,5 @@
 export { CaringDogImage } from './CaringDogImage';
+export { CodeInputField } from './CodeInputField';
 export { FormField, FORM_INPUT_CLASSNAME, FORM_INPUT_PLACEHOLDER_COLOR } from './FormField';
 export { SignupCommonFields } from './SignupCommonFields';
 export { CheckIcon } from './CheckIcon';

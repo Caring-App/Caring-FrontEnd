@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
 import { CaringDogImage } from './CaringDogImage';
+import { CodeInputField } from './CodeInputField';
 import { RssIcon } from './RssIcon';
 import CloseIcon from '@assets/icons/action/close-x.svg';
 
@@ -67,24 +68,7 @@ export const SignupWelcomeStep = ({ userName = '---', currentStep, onNext, onClo
               </Text>
 
               {/* 연동 코드 입력란 (안쪽 테두리 박스) */}
-              <View className="rounded-card border border-border p-4">
-                <View className="relative flex-row items-center justify-center">
-                  <Text className="font-pretendard-semibold text-lg text-text-body">연동 코드</Text>
-                  <TouchableOpacity
-                    className="absolute right-0 rounded-lg bg-primary px-3 py-1.5"
-                    onPress={handleCopyCode}
-                    activeOpacity={0.8}
-                  >
-                    <Text className="font-pretendard-semibold text-sm text-white">복사</Text>
-                  </TouchableOpacity>
-                </View>
-                <TextInput
-                  className="mt-2 h-[44px] rounded-md border border-border-input px-4 text-center font-pretendard-semibold text-lg text-text-body"
-                  style={{ letterSpacing: 1 }}
-                  value={userCode}
-                  editable={false}
-                />
-              </View>
+              <CodeInputField value={userCode} editable={false} buttonLabel="복사" onButtonPress={handleCopyCode} />
             </View>
 
             {!!currentStep.description && (

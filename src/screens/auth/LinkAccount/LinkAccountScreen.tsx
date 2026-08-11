@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useLinkAccount } from '@features/auth/model';
-import { RssIcon } from '@features/auth/ui';
+import { CodeInputField, RssIcon } from '@features/auth/ui';
 import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
 
 export default function LinkAccountScreen({ navigation }: { navigation: any }) {
@@ -39,27 +39,14 @@ export default function LinkAccountScreen({ navigation }: { navigation: any }) {
           </Text>
 
           {/* 연동 코드 입력란 (안쪽 테두리 박스) */}
-          <View className="rounded-card border border-border p-4">
-            <View className="relative flex-row items-center justify-center">
-              <Text className="font-pretendard-semibold text-lg text-text-body">연동 코드</Text>
-              <TouchableOpacity
-                className="absolute right-0 rounded-lg bg-primary px-3 py-1.5"
-                onPress={handlePaste}
-                activeOpacity={0.8}
-              >
-                <Text className="font-pretendard-semibold text-sm text-white">붙여넣기</Text>
-              </TouchableOpacity>
-            </View>
-            <TextInput
-              className="mt-2 h-[44px] rounded-md border border-border-input px-4 text-center font-pretendard-semibold text-lg text-text-body"
-              style={{ letterSpacing: 1 }}
-              value={code}
-              onChangeText={setCode}
-              placeholder="연동 코드를 입력하세요"
-              placeholderTextColor="#6C757D"
-              autoCapitalize="characters"
-            />
-          </View>
+          <CodeInputField
+            value={code}
+            onChangeText={setCode}
+            buttonLabel="붙여넣기"
+            onButtonPress={handlePaste}
+            placeholder="연동 코드를 입력하세요"
+            autoCapitalize="characters"
+          />
         </View>
 
         <Text className="mt-10 text-center font-pretendard-bold text-lg text-text-primary">
