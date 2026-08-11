@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SafeAreaView, View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
-import { useSessionStore } from '../../../shared/store/useSessionStore';
+import { useSessionStore } from '@shared/store/useSessionStore';
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
   const [id, setId] = useState('');
@@ -12,12 +12,12 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
 
   // [DEV] 보호자 진입 핸들러
   const handleDevProtector = () => {
-    useSessionStore.setState({ isLoggedIn: true, role: 'PROTECTOR' });
+    useSessionStore.getState().login('PROTECTOR');
   };
 
   // [DEV] 어르신 진입 핸들러
   const handleDevSenior = () => {
-    useSessionStore.setState({ isLoggedIn: true, role: 'WARD' });
+    useSessionStore.getState().login('WARD');
   };
 
   return (
@@ -25,22 +25,24 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
       <ScrollView contentContainerStyle={loginStyles.scrollContainer} showsVerticalScrollIndicator={false}>
         
         {/* 상단 [DEV] 버튼 영역 */}
-        <View style={loginStyles.devButtonContainer}>
-          <TouchableOpacity 
-            style={loginStyles.devButton} 
-            activeOpacity={0.8}
-            onPress={handleDevProtector}
-          >
-            <Text style={loginStyles.devButtonText}>[DEV] 보호자로 바로 진입</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={loginStyles.devButton} 
-            activeOpacity={0.8}
-            onPress={handleDevSenior}
-          >
-            <Text style={loginStyles.devButtonText}>[DEV] 어르신으로 바로 진입</Text>
-          </TouchableOpacity>
-        </View>
+        {__DEV__ && (
+          <View style={loginStyles.devButtonContainer}>
+            <TouchableOpacity
+              style={loginStyles.devButton}
+              activeOpacity={0.8}
+              onPress={handleDevProtector}
+            >
+              <Text style={loginStyles.devButtonText}>[DEV] 보호자로 바로 진입</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={loginStyles.devButton}
+              activeOpacity={0.8}
+              onPress={handleDevSenior}
+            >
+              <Text style={loginStyles.devButtonText}>[DEV] 어르신으로 바로 진입</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         {/* 타이틀 영역 */}
         <View style={loginStyles.titleContainer}>
