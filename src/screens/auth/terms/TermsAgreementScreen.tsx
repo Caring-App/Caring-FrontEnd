@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTermsAgreement, TERM_LIST } from '@features/auth/model';
-import LogoIcon from '@assets/icons/header/caring_logo.svg';
+import { CaringLogo } from '@features/auth/ui';
+import ChevronRight from '@assets/icons/report/chevron-right.svg';
 
 export default function TermsAgreementScreen({ navigation }: any) {
   const { checkedItems, isAllChecked, isRequiredChecked, handleCheckItem, handleCheckAll } = useTermsAgreement();
@@ -12,187 +14,102 @@ export default function TermsAgreementScreen({ navigation }: any) {
     }
   };
 
+  const requiredTerms = TERM_LIST.filter(term => term.required);
+  const optionalTerms = TERM_LIST.filter(term => !term.required);
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-      <ScrollView contentContainerStyle={styles.container}>
-        
-        {/* 상단 헤더 (로고 왼쪽, 타이틀 가운데 정렬 구조) */}
-        <View style={styles.headerContainer}>
-          <View style={styles.logoContainer}>
-            <LogoIcon width={40} height={40} />
-          </View>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>약관 동의</Text>
-          </View>
+    <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}>
+        {/* 상단 헤더 */}
+        <View className="flex-row items-center gap-3 py-4">
+          <CaringLogo width={44} height={44} />
+          <Text className="font-pretendard-bold text-2xl text-text-primary">약관 동의</Text>
         </View>
 
-        <Text style={styles.subtitle}>서비스 이용을 위해 약관에 동의해 주세요.</Text>
+        <Text className="mt-2 font-pretendard-medium text-base text-text-termsLabel">
+          서비스 이용을 위해 약관에 동의해 주세요
+        </Text>
 
-        {/* 전체 동의 박스 */}
-        <TouchableOpacity style={styles.allAgreeBox} onPress={handleCheckAll} activeOpacity={0.8}>
-          <View style={[styles.checkbox, isAllChecked && styles.checkedBox]}>
-            {isAllChecked && <Text style={styles.checkmark}>✓</Text>}
+        {/* 전체 동의 */}
+        <TouchableOpacity
+          className="mt-6 flex-row items-center gap-3 rounded-card bg-surface-termsRow px-4 py-4"
+          onPress={handleCheckAll}
+          activeOpacity={0.8}
+        >
+          <View
+            className={`h-6 w-6 items-center justify-center rounded-lg border-[1.6px] ${
+              isAllChecked ? 'border-primary' : 'border-border-checkbox'
+            } bg-surface`}
+          >
+            {isAllChecked && <Text className="font-pretendard-bold text-sm text-text-primary">✓</Text>}
           </View>
-          <Text style={styles.allAgreeText}>전체 동의</Text>
+          <Text className="font-pretendard-semibold text-lg text-text-primary">전체 동의</Text>
         </TouchableOpacity>
 
-        {/* 필수 약관 타이틀 */}
-        <Text style={styles.sectionHeader}>필수 약관</Text>
+        {/* 필수 약관 */}
+        <Text className="mb-3 mt-6 font-pretendard-medium text-base text-text-termsLabel">필수 약관</Text>
+        <View className="gap-4">
+          {requiredTerms.map(term => (
+            <TouchableOpacity
+              key={term.id}
+              className="flex-row items-center justify-between"
+              onPress={() => handleCheckItem(term.id)}
+              activeOpacity={0.7}
+            >
+              <View className="flex-row items-center gap-3">
+                <View
+                  className={`h-5 w-5 items-center justify-center rounded border-[1.6px] ${
+                    checkedItems[term.id] ? 'border-primary' : 'border-border-checkbox'
+                  } bg-surface`}
+                >
+                  {checkedItems[term.id] && <Text className="text-[11px] text-text-primary">✓</Text>}
+                </View>
+                <Text className="font-pretendard-medium text-base text-text-primary">
+                  {term.title} <Text className="text-text-termsRequired">(필수)</Text>
+                </Text>
+              </View>
+              <ChevronRight width={16} height={16} />
+            </TouchableOpacity>
+          ))}
+        </View>
 
-        {/* 필수 약관 목록 */}
-        {TERM_LIST.filter(term => term.required).map(term => (
-          <TouchableOpacity
-            key={term.id}
-            style={styles.termItem}
-            onPress={() => handleCheckItem(term.id)}
-            activeOpacity={0.8}
-          >
-            <View style={[styles.checkbox, checkedItems[term.id] && styles.checkedBox]}>
-              {checkedItems[term.id] && <Text style={styles.checkmark}>✓</Text>}
-            </View>
-            <Text style={styles.termText}>
-              {term.title} <Text style={styles.requiredText}>(필수)</Text>
-            </Text>
-          </TouchableOpacity>
-        ))}
-
-        {/* 선택 약관 타이틀 */}
-        <Text style={styles.sectionHeader}>선택 약관</Text>
-
-        {/* 선택 약관 목록 */}
-        {TERM_LIST.filter(term => !term.required).map(term => (
-          <TouchableOpacity
-            key={term.id}
-            style={styles.termItem}
-            onPress={() => handleCheckItem(term.id)}
-            activeOpacity={0.8}
-          >
-            <View style={[styles.checkbox, checkedItems[term.id] && styles.checkedBox]}>
-              {checkedItems[term.id] && <Text style={styles.checkmark}>✓</Text>}
-            </View>
-            <Text style={styles.termText}>{term.title}</Text>
-          </TouchableOpacity>
-        ))}
+        {/* 선택 약관 */}
+        <Text className="mb-3 mt-6 font-pretendard-medium text-base text-text-termsLabel">선택 약관</Text>
+        <View className="gap-4">
+          {optionalTerms.map(term => (
+            <TouchableOpacity
+              key={term.id}
+              className="flex-row items-center justify-between"
+              onPress={() => handleCheckItem(term.id)}
+              activeOpacity={0.7}
+            >
+              <View className="flex-row items-center gap-3">
+                <View
+                  className={`h-5 w-5 items-center justify-center rounded border-[1.6px] ${
+                    checkedItems[term.id] ? 'border-primary' : 'border-border-checkbox'
+                  } bg-surface`}
+                >
+                  {checkedItems[term.id] && <Text className="text-[11px] text-text-primary">✓</Text>}
+                </View>
+                <Text className="font-pretendard-medium text-base text-text-primary">{term.title}</Text>
+              </View>
+              <ChevronRight width={16} height={16} />
+            </TouchableOpacity>
+          ))}
+        </View>
 
         {/* 다음 버튼 */}
         <TouchableOpacity
-          style={[styles.nextButton, !isRequiredChecked && styles.disabledButton]}
+          className={`mt-10 h-[52px] items-center justify-center rounded-card ${
+            isRequiredChecked ? 'bg-primary' : 'bg-border-link'
+          }`}
           onPress={handleNextPress}
           disabled={!isRequiredChecked}
           activeOpacity={0.8}
         >
-          <Text style={styles.nextButtonText}>다음</Text>
+          <Text className="font-pretendard-semibold text-lg text-white">다음</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 24,
-    paddingTop: 60,
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    marginBottom: 20,
-    position: 'relative',
-    height: 48,
-  },
-  titleContainer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-    zIndex: 1,
-  },
-  logoContainer: {
-    justifyContent: 'center',
-    zIndex: 2,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#000000',
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 24,
-  },
-  allAgreeBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F6F8',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 24,
-  },
-  allAgreeText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginLeft: 12,
-  },
-  sectionHeader: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#666666',
-    marginTop: 16,
-    marginBottom: 8,
-    paddingHorizontal: 4,
-  },
-  termItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-  },
-  termText: {
-    fontSize: 15,
-    color: '#333333',
-    marginLeft: 12,
-  },
-  requiredText: {
-    color: '#FF7E00',
-  },
-  checkbox: {
-    width: 22,
-    height: 22,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkedBox: {
-    borderColor: '#FF7E00',
-    backgroundColor: '#FFF9F5',
-  },
-  checkmark: {
-    color: '#FF7E00',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  nextButton: {
-    backgroundColor: '#FF7E00',
-    height: 56,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 30,
-  },
-  disabledButton: {
-    backgroundColor: '#DDDDDD',
-  },
-  nextButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-});
