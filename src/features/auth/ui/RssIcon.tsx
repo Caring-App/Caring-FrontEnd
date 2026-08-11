@@ -9,7 +9,7 @@ interface Props {
   style?: any;
 }
 
-export const RssIcon = ({ width = 18, height = 18, color = '#FF7F00', style }: Props) => {
+export const RssIcon = ({ width = 18, height = 18, color = '#FD7E14', style }: Props) => {
   return (
     <Svg width={width} height={height} viewBox="0 0 20 20" fill="none" style={style}>
       <G id="Vector">
