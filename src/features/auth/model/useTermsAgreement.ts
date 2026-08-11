@@ -19,7 +19,9 @@ export const TERM_LIST: TermItem[] = [
 // 돌봄대상자 약관 목록 — 보호자 목록과 동일하나 "음성 데이터 수집 및 이용 동의" 항목만 없음 (Figma 151:12313)
 export const WARD_TERM_LIST: TermItem[] = TERM_LIST.filter((term) => term.id !== 'voice');
 
-export const useTermsAgreement = (termList: TermItem[] = TERM_LIST) => {
+// termList는 호출부가 역할(보호자/돌봄대상자)에 맞는 목록을 명시적으로 넘기도록 필수 파라미터로 둠
+// — 기본값을 두면 실수로 안 넘겼을 때 조용히 보호자 목록이 적용되는 위험이 있음
+export const useTermsAgreement = (termList: TermItem[]) => {
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
 
   const isAllChecked = termList.every((item) => checkedItems[item.id]);
