@@ -1,6 +1,11 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
+// 회원가입 폼 입력창 공용 스타일 (SignupScreen, WardSignupScreen)
+export const FORM_INPUT_CLASSNAME =
+  'rounded-md border border-border-input bg-surface px-3.5 py-2 font-pretendard-light text-lg text-text-body';
+export const FORM_INPUT_PLACEHOLDER_COLOR = '#6C757D';
+
 interface FormFieldProps {
   label: string;
   children: React.ReactNode;

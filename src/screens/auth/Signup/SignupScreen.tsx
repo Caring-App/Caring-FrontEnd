@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-nativ
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import useSignUp from '@features/auth/model/useSignUp';
-import { BirthDatePicker, FormField } from '@features/auth/ui';
+import { BirthDatePicker, FormField, FORM_INPUT_CLASSNAME, FORM_INPUT_PLACEHOLDER_COLOR } from '@features/auth/ui';
 import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
 
 export const SignupScreen = ({ navigation }: { navigation: any }) => {
@@ -21,8 +21,6 @@ export const SignupScreen = ({ navigation }: { navigation: any }) => {
     isFormValid,
   } = useSignUp(navigation);
 
-  const inputClassName = 'rounded-md border border-border-input bg-surface px-3.5 py-2 font-pretendard-light text-lg text-text-body';
-
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
       <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
@@ -37,9 +35,9 @@ export const SignupScreen = ({ navigation }: { navigation: any }) => {
         <View className="mt-4">
           <FormField label="이름">
             <TextInput
-              className={inputClassName}
+              className={FORM_INPUT_CLASSNAME}
               placeholder="이름을 입력해 주세요"
-              placeholderTextColor="#6C757D"
+              placeholderTextColor={FORM_INPUT_PLACEHOLDER_COLOR}
               value={form.name}
               onChangeText={setName}
             />
@@ -57,9 +55,9 @@ export const SignupScreen = ({ navigation }: { navigation: any }) => {
               </TouchableOpacity>
             </View>
             <TextInput
-              className={inputClassName}
+              className={FORM_INPUT_CLASSNAME}
               placeholder="전화번호를 입력해 주세요"
-              placeholderTextColor="#6C757D"
+              placeholderTextColor={FORM_INPUT_PLACEHOLDER_COLOR}
               keyboardType="number-pad"
               value={form.phone}
               onChangeText={setPhone}
@@ -68,9 +66,9 @@ export const SignupScreen = ({ navigation }: { navigation: any }) => {
 
           <FormField label="인증번호 입력">
             <TextInput
-              className={inputClassName}
+              className={FORM_INPUT_CLASSNAME}
               placeholder="인증번호를 입력해 주세요"
-              placeholderTextColor="#6C757D"
+              placeholderTextColor={FORM_INPUT_PLACEHOLDER_COLOR}
               keyboardType="number-pad"
               value={form.authCode}
               onChangeText={setAuthCode}
@@ -79,9 +77,9 @@ export const SignupScreen = ({ navigation }: { navigation: any }) => {
 
           <FormField label="비밀번호">
             <TextInput
-              className={inputClassName}
+              className={FORM_INPUT_CLASSNAME}
               placeholder="비밀번호를 입력해 주세요"
-              placeholderTextColor="#6C757D"
+              placeholderTextColor={FORM_INPUT_PLACEHOLDER_COLOR}
               secureTextEntry
               value={form.password}
               onChangeText={setPassword}
@@ -90,9 +88,9 @@ export const SignupScreen = ({ navigation }: { navigation: any }) => {
 
           <FormField label="비밀번호 확인">
             <TextInput
-              className={inputClassName}
+              className={FORM_INPUT_CLASSNAME}
               placeholder="비밀번호를 다시 입력해 주세요"
-              placeholderTextColor="#6C757D"
+              placeholderTextColor={FORM_INPUT_PLACEHOLDER_COLOR}
               secureTextEntry
               value={form.passwordConfirm}
               onChangeText={setPasswordConfirm}
@@ -108,9 +106,9 @@ export const SignupScreen = ({ navigation }: { navigation: any }) => {
 
           <FormField label="주소">
             <TextInput
-              className={inputClassName}
+              className={FORM_INPUT_CLASSNAME}
               placeholder="주소를 입력해 주세요"
-              placeholderTextColor="#6C757D"
+              placeholderTextColor={FORM_INPUT_PLACEHOLDER_COLOR}
               value={form.address}
               onChangeText={setAddress}
             />
