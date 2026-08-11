@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { CaringLogo } from './CaringLogo';
-import { CaringDogIcon } from './CaringDogIcon';
+import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
+import { CaringDogImage } from './CaringDogImage';
 import { RssIcon } from './RssIcon';
 
 interface Props {
@@ -37,7 +37,7 @@ export const SignupWelcomeStep = ({ userName = '---', currentStep, onNext }: Pro
         {step.type === 'character' && (
           <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 200 }}>
             <View style={styles.characterContainer}>
-              <CaringDogIcon width={600} height={600} />
+              <CaringDogImage size={260} />
             </View>
             {step.title && (
               <View style={[styles.textContainer, { marginTop: -80 }]}>

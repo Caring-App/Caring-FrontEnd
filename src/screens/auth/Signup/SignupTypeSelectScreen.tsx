@@ -4,7 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
 import { useSignupTypeSelect } from '@features/auth/model';
-import { CaringLogo, CaringDogIcon } from '@features/auth/ui';
+import { CaringDogImage } from '@features/auth/ui';
+import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
 
 export const SignupTypeSelectScreen = () => {
   const navigation = useNavigation();
@@ -13,15 +14,15 @@ export const SignupTypeSelectScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-surface">
       {/* 상단 케어링 로고 */}
-      <View className="pl-6 pt-2">
-        <CaringLogo width={50} height={50} />
+      <View className="px-6 py-4">
+        <CaringLogo size={44} />
       </View>
 
       {/* 중앙 컨텐츠 영역 */}
-      <View className="flex-1 items-center justify-center px-6">
-        <CaringDogIcon width={220} height={220} />
+      <View className="flex-1 items-center px-6">
+        <CaringDogImage size={300} />
 
-        <Text className="mt-6 text-center font-pretendard-bold text-[32px] text-text-strong">안녕하세요!</Text>
+        <Text className="mt-2 text-center font-pretendard-bold text-[32px] text-text-strong">안녕하세요!</Text>
         <Text className="text-center font-pretendard-bold text-[32px] text-text-strong">어떤 서비스를 이용하시나요?</Text>
 
         {/* 역할 선택 버튼 */}
