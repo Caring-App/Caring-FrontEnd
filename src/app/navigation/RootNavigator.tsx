@@ -6,8 +6,11 @@ import LoginScreen from '@screens/auth/Login/LoginScreen';
 import { SignupTypeSelectScreen } from '@screens/auth/Signup/SignupTypeSelectScreen';
 import TermsAgreementScreen from '@screens/auth/terms/TermsAgreementScreen';
 import SignupScreen from '@screens/auth/Signup/SignupScreen';
+import WardSignupScreen from '@screens/auth/Signup/WardSignupScreen';
 import { SignupWelcomeScreen } from '@screens/auth/welcome-guide/SignupWelcomeScreen';
+import { WardSignupWelcomeScreen } from '@screens/auth/welcome-guide/WardSignupWelcomeScreen';
 import LinkAccountScreen from '@screens/auth/LinkAccount/LinkAccountScreen';
+import { LinkAccountCompleteScreen } from '@screens/auth/LinkAccount/LinkAccountCompleteScreen';
 import { GuardianStackNavigator } from './GuardianStackNavigator';
 import { SeniorHomeScreen } from '@screens/senior/Home/SeniorHomeScreen';
 import { SeniorScheduleScreen } from '@screens/senior/Schedule/SeniorScheduleScreen';
@@ -41,7 +44,10 @@ export const RootNavigator = () => {
       <Stack.Screen name="TermsAgreement" component={TermsAgreementScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
       <Stack.Screen name="SignupWelcome" component={SignupWelcomeScreen} />
+      <Stack.Screen name="WardSignup" component={WardSignupScreen} />
+      <Stack.Screen name="WardSignupWelcome" component={WardSignupWelcomeScreen} />
       <Stack.Screen name="LinkAccount" component={LinkAccountScreen} />
+      <Stack.Screen name="LinkAccountComplete" component={LinkAccountCompleteScreen} />
     </Stack.Navigator>
   );
 };
