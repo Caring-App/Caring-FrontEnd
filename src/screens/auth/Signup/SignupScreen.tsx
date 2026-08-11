@@ -3,17 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-nativ
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import useSignUp from '@features/auth/model/useSignUp';
-import { BirthDatePicker } from '@features/auth/ui';
+import { BirthDatePicker, FormField } from '@features/auth/ui';
 import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
-
-function FormField({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <View className="mb-4">
-      <Text className="mb-2 font-pretendard-semibold text-lg text-text-body">{label}</Text>
-      {children}
-    </View>
-  );
-}
 
 export const SignupScreen = ({ navigation }: { navigation: any }) => {
   const {
