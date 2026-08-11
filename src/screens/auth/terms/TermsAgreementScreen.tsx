@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTermsAgreement, TERM_LIST } from '@features/auth/model';
+import { useTermsAgreement, TERM_LIST, WARD_TERM_LIST } from '@features/auth/model';
 import { CheckIcon } from '@features/auth/ui';
 import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
 import ChevronRight from '@assets/icons/report/chevron-right.svg';
@@ -18,17 +18,19 @@ function TermCheckbox({ checked }: { checked: boolean }) {
   );
 }
 
-export default function TermsAgreementScreen({ navigation }: any) {
-  const { checkedItems, isAllChecked, isRequiredChecked, handleCheckItem, handleCheckAll } = useTermsAgreement();
+export default function TermsAgreementScreen({ navigation, route }: any) {
+  const role = route?.params?.role;
+  const termList = role === 'WARD' ? WARD_TERM_LIST : TERM_LIST;
+  const { checkedItems, isAllChecked, isRequiredChecked, handleCheckItem, handleCheckAll } = useTermsAgreement(termList);
 
   const handleNextPress = () => {
     if (isRequiredChecked) {
-      navigation.navigate('Signup');
+      navigation.navigate(role === 'WARD' ? 'WardSignup' : 'Signup');
     }
   };
 
-  const requiredTerms = TERM_LIST.filter(term => term.required);
-  const optionalTerms = TERM_LIST.filter(term => !term.required);
+  const requiredTerms = termList.filter(term => term.required);
+  const optionalTerms = termList.filter(term => !term.required);
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>

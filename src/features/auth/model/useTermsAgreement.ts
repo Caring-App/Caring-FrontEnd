@@ -16,11 +16,14 @@ export const TERM_LIST: TermItem[] = [
   { id: 'voice', title: '음성 데이터 수집 및 이용 동의', required: false },
 ];
 
-export const useTermsAgreement = () => {
+// 돌봄대상자 약관 목록 — 보호자 목록과 동일하나 "음성 데이터 수집 및 이용 동의" 항목만 없음 (Figma 151:12313)
+export const WARD_TERM_LIST: TermItem[] = TERM_LIST.filter((term) => term.id !== 'voice');
+
+export const useTermsAgreement = (termList: TermItem[] = TERM_LIST) => {
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
 
-  const isAllChecked = TERM_LIST.every((item) => checkedItems[item.id]);
-  const isRequiredChecked = TERM_LIST
+  const isAllChecked = termList.every((item) => checkedItems[item.id]);
+  const isRequiredChecked = termList
     .filter((item) => item.required)
     .every((item) => checkedItems[item.id]);
 
@@ -34,7 +37,7 @@ export const useTermsAgreement = () => {
   const handleCheckAll = () => {
     const nextValue = !isAllChecked;
     const newCheckedItems: { [key: string]: boolean } = {};
-    TERM_LIST.forEach((item) => {
+    termList.forEach((item) => {
       newCheckedItems[item.id] = nextValue;
     });
     setCheckedItems(newCheckedItems);
