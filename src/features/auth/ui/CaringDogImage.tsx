@@ -7,5 +7,6 @@ interface CaringDogImageProps {
 }
 
 export function CaringDogImage({ size = 240 }: CaringDogImageProps) {
-  return <Image source={caringDog} resizeMode="contain" style={{ width: size, height: size }} />;
+  // 캐릭터가 오른쪽으로 손을 든 포즈라 시각적 무게중심이 왼쪽에 쏠려 보여, 살짝 오른쪽으로 보정
+  return <Image source={caringDog} resizeMode="contain" style={{ width: size, height: size, marginLeft: 8 }} />;
 }
