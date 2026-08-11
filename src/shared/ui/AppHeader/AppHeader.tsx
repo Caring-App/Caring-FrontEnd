@@ -11,8 +11,8 @@ interface AppHeaderProps {
 
 export function AppHeader({ onPressBell, onPressMenu }: AppHeaderProps) {
   return (
-    <View className="h-16 flex-row items-center justify-between bg-surface px-4">
-      <CaringLogo size={40} />
+    <View className="flex-row items-center justify-between bg-surface px-6 py-4">
+      <CaringLogo size={44} />
       <View className="flex-row items-center gap-4">
         <Pressable onPress={onPressBell} hitSlop={8}>
           <BellIcon width={26} height={26} />
