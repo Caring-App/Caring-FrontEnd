@@ -7,7 +7,7 @@ import { FormLabel, SoundSettingsCard, TimeTriggerInput, WheelTimePicker, format
 // FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, 사용가이드가 이 모달 내부(카드 전체 /
 // 시간 섹션)를 직접 하이라이트해야 해서 guardian-tour를 의도적으로 참조함(순환참조 없음).
 // 화면 계층으로 끌어올리는 대안도 검토했으나 ref/콜백 prop-drilling이 늘어나 오히려 가독성이 떨어져 보류.
-import { useHostModalTourStep, useTourStore } from '@features/guardian-tour/model';
+import { useHostModalTourStep, useTourScrollTracking, useTourStore } from '@features/guardian-tour/model';
 import { TourOverlayContent } from '@features/guardian-tour/ui';
 import { LOCATION_OPTIONS, useScheduleRegistrationForm } from '../model/useScheduleRegistrationForm';
 import { ScheduleEntry } from '../model/scheduleRegistrationTypes';
@@ -30,14 +30,13 @@ export function ScheduleRegistrationModal({
 }: ScheduleRegistrationModalProps) {
   const cardRef = useRef<View>(null);
   const timeSectionRef = useRef<View>(null);
-  const formScrollRef = useRef<ScrollView>(null);
+  const tourScroll = useTourScrollTracking('scheduleRegisterModal');
 
   // 사용가이드가 등록 모달을 열자마자(같은 마운트에서) 바로 위치를 재려고 하므로, 대상 ref 등록이
   // useTourSpotlight의 effect보다 먼저 실행되어야 함 — 그래서 이 effect를 반드시 먼저 선언함
   useEffect(() => {
     useTourStore.getState().registerTargetRef('schedule.registerModal', cardRef);
     useTourStore.getState().registerTargetRef('schedule.registerModal.timeSection', timeSectionRef);
-    useTourStore.getState().registerScrollRef('scheduleRegisterModal', formScrollRef);
   }, []);
 
   // 사용가이드가 "일정 등록" 단계에 도달하면 이 모달을 스스로 열어서 보여줌
@@ -65,14 +64,7 @@ export function ScheduleRegistrationModal({
             </Pressable>
           </View>
 
-          <ScrollView
-            ref={formScrollRef}
-            showsVerticalScrollIndicator={false}
-            scrollEventThrottle={16}
-            onScroll={event =>
-              useTourStore.getState().setScrollOffset('scheduleRegisterModal', event.nativeEvent.contentOffset.y)
-            }
-            onMomentumScrollEnd={() => useTourStore.getState().notifyScrollSettled('scheduleRegisterModal')}>
+          <ScrollView ref={tourScroll.ref} showsVerticalScrollIndicator={false} {...tourScroll.scrollHandlers}>
             <View className="gap-5 rounded-card border border-border px-3.5 pb-3.5 pt-5">
               <View>
                 <FormLabel>일정 이름</FormLabel>

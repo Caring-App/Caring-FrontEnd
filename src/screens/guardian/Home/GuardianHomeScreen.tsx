@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Dimensions, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -12,7 +12,7 @@ import { LocationSection } from '@features/location/ui';
 import { ScheduleSection } from '@features/schedule/ui';
 import { WelfareSection } from '@features/welfare-facility/ui';
 import { MOCK_WARDS, useSelectedWardStore } from '@features/ward-management/model';
-import { TOUR_STEPS, useTourStore } from '@features/guardian-tour/model';
+import { TOUR_STEPS, useTourScrollTracking, useTourStore } from '@features/guardian-tour/model';
 import { TourOverlay, TourTarget } from '@features/guardian-tour/ui';
 
 type GuardianStackNavigationProp = NativeStackNavigationProp<GuardianStackParamList>;
@@ -26,7 +26,7 @@ export function GuardianHomeScreen() {
   const stackNavigation = navigation.getParent<GuardianStackNavigationProp>();
   const selectedWardId = useSelectedWardStore(state => state.selectedWardId);
   const ward = MOCK_WARDS.find(item => item.id === selectedWardId) ?? MOCK_WARDS[0];
-  const scrollViewRef = useRef<ScrollView>(null);
+  const tourScroll = useTourScrollTracking('home');
 
   const isTourActive = useTourStore(state => state.isActive);
   const tourStepIndex = useTourStore(state => state.currentStepIndex);
@@ -42,10 +42,6 @@ export function GuardianHomeScreen() {
       }
     }, []),
   );
-
-  useEffect(() => {
-    useTourStore.getState().registerScrollRef('home', scrollViewRef);
-  }, []);
 
   // 사용가이드가 "복약 등록" 단계에 도달하면 복약 관리 화면으로 자동 이동함(그 화면의 등록 모달을 열어서 보여줘야 하므로)
   useEffect(() => {
@@ -68,16 +64,14 @@ export function GuardianHomeScreen() {
         onPressMenu={() => useGuardianMenuStore.getState().open()}
       />
       <ScrollView
-        ref={scrollViewRef}
+        ref={tourScroll.ref}
         className="flex-1 px-4"
         contentContainerClassName="pb-8"
         // 사용가이드 중엔 하단 안내 카드가 화면 상당 부분을 가려서, 맨 아래쪽 섹션들은 기본 여백만으론
         // 카드 위로 끌어올릴 스크롤 여유가 부족함 — 화면 높이만큼 여백을 더 얹어 항상 충분하게 함
         contentContainerStyle={isTourActive ? { paddingBottom: Dimensions.get('window').height } : undefined}
         showsVerticalScrollIndicator={false}
-        scrollEventThrottle={16}
-        onScroll={event => useTourStore.getState().setScrollOffset('home', event.nativeEvent.contentOffset.y)}
-        onMomentumScrollEnd={() => useTourStore.getState().notifyScrollSettled('home')}>
+        {...tourScroll.scrollHandlers}>
         <DailyReportCard wardId={ward.id} wardName={ward.name} forceShowDetail={forceShowDetail} />
         <TourTarget id="schedule.section" className="mt-4">
           <ScheduleSection wardId={ward.id} wardName={ward.name} />
