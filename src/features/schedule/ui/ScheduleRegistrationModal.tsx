@@ -28,8 +28,6 @@ export function ScheduleRegistrationModal({
   editingSchedule,
   onClose,
 }: ScheduleRegistrationModalProps) {
-  const { state, actions } = useScheduleRegistrationForm(wardId, visible, editingSchedule, onClose);
-
   const cardRef = useRef<View>(null);
   const timeSectionRef = useRef<View>(null);
   const formScrollRef = useRef<ScrollView>(null);
@@ -46,6 +44,9 @@ export function ScheduleRegistrationModal({
   const { isTourStep, tourStep, tourStepIndex, ready, box } = useHostModalTourStep('scheduleRegisterModal');
   // "일정 시간 / 음성 알림 시간" 하이라이트 단계에서는 두 휠 피커를 다 펼쳐서 보여줌
   const isTimeSectionStep = isTourStep && tourStep?.targetId === 'schedule.registerModal.timeSection';
+  // 폼 훅에도 사용가이드가 강제로 연 경우를 같이 알려줘야, 이전에 수동으로 열었다 저장 없이 닫아서
+  // 남아있던 값이 아니라 항상 깨끗한 상태로 초기화됨(훅 내부는 visible이 켜질 때만 리셋함)
+  const { state, actions } = useScheduleRegistrationForm(wardId, visible || isTourStep, editingSchedule, onClose);
 
   return (
     <Modal visible={visible || isTourStep} transparent animationType="fade" onRequestClose={onClose}>
