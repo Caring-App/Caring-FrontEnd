@@ -11,14 +11,19 @@ const SPOTLIGHT_RADIUS = 12;
 interface TourOverlayContentProps {
   step: TourStep;
   currentStepIndex: number;
+  // 하이라이트 박스까지 화면에 그릴 준비가 됐는지(측정 성공 + 유효한 위치)
   showSpotlight: boolean;
+  // 위치 측정 시도 자체가 끝났는지(성공/실패 무관) — "다음" 버튼은 이 값으로만 막음.
+  // showSpotlight로 막으면 측정이 끝내 실패했을 때 하이라이트도 안 뜨고 버튼도 영원히 안 풀리는
+  // 상황이 생길 수 있어서, 최소한 측정 시도가 끝났으면 다음으로 넘어갈 수 있게 함
+  ready: boolean;
   box: TourTargetLayout | undefined;
 }
 
 // 딤 처리 + 하이라이트 + 하단 안내 카드로 구성된 사용가이드 오버레이 UI.
 // 화면(TourOverlay)에서는 자기 자신의 Modal 안에, 등록 모달(일정/복약 등록)에서는 그 모달의
 // Modal 안에 그대로 얹어서 쓸 수 있도록 Modal 없이 순수 UI만 담당함
-export function TourOverlayContent({ step, currentStepIndex, showSpotlight, box }: TourOverlayContentProps) {
+export function TourOverlayContent({ step, currentStepIndex, showSpotlight, ready, box }: TourOverlayContentProps) {
   const handleNext = () => useTourStore.getState().next(TOUR_STEPS.length);
   const handleClose = () => useTourStore.getState().close();
 
@@ -91,11 +96,12 @@ export function TourOverlayContent({ step, currentStepIndex, showSpotlight, box 
         <Text style={styles.cardDescription}>{step.description}</Text>
 
         {/* 하이라이트 위치 측정이 끝나기 전에 연타하면 다음 스텝이 이전 스텝의 스크롤/측정 상태와
-            겹쳐서 하이라이트가 어긋나 보일 수 있어, 측정이 끝나기 전엔 버튼을 눌러도 무시함 */}
+            겹쳐서 하이라이트가 어긋나 보일 수 있어, 측정 시도가 끝나기 전엔 버튼을 눌러도 무시함
+            (showSpotlight가 아니라 ready로 막는 이유는 위 props 설명 참고) */}
         <TouchableOpacity
-          style={[styles.nextButton, !showSpotlight && styles.nextButtonDisabled]}
+          style={[styles.nextButton, !ready && styles.nextButtonDisabled]}
           onPress={handleNext}
-          disabled={!showSpotlight}
+          disabled={!ready}
           activeOpacity={0.8}>
           <Text style={styles.nextButtonText}>다음</Text>
         </TouchableOpacity>

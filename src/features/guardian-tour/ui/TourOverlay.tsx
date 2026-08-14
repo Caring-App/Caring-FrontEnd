@@ -33,7 +33,13 @@ export function TourOverlay({ screen }: TourOverlayProps) {
     // 하이라이트 좌표는 일반 화면 트리에서 measureInWindow로 잰 값(상태바 아래 창 기준)이라 상태바 높이만큼
     // 어긋난다. 두 좌표계를 일치시키기 위해 statusBarTranslucent를 빼서 모달도 같은 창 기준으로 그리게 함.
     <Modal visible transparent animationType="fade" onRequestClose={handleClose}>
-      <TourOverlayContent step={step} currentStepIndex={currentStepIndex} showSpotlight={ready && !!box} box={box} />
+      <TourOverlayContent
+        step={step}
+        currentStepIndex={currentStepIndex}
+        showSpotlight={ready && !!box}
+        ready={ready}
+        box={box}
+      />
     </Modal>
   );
 }

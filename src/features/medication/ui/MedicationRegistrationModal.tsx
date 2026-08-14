@@ -219,6 +219,7 @@ export function MedicationRegistrationModal({
           step={tourStep}
           currentStepIndex={tourStepIndex}
           showSpotlight={ready && !!box}
+          ready={ready}
           box={box}
         />
       )}
