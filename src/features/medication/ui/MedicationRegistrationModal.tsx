@@ -38,7 +38,6 @@ export function MedicationRegistrationModal({
   editingMedication,
   onClose,
 }: MedicationRegistrationModalProps) {
-  const { state, actions } = useMedicationRegistrationForm(wardId, visible, editingMedication, onClose);
   const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
 
   const cardRef = useRef<View>(null);
@@ -52,6 +51,9 @@ export function MedicationRegistrationModal({
 
   // 사용가이드가 "복약 등록" 단계에 도달하면 이 모달을 스스로 열어서 보여줌
   const { isTourStep, tourStep, tourStepIndex, ready, box } = useHostModalTourStep('medicationRegisterModal');
+  // 폼 훅에도 사용가이드가 강제로 연 경우를 같이 알려줘야, 이전에 수동으로 열었다 저장 없이 닫아서
+  // 남아있던 값이 아니라 항상 깨끗한 상태로 초기화됨(훅 내부는 visible이 켜질 때만 리셋함)
+  const { state, actions } = useMedicationRegistrationForm(wardId, visible || isTourStep, editingMedication, onClose);
 
   const handleDelete = () => {
     if (editingMedication) {
