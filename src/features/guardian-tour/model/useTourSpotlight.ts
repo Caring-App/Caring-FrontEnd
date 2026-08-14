@@ -22,14 +22,18 @@ export function useTourSpotlight(active: boolean) {
   const currentStepIndex = useTourStore(state => state.currentStepIndex);
   const step = TOUR_STEPS[currentStepIndex];
   const box = useTourStore(state => (step ? state.targets[step.targetId] : undefined));
-  const [ready, setReady] = useState(false);
+  // ready를 boolean state로 직접 들고 있으면, 스텝이 바뀐 렌더링과 그걸 감지해서 setReady(false)를
+  // 부르는 effect 사이에 한 프레임(혹은 그 이상) 텀이 생겨서, 그 사이에 "다음"을 또 누르면 이전
+  // 스텝의 ready=true가 아직 안 지워진 채로 새 스텝에 적용돼 하이라이트가 어긋나 보일 수 있었음
+  // (연타 버그가 재발한 원인). readyStepIndex를 currentStepIndex와 비교해서 유도하면, 스텝이 바뀐
+  // 그 즉시(같은 렌더링에서) ready가 false로 떨어져서 이 텀 자체가 없어짐
+  const [readyStepIndex, setReadyStepIndex] = useState<number | null>(null);
+  const ready = readyStepIndex === currentStepIndex;
 
   useEffect(() => {
     if (!active || !isActive || !step) {
       return undefined;
     }
-
-    setReady(false);
 
     let cancelled = false;
     let unsubscribeSettle: (() => void) | null = null;
@@ -56,14 +60,14 @@ export function useTourSpotlight(active: boolean) {
           if (cancelled) return;
           if (width > 0 && height > 0) {
             useTourStore.getState().setTargetLayout(step.targetId, { x, y, width, height });
-            setReady(true);
+            setReadyStepIndex(currentStepIndex);
             return;
           }
           if (attempt < MEASURE_RETRY_LIMIT) {
             requestAnimationFrame(() => measureAndSetReady(attempt + 1));
             return;
           }
-          setReady(true);
+          setReadyStepIndex(currentStepIndex);
         });
       };
 
@@ -132,7 +136,7 @@ export function useTourSpotlight(active: boolean) {
         return;
       }
       // 끝내 등록되지 않음 — 하이라이트는 못 보여줘도 최소한 다음으로는 넘어갈 수 있게 함
-      setReady(true);
+      setReadyStepIndex(currentStepIndex);
     };
 
     findTargetAndStart();
