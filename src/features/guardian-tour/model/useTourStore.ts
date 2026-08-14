@@ -32,6 +32,9 @@ interface TourState {
   next: (totalSteps: number) => void;
   close: () => void;
   registerTargetRef: (id: string, ref: React.RefObject<View | null>) => void;
+  // TourTarget이 언마운트될 때 자기 자신의 등록을 지움. 같은 id로 다른 컴포넌트가 먼저 새로 등록해둔
+  // 상태를 실수로 덮어쓰지 않도록, ref가 여전히 자기 자신일 때만 지움
+  unregisterTargetRef: (id: string, ref: React.RefObject<View | null>) => void;
   registerScrollRef: (id: string, ref: React.RefObject<ScrollView | null>) => void;
   setTargetLayout: (id: string, layout: TourTargetLayout) => void;
   notifyScrollSettled: () => void;
@@ -60,6 +63,15 @@ export const useTourStore = create<TourState>((set, get) => ({
   close: () => set({ isActive: false }),
   registerTargetRef: (id, ref) =>
     set(state => ({ targetRefs: { ...state.targetRefs, [id]: ref } })),
+  unregisterTargetRef: (id, ref) =>
+    set(state => {
+      if (state.targetRefs[id] !== ref) {
+        return state;
+      }
+      const nextTargetRefs = { ...state.targetRefs };
+      delete nextTargetRefs[id];
+      return { targetRefs: nextTargetRefs };
+    }),
   registerScrollRef: (id, ref) =>
     set(state => ({ scrollRefs: { ...state.scrollRefs, [id]: ref } })),
   setTargetLayout: (id, layout) =>

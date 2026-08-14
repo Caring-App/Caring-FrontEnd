@@ -14,6 +14,9 @@ export function TourTarget({ id, children, ...rest }: TourTargetProps) {
 
   useEffect(() => {
     useTourStore.getState().registerTargetRef(id, viewRef);
+    return () => {
+      useTourStore.getState().unregisterTargetRef(id, viewRef);
+    };
   }, [id]);
 
   return (
