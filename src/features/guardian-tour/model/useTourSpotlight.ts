@@ -5,6 +5,7 @@ import { TOUR_STEPS } from './tourSteps';
 
 const SCROLL_TOP_PADDING = 96;
 const SCROLL_SETTLE_FALLBACK_DELAY = 1200;
+const MEASURE_RETRY_LIMIT = 5;
 
 // 사용가이드 하이라이트 대상의 위치를 계산하는 공용 훅.
 // active가 true인 쪽(홈 화면의 TourOverlay, 혹은 등록 모달 자기 자신)만 실제로 스크롤/측정을 수행함.
@@ -44,12 +45,21 @@ export function useTourSpotlight(active: boolean) {
       }
     };
 
-    const measureAndSetReady = () => {
+    // "다음"을 빠르게 연타하면 방금 막 나타난 대상(예: 그래프 섹션)이 아직 레이아웃을 안 끝낸 채로
+    // 측정될 수 있음 — 그럴 땐 measureInWindow가 0x0을 돌려주는데, 이 값을 그대로 믿으면 하이라이트가
+    // 어긋나 보이므로 유효한 값이 나올 때까지 몇 프레임 재시도하고, 그래도 안 되면 포기하고 진행함
+    const measureAndSetReady = (attempt = 0) => {
       if (cancelled) return;
       targetNode.measureInWindow((x: number, y: number, width: number, height: number) => {
         if (cancelled) return;
         if (width > 0 && height > 0) {
           useTourStore.getState().setTargetLayout(step.targetId, { x, y, width, height });
+          setReady(true);
+          return;
+        }
+        if (attempt < MEASURE_RETRY_LIMIT) {
+          requestAnimationFrame(() => measureAndSetReady(attempt + 1));
+          return;
         }
         setReady(true);
       });

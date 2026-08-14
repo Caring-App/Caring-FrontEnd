@@ -90,7 +90,13 @@ export function TourOverlayContent({ step, currentStepIndex, showSpotlight, box 
 
         <Text style={styles.cardDescription}>{step.description}</Text>
 
-        <TouchableOpacity style={styles.nextButton} onPress={handleNext} activeOpacity={0.8}>
+        {/* 하이라이트 위치 측정이 끝나기 전에 연타하면 다음 스텝이 이전 스텝의 스크롤/측정 상태와
+            겹쳐서 하이라이트가 어긋나 보일 수 있어, 측정이 끝나기 전엔 버튼을 눌러도 무시함 */}
+        <TouchableOpacity
+          style={[styles.nextButton, !showSpotlight && styles.nextButtonDisabled]}
+          onPress={handleNext}
+          disabled={!showSpotlight}
+          activeOpacity={0.8}>
           <Text style={styles.nextButtonText}>다음</Text>
         </TouchableOpacity>
 
@@ -155,6 +161,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 12,
     backgroundColor: colors.primary,
+  },
+  nextButtonDisabled: {
+    opacity: 0.5,
   },
   nextButtonText: {
     fontFamily: 'Pretendard-SemiBold',
