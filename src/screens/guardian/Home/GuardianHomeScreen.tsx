@@ -77,7 +77,7 @@ export function GuardianHomeScreen() {
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
         onScroll={event => useTourStore.getState().setScrollOffset('home', event.nativeEvent.contentOffset.y)}
-        onMomentumScrollEnd={() => useTourStore.getState().notifyScrollSettled()}>
+        onMomentumScrollEnd={() => useTourStore.getState().notifyScrollSettled('home')}>
         <DailyReportCard wardId={ward.id} wardName={ward.name} forceShowDetail={forceShowDetail} />
         <TourTarget id="schedule.section" className="mt-4">
           <ScheduleSection wardId={ward.id} wardName={ward.name} />

@@ -81,9 +81,10 @@ export function useTourSpotlight(active: boolean) {
       // 실제 스크롤 애니메이션이 끝나는 시점(onMomentumScrollEnd)을 기다렸다가 측정.
       // 혹시 이벤트가 안 오는 경우를 대비해 안전장치로 일정 시간 뒤 강제 측정도 같이 걸어둠.
       const waitForSettleThenMeasure = () => {
-        const tickAtStart = useTourStore.getState().scrollSettleTick;
+        const scrollId = step.scrollId as string;
+        const tickAtStart = useTourStore.getState().scrollSettleTicks[scrollId] ?? 0;
         unsubscribeSettle = useTourStore.subscribe(state => {
-          if (state.scrollSettleTick !== tickAtStart) {
+          if ((state.scrollSettleTicks[scrollId] ?? 0) !== tickAtStart) {
             cleanupWatchers();
             measureAndSetReady();
           }

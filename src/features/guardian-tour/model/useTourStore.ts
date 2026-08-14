@@ -20,8 +20,11 @@ interface TourState {
   // 스텝별로 스크롤이 필요한 컨테이너(홈 ScrollView, 일정/복약 등록 모달의 내부 ScrollView 등)의 ref.
   // TourStep.scrollId로 조회함 — 등록 모달처럼 화면 중앙에 고정되어 스크롤이 필요 없는 스텝은 등록하지 않아도 됨
   scrollRefs: Record<string, React.RefObject<ScrollView | null>>;
-  // ScrollView의 onMomentumScrollEnd에서 증가시키는 카운터 — "스크롤 애니메이션이 실제로 끝났다"는 신호로 사용
-  scrollSettleTick: number;
+  // 각 스크롤 컨테이너(scrollId)의 onMomentumScrollEnd에서 증가시키는 카운터 — "그 컨테이너의 스크롤
+  // 애니메이션이 실제로 끝났다"는 신호로 사용. 컨테이너가 여러 개라 하나로 합치면, 투어가 스크롤 중인
+  // 컨테이너와 무관한 다른 화면의 스크롤이 우연히 같은 타이밍에 끝나도 "정착됨"으로 오판할 수 있어
+  // scrollOffsets와 마찬가지로 scrollId별로 따로 둠
+  scrollSettleTicks: Record<string, number>;
   // 각 스크롤 컨테이너(scrollId)의 onScroll에서 실시간으로 갱신하는 실제 스크롤 위치.
   // 오버레이가 목표 오프셋을 계산할 때 자체적으로 추정한 값 대신 이 값을 기준으로 삼아야
   // 스크롤 위치와 어긋나지 않음. 컨테이너가 여러 개(홈 ScrollView, 등록 모달 내부 ScrollView)이므로
@@ -37,7 +40,7 @@ interface TourState {
   unregisterTargetRef: (id: string, ref: React.RefObject<View | null>) => void;
   registerScrollRef: (id: string, ref: React.RefObject<ScrollView | null>) => void;
   setTargetLayout: (id: string, layout: TourTargetLayout) => void;
-  notifyScrollSettled: () => void;
+  notifyScrollSettled: (scrollId: string) => void;
   setScrollOffset: (scrollId: string, y: number) => void;
 }
 
@@ -48,7 +51,7 @@ export const useTourStore = create<TourState>((set, get) => ({
   targets: {},
   targetRefs: {},
   scrollRefs: {},
-  scrollSettleTick: 0,
+  scrollSettleTicks: {},
   scrollOffsets: {},
   requestAutoStart: () => set({ shouldAutoStart: true }),
   start: () => set({ isActive: true, currentStepIndex: 0, shouldAutoStart: false }),
@@ -76,7 +79,10 @@ export const useTourStore = create<TourState>((set, get) => ({
     set(state => ({ scrollRefs: { ...state.scrollRefs, [id]: ref } })),
   setTargetLayout: (id, layout) =>
     set(state => ({ targets: { ...state.targets, [id]: layout } })),
-  notifyScrollSettled: () => set(state => ({ scrollSettleTick: state.scrollSettleTick + 1 })),
+  notifyScrollSettled: scrollId =>
+    set(state => ({
+      scrollSettleTicks: { ...state.scrollSettleTicks, [scrollId]: (state.scrollSettleTicks[scrollId] ?? 0) + 1 },
+    })),
   setScrollOffset: (scrollId, y) =>
     set(state => ({ scrollOffsets: { ...state.scrollOffsets, [scrollId]: y } })),
 }));

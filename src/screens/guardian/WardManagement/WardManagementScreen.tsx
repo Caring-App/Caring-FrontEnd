@@ -43,7 +43,7 @@ export function WardManagementScreen() {
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
         onScroll={event => useTourStore.getState().setScrollOffset('wardManagement', event.nativeEvent.contentOffset.y)}
-        onMomentumScrollEnd={() => useTourStore.getState().notifyScrollSettled()}>
+        onMomentumScrollEnd={() => useTourStore.getState().notifyScrollSettled('wardManagement')}>
         <TourTarget id="wardManagement.section" className="mt-4">
           <View className="rounded-card border border-border bg-surface p-4">
             <Text className="text-xl font-pretendard-bold text-text-primary">돌봄대상자 관리</Text>

@@ -72,7 +72,7 @@ export function ScheduleRegistrationModal({
             onScroll={event =>
               useTourStore.getState().setScrollOffset('scheduleRegisterModal', event.nativeEvent.contentOffset.y)
             }
-            onMomentumScrollEnd={() => useTourStore.getState().notifyScrollSettled()}>
+            onMomentumScrollEnd={() => useTourStore.getState().notifyScrollSettled('scheduleRegisterModal')}>
             <View className="gap-5 rounded-card border border-border px-3.5 pb-3.5 pt-5">
               <View>
                 <FormLabel>일정 이름</FormLabel>
