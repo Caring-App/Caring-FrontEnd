@@ -11,7 +11,8 @@ export function WelfareSection({ onPressMore }: { onPressMore?: () => void }) {
     <SectionCard
       title="주변 공공 복지 시설"
       icon={<BuildingFillIcon width={15} height={20} />}
-      action={<DetailLinkText onPress={onPressMore} />}>
+      action={<DetailLinkText onPress={onPressMore} />}
+      className="">
       {/* TODO: features/location 실제 위치 기반 공공 시설 추천 API 연동. 아래 두 배너는
           고정 안내용이라 자세히 보기 리스트와 별개임. */}
       <View className="mt-3 gap-2">

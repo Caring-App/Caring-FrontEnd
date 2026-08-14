@@ -9,7 +9,7 @@ export function LocationSection({ wardId, onPressMore }: { wardId: string; onPre
   const location = getWardLocation(wardId);
 
   return (
-    <SectionCard title="위치 GPS" icon={<GeoAltFillIcon width={15} height={20} />}>
+    <SectionCard title="위치 GPS" icon={<GeoAltFillIcon width={15} height={20} />} className="">
       <View className="relative mt-3 overflow-hidden rounded-card border border-border">
         <NaverMapView
           key={wardId}

@@ -27,7 +27,8 @@ export function ScheduleSection({ wardId, wardName }: ScheduleSectionProps) {
     <SectionCard
       title="일정 관리"
       icon={<CalendarEventIcon width={20} height={20} />}
-      action={<AddButton label="일정 등록" onPress={openCreate} />}>
+      action={<AddButton label="일정 등록" onPress={openCreate} />}
+      className="">
       <HomeScheduleCalendar wardId={wardId} wardName={wardName} onRequestEdit={openEdit} />
 
       <ScheduleRegistrationModal

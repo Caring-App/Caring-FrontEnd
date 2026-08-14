@@ -13,6 +13,7 @@ import EmojiTearOnIcon from '@assets/icons/emoji/emoji-tear-on.svg';
 import EmojiTearOffIcon from '@assets/icons/emoji/emoji-tear-off.svg';
 import { HealthMetricsChart } from './HealthMetricsChart';
 import { DropdownAnchor, TimeDropdown } from './TimeDropdown';
+import { TourTarget } from '@features/guardian-tour/ui';
 
 const HEALTH_EMOJI_ICONS: Record<HealthStatus, { on: typeof EmojiSmileOnIcon; off: typeof EmojiSmileOnIcon }> = {
   good: { on: EmojiSmileOnIcon, off: EmojiSmileOffIcon },
@@ -45,8 +46,18 @@ function buildDailySummary(wardName: string, status: HealthStatus | null, taken:
   return `${wardName}님의 오늘 건강 상태는 '${HEALTH_STATUS_LABELS[status]}' 이에요! ${medicationClause}`;
 }
 
-export function DailyReportCard({ wardId, wardName }: { wardId: string; wardName: string }) {
+export function DailyReportCard({
+  wardId,
+  wardName,
+  forceShowDetail,
+}: {
+  wardId: string;
+  wardName: string;
+  // 사용가이드 투어가 "건강 수치 그래프" 단계를 보여줄 때 접힌 상세 영역을 강제로 펼치기 위한 옵션
+  forceShowDetail?: boolean;
+}) {
   const [showDetail, setShowDetail] = useState(false);
+  const isDetailVisible = showDetail || !!forceShowDetail;
   const [reportTime, setReportTime] = useState('21 : 00');
   const [timeDropdownAnchor, setTimeDropdownAnchor] = useState<DropdownAnchor | null>(null);
   const timeButtonRef = useRef<React.ComponentRef<typeof Pressable>>(null);
@@ -54,10 +65,10 @@ export function DailyReportCard({ wardId, wardName }: { wardId: string; wardName
   const taken = useMedicationStore(state => state.takenByWard[wardId]);
 
   return (
-    <View className="mt-4 rounded-card border border-border bg-surface p-4">
+    <TourTarget id="dailyReport.card" className="mt-4 rounded-card border border-border bg-surface p-4">
       <View className="flex-row items-center gap-2">
         <Pressable onPress={() => setShowDetail(prev => !prev)} hitSlop={8}>
-          <View style={{ transform: [{ rotate: showDetail ? '90deg' : '0deg' }] }}>
+          <View style={{ transform: [{ rotate: isDetailVisible ? '90deg' : '0deg' }] }}>
             <ChevronRightIcon width={18} height={18} />
           </View>
         </Pressable>
@@ -92,16 +103,16 @@ export function DailyReportCard({ wardId, wardName }: { wardId: string; wardName
         하루 요약 레포트는 설정한 시간을 기준으로 반영됩니다
       </Text>
 
-      <View className="mt-4 rounded-card border border-border bg-surface p-4">
+      <TourTarget id="dailyReport.healthStatus" className="mt-4 rounded-card border border-border bg-surface p-4">
         <Text className="text-md font-semibold text-text-primary">오늘의 건강 상태</Text>
         <View className="mt-3 flex-row justify-around">
           <EmojiState wardId={wardId} status="good" />
           <EmojiState wardId={wardId} status="normal" />
           <EmojiState wardId={wardId} status="bad" />
         </View>
-      </View>
+      </TourTarget>
 
-      <View className="mt-3 rounded-card border border-border bg-surface p-4">
+      <TourTarget id="dailyReport.summary" className="mt-3 rounded-card border border-border bg-surface p-4">
         <Text className="text-md font-semibold text-text-primary">오늘 하루 요약</Text>
         <Text className="mt-2 text-sm text-text-primary">{buildDailySummary(wardName, status, taken)}</Text>
         <View className="mt-3 gap-1">
@@ -111,10 +122,10 @@ export function DailyReportCard({ wardId, wardName }: { wardId: string; wardName
             </Text>
           ))}
         </View>
-      </View>
+      </TourTarget>
 
-      {showDetail && <CompoundHealthDataSection />}
-    </View>
+      {isDetailVisible && <CompoundHealthDataSection />}
+    </TourTarget>
   );
 }
 
@@ -132,11 +143,11 @@ function EmojiState({ wardId, status }: { wardId: string; status: HealthStatus }
 
 function CompoundHealthDataSection() {
   return (
-    <View className="mt-3 rounded-card border border-border bg-surface p-4">
+    <TourTarget id="dailyReport.chart" className="mt-3 rounded-card border border-border bg-surface p-4">
       <Text className="text-md font-semibold text-text-primary">건강 수치 그래프</Text>
       <View className="mt-3">
         <HealthMetricsChart />
       </View>
-    </View>
+    </TourTarget>
   );
 }

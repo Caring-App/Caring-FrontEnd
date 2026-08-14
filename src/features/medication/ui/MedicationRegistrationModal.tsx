@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { ConfirmModal, FormLabel, SoundSettingsCard, TimeTriggerInput, WheelTimePicker, formatTime } from '@shared/ui';
 import CapsuleIcon from '@assets/icons/medication/capsule-on.svg';
 import CloseIcon from '@assets/icons/action/close-x.svg';
 import ChevronDownIcon from '@assets/icons/section/chevron-down-select.svg';
+// FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, 사용가이드가 이 모달 내부(카드 전체)를
+// 직접 하이라이트해야 해서 guardian-tour를 의도적으로 참조함(순환참조 없음, 자세한 이유는
+// ScheduleRegistrationModal.tsx의 동일 주석 참고).
+import { useHostModalTourStep, useTourStore } from '@features/guardian-tour/model';
+import { TourOverlayContent } from '@features/guardian-tour/ui';
 import {
   DAY_PRESETS,
   MEAL_TYPE_OPTIONS,
@@ -36,6 +41,18 @@ export function MedicationRegistrationModal({
   const { state, actions } = useMedicationRegistrationForm(wardId, visible, editingMedication, onClose);
   const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
 
+  const cardRef = useRef<View>(null);
+
+  // 이 모달은 사용가이드가 "복약 등록" 단계에 도달했을 때 처음으로(!) 마운트되는 경우가 있어서
+  // (복약 관리 화면 자체가 그 시점에 처음 push됨), 대상 ref 등록이 useTourSpotlight의 effect보다
+  // 먼저 실행되어야 함 — 그래서 이 effect를 반드시 먼저 선언함
+  useEffect(() => {
+    useTourStore.getState().registerTargetRef('medication.registerModal', cardRef);
+  }, []);
+
+  // 사용가이드가 "복약 등록" 단계에 도달하면 이 모달을 스스로 열어서 보여줌
+  const { isTourStep, tourStep, tourStepIndex, ready, box } = useHostModalTourStep('medicationRegisterModal');
+
   const handleDelete = () => {
     if (editingMedication) {
       useMedicationListStore.getState().deleteMedication(wardId, editingMedication.id);
@@ -45,10 +62,10 @@ export function MedicationRegistrationModal({
   };
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <Modal visible={visible || isTourStep} transparent animationType="fade" onRequestClose={onClose}>
       <View className="flex-1 items-center justify-center bg-black/30 px-5">
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="w-full max-h-[85%]">
-          <View className="max-h-full rounded-card border border-border bg-surface p-4">
+          <View ref={cardRef} className="max-h-full rounded-card border border-border bg-surface p-4">
             <View className="mb-4 flex-row items-center justify-between">
               <View className="flex-row items-center gap-2">
                 <CapsuleIcon width={20} height={18} />
@@ -194,6 +211,15 @@ export function MedicationRegistrationModal({
         onCancel={() => setIsDeleteConfirmVisible(false)}
         onConfirm={handleDelete}
       />
+
+      {isTourStep && tourStep && (
+        <TourOverlayContent
+          step={tourStep}
+          currentStepIndex={tourStepIndex}
+          showSpotlight={ready && !!box}
+          box={box}
+        />
+      )}
     </Modal>
   );
 }
