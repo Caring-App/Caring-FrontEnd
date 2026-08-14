@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: 'Pretendard-Bold',
     fontSize: 18,
-    color: '#111111',
+    color: colors.textPrimary,
   },
   cardDescription: {
     marginTop: 8,
@@ -186,6 +186,6 @@ const styles = StyleSheet.create({
   },
   dotInactive: {
     width: 6,
-    backgroundColor: '#e2e5e5',
+    backgroundColor: colors.border,
   },
 });
