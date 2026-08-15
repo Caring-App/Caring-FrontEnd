@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -8,6 +8,7 @@ import { MOCK_WARDS, useSelectedWardStore } from '@features/ward-management/mode
 import { MedicationEntry, useMedicationListStore } from '@features/medication/model';
 import { MedicationListItem, MedicationRegistrationModal } from '@features/medication/ui';
 import { sortMedicationsByTime } from '@features/medication/utils';
+import { MEDICATION_MODAL_STEP_INDEX, useTourStore } from '@features/guardian-tour/model';
 
 export function MedicationScreen() {
   const navigation = useNavigation();
@@ -32,6 +33,17 @@ export function MedicationScreen() {
     setIsRegistrationVisible(false);
     setEditingMedication(null);
   };
+
+  // 사용가이드가 "복약 등록" 단계를 지나 다음 스텝(홈 화면 쪽)으로 넘어가면 이 화면을 자동으로 닫고
+  // 홈으로 돌아감 — 안 그러면 이후 스텝들이 이 화면 위에 떠서 하이라이트만 보이고 배경은 여전히
+  // 복약 관리 목록인 상태가 됨
+  const isTourActive = useTourStore(state => state.isActive);
+  const tourStepIndex = useTourStore(state => state.currentStepIndex);
+  useEffect(() => {
+    if (isTourActive && MEDICATION_MODAL_STEP_INDEX !== -1 && tourStepIndex > MEDICATION_MODAL_STEP_INDEX) {
+      navigation.goBack();
+    }
+  }, [isTourActive, tourStepIndex, navigation]);
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top']}>

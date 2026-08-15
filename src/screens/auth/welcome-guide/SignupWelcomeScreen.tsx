@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSessionStore } from '@shared/store/useSessionStore';
+import { useTourStore } from '@features/guardian-tour/model';
 import { SignupWelcomeStep, WelcomeStep } from '@features/auth/ui/SignupWelcomeStep';
 
 export const SignupWelcomeScreen = ({ route }: { route?: any }) => {
@@ -28,9 +29,14 @@ export const SignupWelcomeScreen = ({ route }: { route?: any }) => {
     },
   ];
 
-  const handleComplete = () => {
-    // 온보딩 종료 → 보호자 홈으로 진입 (세션 전환 시 RootNavigator가 GuardianStackNavigator로 자동 전환)
-    // TODO: 사용가이드(안내 다음 단계)는 별도 작업 중 — 완료 시 해당 화면으로 이동하도록 교체 필요
+  // X(닫기) → 안내 없이 바로 보호자 홈으로 진입
+  const handleClose = () => {
+    useSessionStore.getState().login('PROTECTOR');
+  };
+
+  // 마지막 단계에서 "다음" → 보호자 홈 진입과 동시에 사용가이드 자동 시작
+  const handleFinish = () => {
+    useTourStore.getState().requestAutoStart();
     useSessionStore.getState().login('PROTECTOR');
   };
 
@@ -38,7 +44,7 @@ export const SignupWelcomeScreen = ({ route }: { route?: any }) => {
     if (currentIndex < steps.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      handleComplete();
+      handleFinish();
     }
   };
 
@@ -47,7 +53,7 @@ export const SignupWelcomeScreen = ({ route }: { route?: any }) => {
       userName={userName}
       currentStep={steps[currentIndex]}
       onNext={handleNext}
-      onClose={handleComplete}
+      onClose={handleClose}
     />
   );
 };

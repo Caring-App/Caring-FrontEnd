@@ -7,6 +7,7 @@ import { GuardianStackParamList } from '@app/navigation/types';
 import { AppHeader } from '@shared/ui';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import { useGuardianMenuStore } from '@features/guardian-menu/model';
+import { useTourStore } from '@features/guardian-tour/model';
 import { MOCK_LINK_CODE, MOCK_PROFILE } from '@features/mypage/model';
 import {
   EditPersonalInfoModal,
@@ -47,7 +48,13 @@ export function ProfileScreen() {
         <View className="mt-6 border-t border-border-divider pl-4">
           <MenuListItem label="설정" onPress={() => stackNavigation?.navigate('Settings')} />
           <MenuListItem label="문의하기" onPress={() => stackNavigation?.navigate('Inquiry')} />
-          <MenuListItem label="사용 가이드 안내" onPress={() => {}} />
+          <MenuListItem
+            label="사용 가이드 안내"
+            onPress={() => {
+              useTourStore.getState().requestAutoStart();
+              stackNavigation?.navigate('Tabs', { screen: 'Home' });
+            }}
+          />
           <MenuListItem label="정책 및 약관" onPress={() => stackNavigation?.navigate('Policy')} />
           <MenuListItem label="로그아웃" onPress={() => useSessionStore.getState().requestLogout()} />
         </View>

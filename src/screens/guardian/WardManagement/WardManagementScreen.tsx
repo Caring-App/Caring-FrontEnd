@@ -6,6 +6,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GuardianStackParamList } from '@app/navigation/types';
 import { AppHeader } from '@shared/ui';
 import { useGuardianMenuStore } from '@features/guardian-menu/model';
+import { useTourScrollTracking } from '@features/guardian-tour/model';
+import { TourOverlay, TourTarget } from '@features/guardian-tour/ui';
 import { MOCK_WARDS, Ward } from '@features/ward-management/model';
 import { EditWardModal, WardCard } from '@features/ward-management/ui';
 
@@ -16,6 +18,7 @@ export function WardManagementScreen() {
   const stackNavigation = navigation.getParent<GuardianStackNavigationProp>();
   const [wards, setWards] = useState<Ward[]>(MOCK_WARDS);
   const [editingWardId, setEditingWardId] = useState<string | null>(null);
+  const tourScroll = useTourScrollTracking('wardManagement');
 
   const editingWard = wards.find(ward => ward.id === editingWardId) ?? null;
 
@@ -30,23 +33,27 @@ export function WardManagementScreen() {
         onPressMenu={() => useGuardianMenuStore.getState().open()}
       />
       <ScrollView
+        ref={tourScroll.ref}
         className="flex-1 px-4"
         contentContainerClassName="pb-8"
-        showsVerticalScrollIndicator={false}>
-        <View className="mt-4 rounded-card border border-border bg-surface p-4">
-          <Text className="text-xl font-pretendard-bold text-text-primary">돌봄대상자 관리</Text>
-          <View className="mt-4 gap-4">
-            {wards.map(ward => (
-              <WardCard
-                key={ward.id}
-                ward={ward}
-                onChangeTtsSpeed={speed => updateWard(ward.id, { ttsSpeed: speed })}
-                onChangeFontSize={size => updateWard(ward.id, { fontSize: size })}
-                onPressEdit={() => setEditingWardId(ward.id)}
-              />
-            ))}
+        showsVerticalScrollIndicator={false}
+        {...tourScroll.scrollHandlers}>
+        <TourTarget id="wardManagement.section" className="mt-4">
+          <View className="rounded-card border border-border bg-surface p-4">
+            <Text className="text-xl font-pretendard-bold text-text-primary">돌봄대상자 관리</Text>
+            <View className="mt-4 gap-4">
+              {wards.map(ward => (
+                <WardCard
+                  key={ward.id}
+                  ward={ward}
+                  onChangeTtsSpeed={speed => updateWard(ward.id, { ttsSpeed: speed })}
+                  onChangeFontSize={size => updateWard(ward.id, { fontSize: size })}
+                  onPressEdit={() => setEditingWardId(ward.id)}
+                />
+              ))}
+            </View>
           </View>
-        </View>
+        </TourTarget>
       </ScrollView>
 
       <EditWardModal
@@ -58,6 +65,7 @@ export function WardManagementScreen() {
           setEditingWardId(null);
         }}
       />
+      <TourOverlay screen="WardManagement" />
     </SafeAreaView>
   );
 }

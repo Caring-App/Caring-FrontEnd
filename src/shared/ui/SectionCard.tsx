@@ -6,14 +6,16 @@ export function SectionCard({
   icon,
   action,
   children,
+  className = 'mt-4',
 }: {
   title: string;
   icon?: React.ReactNode;
   action?: React.ReactNode;
   children: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <View className="mt-4 rounded-card border border-border bg-surface p-4">
+    <View className={`${className} rounded-card border border-border bg-surface p-4`}>
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center gap-2">
           {icon}

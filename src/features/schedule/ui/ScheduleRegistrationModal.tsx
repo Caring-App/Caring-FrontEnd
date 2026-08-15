@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import CalendarEventIcon from '@assets/icons/section/calendar-event.svg';
 import CloseIcon from '@assets/icons/action/close-x.svg';
 import ChevronDownIcon from '@assets/icons/section/chevron-down-select.svg';
 import { FormLabel, SoundSettingsCard, TimeTriggerInput, WheelTimePicker, formatTime } from '@shared/ui';
+// FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, 사용가이드가 이 모달 내부(카드 전체 /
+// 시간 섹션)를 직접 하이라이트해야 해서 guardian-tour를 의도적으로 참조함(순환참조 없음).
+// 화면 계층으로 끌어올리는 대안도 검토했으나 ref/콜백 prop-drilling이 늘어나 오히려 가독성이 떨어져 보류.
+import { useHostModalTourStep, useTourScrollTracking } from '@features/guardian-tour/model';
+import { TourHostOverlay } from '@features/guardian-tour/ui';
 import { LOCATION_OPTIONS, useScheduleRegistrationForm } from '../model/useScheduleRegistrationForm';
 import { ScheduleEntry } from '../model/scheduleRegistrationTypes';
 import { ScheduleCalendarPicker } from './ScheduleCalendarPicker';
@@ -23,13 +28,26 @@ export function ScheduleRegistrationModal({
   editingSchedule,
   onClose,
 }: ScheduleRegistrationModalProps) {
-  const { state, actions } = useScheduleRegistrationForm(wardId, visible, editingSchedule, onClose);
+  const cardRef = useRef<View>(null);
+  const timeSectionRef = useRef<View>(null);
+  const tourScroll = useTourScrollTracking('scheduleRegisterModal');
+
+  // 사용가이드가 "일정 등록" 단계에 도달하면 이 모달을 스스로 열어서 보여줌
+  const { isTourStep, tourStep, tourStepIndex, ready, box } = useHostModalTourStep('scheduleRegisterModal', {
+    'schedule.registerModal': cardRef,
+    'schedule.registerModal.timeSection': timeSectionRef,
+  });
+  // "일정 시간 / 음성 알림 시간" 하이라이트 단계에서는 두 휠 피커를 다 펼쳐서 보여줌
+  const isTimeSectionStep = isTourStep && tourStep?.targetId === 'schedule.registerModal.timeSection';
+  // 폼 훅에도 사용가이드가 강제로 연 경우를 같이 알려줘야, 이전에 수동으로 열었다 저장 없이 닫아서
+  // 남아있던 값이 아니라 항상 깨끗한 상태로 초기화됨(훅 내부는 visible이 켜질 때만 리셋함)
+  const { state, actions } = useScheduleRegistrationForm(wardId, visible || isTourStep, editingSchedule, onClose);
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <Modal visible={visible || isTourStep} transparent animationType="fade" onRequestClose={onClose}>
       <View className="flex-1 items-center justify-center bg-black/30 px-5">
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="w-full max-h-[85%]">
-        <View className="max-h-full rounded-card border border-border bg-surface p-4">
+        <View ref={cardRef} className="max-h-full rounded-card border border-border bg-surface p-4">
           <View className="mb-4 flex-row items-center justify-between">
             <View className="flex-row items-center gap-2">
               <CalendarEventIcon width={20} height={20} />
@@ -42,7 +60,7 @@ export function ScheduleRegistrationModal({
             </Pressable>
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <ScrollView ref={tourScroll.ref} showsVerticalScrollIndicator={false} {...tourScroll.scrollHandlers}>
             <View className="gap-5 rounded-card border border-border px-3.5 pb-3.5 pt-5">
               <View>
                 <FormLabel>일정 이름</FormLabel>
@@ -85,32 +103,34 @@ export function ScheduleRegistrationModal({
               />
             </View>
 
-            <View className="mt-5">
-              <FormLabel>일정 시간</FormLabel>
-              <TimeTriggerInput
-                placeholder="일정 시간을 선택하세요"
-                valueLabel={state.hasScheduleTime ? formatTime(state.scheduleTime) : undefined}
-                onPress={actions.toggleSchedulePicker}
-              />
-              {state.showSchedulePicker && (
-                <View className="mt-2">
-                  <WheelTimePicker value={state.scheduleTime} onChange={actions.setScheduleTime} />
-                </View>
-              )}
-            </View>
+            <View ref={timeSectionRef} className="mt-5 gap-5">
+              <View>
+                <FormLabel>일정 시간</FormLabel>
+                <TimeTriggerInput
+                  placeholder="일정 시간을 선택하세요"
+                  valueLabel={state.hasScheduleTime ? formatTime(state.scheduleTime) : undefined}
+                  onPress={actions.toggleSchedulePicker}
+                />
+                {(state.showSchedulePicker || isTimeSectionStep) && (
+                  <View className="mt-2">
+                    <WheelTimePicker value={state.scheduleTime} onChange={actions.setScheduleTime} />
+                  </View>
+                )}
+              </View>
 
-            <View className="mt-5">
-              <FormLabel>음성 알림 시간</FormLabel>
-              <TimeTriggerInput
-                placeholder="알림을 전달 할 시간을 선택하세요"
-                valueLabel={state.hasAlarmTime ? formatTime(state.alarmTime) : undefined}
-                onPress={actions.toggleAlarmPicker}
-              />
-              {state.showAlarmPicker && (
-                <View className="mt-2">
-                  <WheelTimePicker value={state.alarmTime} onChange={actions.setAlarmTime} />
-                </View>
-              )}
+              <View>
+                <FormLabel>음성 알림 시간</FormLabel>
+                <TimeTriggerInput
+                  placeholder="알림을 전달 할 시간을 선택하세요"
+                  valueLabel={state.hasAlarmTime ? formatTime(state.alarmTime) : undefined}
+                  onPress={actions.toggleAlarmPicker}
+                />
+                {(state.showAlarmPicker || isTimeSectionStep) && (
+                  <View className="mt-2">
+                    <WheelTimePicker value={state.alarmTime} onChange={actions.setAlarmTime} />
+                  </View>
+                )}
+              </View>
             </View>
 
             <SoundSettingsCard
@@ -131,6 +151,8 @@ export function ScheduleRegistrationModal({
         </View>
       </KeyboardAvoidingView>
       </View>
+
+      <TourHostOverlay isTourStep={isTourStep} tourStep={tourStep} tourStepIndex={tourStepIndex} ready={ready} box={box} />
     </Modal>
   );
 }

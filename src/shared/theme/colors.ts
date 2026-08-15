@@ -4,6 +4,7 @@ export const colors = {
   primary: '#fd7e14',
   surface: '#ffffff',
   border: '#e2e5e5',
+  textPrimary: '#111111',
   textPlaceholder: '#6c757d',
   textPlaceholderMuted: '#a1a1a1',
   textBody: '#212529',

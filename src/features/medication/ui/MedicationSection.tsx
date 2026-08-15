@@ -11,7 +11,8 @@ export function MedicationSection({ wardId, onPressMore }: { wardId: string; onP
     <SectionCard
       title="복약 관리"
       icon={<PrescriptionIcon width={20} height={20} />}
-      action={<AddButton label="복약 관리" onPress={onPressMore} />}>
+      action={<AddButton label="복약 관리" onPress={onPressMore} />}
+      className="">
       <View className="mt-3 flex-row justify-around">
         <MedicationSlot wardId={wardId} label="아침" slot="morning" />
         <MedicationSlot wardId={wardId} label="점심" slot="lunch" />
