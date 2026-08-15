@@ -54,7 +54,9 @@ export const useTourStore = create<TourState>((set, get) => ({
   scrollSettleTicks: {},
   scrollOffsets: {},
   requestAutoStart: () => set({ shouldAutoStart: true }),
-  start: () => set({ isActive: true, currentStepIndex: 0, shouldAutoStart: false }),
+  // targets를 같이 리셋해야 함 — 안 하면 재실행(예: 마이페이지 "다시보기")에서 측정이 실패했을 때
+  // 이전 실행에서 남은 stale한 좌표로 하이라이트가 그려질 수 있음
+  start: () => set({ isActive: true, currentStepIndex: 0, shouldAutoStart: false, targets: {} }),
   next: (totalSteps: number) => {
     const nextIndex = get().currentStepIndex + 1;
     if (nextIndex >= totalSteps) {
