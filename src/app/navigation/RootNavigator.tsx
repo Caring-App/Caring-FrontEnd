@@ -1,7 +1,9 @@
 import React from 'react';
+import { View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { useSessionStore } from '@shared/store/useSessionStore';
+import { LogoutConfirmModal } from '@features/mypage/ui';
 import LoginScreen from '@screens/auth/Login/LoginScreen';
 import { SignupTypeSelectScreen } from '@screens/auth/Signup/SignupTypeSelectScreen';
 import TermsAgreementScreen from '@screens/auth/terms/TermsAgreementScreen';
@@ -31,10 +33,13 @@ export const RootNavigator = () => {
   // 2. 피보호자/어르신(WARD)으로 로그인된 경우
   if (isLoggedIn && role === 'WARD') {
     return (
-      <SeniorStack.Navigator screenOptions={{ headerShown: false }}>
-        <SeniorStack.Screen name="SeniorHome" component={SeniorHomeScreen} />
-        <SeniorStack.Screen name="SeniorSchedule" component={SeniorScheduleScreen} />
-      </SeniorStack.Navigator>
+      <View className="flex-1">
+        <SeniorStack.Navigator screenOptions={{ headerShown: false }}>
+          <SeniorStack.Screen name="SeniorHome" component={SeniorHomeScreen} />
+          <SeniorStack.Screen name="SeniorSchedule" component={SeniorScheduleScreen} />
+        </SeniorStack.Navigator>
+        <LogoutConfirmModal />
+      </View>
     );
   }
 
