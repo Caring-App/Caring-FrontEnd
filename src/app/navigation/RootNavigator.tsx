@@ -1,9 +1,7 @@
 import React from 'react';
-import { View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { useSessionStore } from '@shared/store/useSessionStore';
-import { LogoutConfirmModal } from '@features/mypage/ui';
 import LoginScreen from '@screens/auth/Login/LoginScreen';
 import { SignupTypeSelectScreen } from '@screens/auth/Signup/SignupTypeSelectScreen';
 import TermsAgreementScreen from '@screens/auth/terms/TermsAgreementScreen';
@@ -14,12 +12,10 @@ import { WardSignupWelcomeScreen } from '@screens/auth/welcome-guide/WardSignupW
 import LinkAccountScreen from '@screens/auth/LinkAccount/LinkAccountScreen';
 import { LinkAccountCompleteScreen } from '@screens/auth/LinkAccount/LinkAccountCompleteScreen';
 import { GuardianStackNavigator } from './GuardianStackNavigator';
-import { SeniorHomeScreen } from '@screens/senior/Home/SeniorHomeScreen';
-import { SeniorScheduleScreen } from '@screens/senior/Schedule/SeniorScheduleScreen';
-import { AuthStackParamList, SeniorStackParamList } from './types';
+import { SeniorStackNavigator } from './SeniorStackNavigator';
+import { AuthStackParamList } from './types';
 
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
-const SeniorStack = createNativeStackNavigator<SeniorStackParamList>();
 
 export const RootNavigator = () => {
   const isLoggedIn = useSessionStore(state => state.isLoggedIn);
@@ -32,15 +28,7 @@ export const RootNavigator = () => {
 
   // 2. 피보호자/어르신(WARD)으로 로그인된 경우
   if (isLoggedIn && role === 'WARD') {
-    return (
-      <View className="flex-1">
-        <SeniorStack.Navigator screenOptions={{ headerShown: false }}>
-          <SeniorStack.Screen name="SeniorHome" component={SeniorHomeScreen} />
-          <SeniorStack.Screen name="SeniorSchedule" component={SeniorScheduleScreen} />
-        </SeniorStack.Navigator>
-        <LogoutConfirmModal />
-      </View>
-    );
+    return <SeniorStackNavigator />;
   }
 
   // 3. 비로그인 상태 (인증 및 회원가입 관련 스크린 제공)
