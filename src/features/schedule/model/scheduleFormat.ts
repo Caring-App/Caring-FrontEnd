@@ -8,16 +8,17 @@ export function to24Hour(time: TimeState): { hour: number; minute: number } {
   return { hour, minute: Number(time.minute) };
 }
 
-export function formatScheduleDateTime(entry: ScheduleEntry): string {
+export function formatScheduleTime(entry: ScheduleEntry): string {
   const { hour, minute } = to24Hour(entry.scheduleTime);
   const hh = String(hour).padStart(2, '0');
   const mm = String(minute).padStart(2, '0');
-  return `${entry.date.getFullYear()}년 ${entry.date.getMonth() + 1}월 ${entry.date.getDate()}일 ${hh}:${mm}`;
+  return `${hh}:${mm}`;
+}
+
+export function formatScheduleDateTime(entry: ScheduleEntry): string {
+  return `${entry.date.getFullYear()}년 ${entry.date.getMonth() + 1}월 ${entry.date.getDate()}일 ${formatScheduleTime(entry)}`;
 }
 
 export function formatScheduleDateTimeShort(entry: ScheduleEntry): string {
-  const { hour, minute } = to24Hour(entry.scheduleTime);
-  const hh = String(hour).padStart(2, '0');
-  const mm = String(minute).padStart(2, '0');
-  return `${entry.date.getMonth() + 1}월 ${entry.date.getDate()}일 ${hh}:${mm}`;
+  return `${entry.date.getMonth() + 1}월 ${entry.date.getDate()}일 ${formatScheduleTime(entry)}`;
 }
