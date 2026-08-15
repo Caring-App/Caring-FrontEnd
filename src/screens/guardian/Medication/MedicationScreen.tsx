@@ -14,7 +14,7 @@ export function MedicationScreen() {
   const navigation = useNavigation();
   const selectedWardId = useSelectedWardStore(state => state.selectedWardId);
   const ward = MOCK_WARDS.find(item => item.id === selectedWardId) ?? MOCK_WARDS[0];
-  const medications = useMedicationListStore(state => state.medicationsByWard[selectedWardId] ?? []);
+  const medications = useMedicationListStore(state => state.medicationsByWard[selectedWardId]) ?? [];
   const sortedMedications = sortMedicationsByTime(medications);
   const toggleEnabled = useMedicationListStore(state => state.toggleEnabled);
 
