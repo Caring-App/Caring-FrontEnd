@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import CalendarEventIcon from '@assets/icons/section/calendar-event.svg';
 import CloseIcon from '@assets/icons/action/close-x.svg';
@@ -7,8 +7,8 @@ import { FormLabel, SoundSettingsCard, TimeTriggerInput, WheelTimePicker, format
 // FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, 사용가이드가 이 모달 내부(카드 전체 /
 // 시간 섹션)를 직접 하이라이트해야 해서 guardian-tour를 의도적으로 참조함(순환참조 없음).
 // 화면 계층으로 끌어올리는 대안도 검토했으나 ref/콜백 prop-drilling이 늘어나 오히려 가독성이 떨어져 보류.
-import { useHostModalTourStep, useTourScrollTracking, useTourStore } from '@features/guardian-tour/model';
-import { TourOverlayContent } from '@features/guardian-tour/ui';
+import { useHostModalTourStep, useTourScrollTracking } from '@features/guardian-tour/model';
+import { TourHostOverlay } from '@features/guardian-tour/ui';
 import { LOCATION_OPTIONS, useScheduleRegistrationForm } from '../model/useScheduleRegistrationForm';
 import { ScheduleEntry } from '../model/scheduleRegistrationTypes';
 import { ScheduleCalendarPicker } from './ScheduleCalendarPicker';
@@ -32,15 +32,11 @@ export function ScheduleRegistrationModal({
   const timeSectionRef = useRef<View>(null);
   const tourScroll = useTourScrollTracking('scheduleRegisterModal');
 
-  // 사용가이드가 등록 모달을 열자마자(같은 마운트에서) 바로 위치를 재려고 하므로, 대상 ref 등록이
-  // useTourSpotlight의 effect보다 먼저 실행되어야 함 — 그래서 이 effect를 반드시 먼저 선언함
-  useEffect(() => {
-    useTourStore.getState().registerTargetRef('schedule.registerModal', cardRef);
-    useTourStore.getState().registerTargetRef('schedule.registerModal.timeSection', timeSectionRef);
-  }, []);
-
   // 사용가이드가 "일정 등록" 단계에 도달하면 이 모달을 스스로 열어서 보여줌
-  const { isTourStep, tourStep, tourStepIndex, ready, box } = useHostModalTourStep('scheduleRegisterModal');
+  const { isTourStep, tourStep, tourStepIndex, ready, box } = useHostModalTourStep('scheduleRegisterModal', {
+    'schedule.registerModal': cardRef,
+    'schedule.registerModal.timeSection': timeSectionRef,
+  });
   // "일정 시간 / 음성 알림 시간" 하이라이트 단계에서는 두 휠 피커를 다 펼쳐서 보여줌
   const isTimeSectionStep = isTourStep && tourStep?.targetId === 'schedule.registerModal.timeSection';
   // 폼 훅에도 사용가이드가 강제로 연 경우를 같이 알려줘야, 이전에 수동으로 열었다 저장 없이 닫아서
@@ -156,15 +152,7 @@ export function ScheduleRegistrationModal({
       </KeyboardAvoidingView>
       </View>
 
-      {isTourStep && tourStep && (
-        <TourOverlayContent
-          step={tourStep}
-          currentStepIndex={tourStepIndex}
-          showSpotlight={ready && !!box}
-          ready={ready}
-          box={box}
-        />
-      )}
+      <TourHostOverlay isTourStep={isTourStep} tourStep={tourStep} tourStepIndex={tourStepIndex} ready={ready} box={box} />
     </Modal>
   );
 }

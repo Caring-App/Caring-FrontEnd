@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { ConfirmModal, FormLabel, SoundSettingsCard, TimeTriggerInput, WheelTimePicker, formatTime } from '@shared/ui';
 import CapsuleIcon from '@assets/icons/medication/capsule-on.svg';
@@ -7,8 +7,8 @@ import ChevronDownIcon from '@assets/icons/section/chevron-down-select.svg';
 // FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, 사용가이드가 이 모달 내부(카드 전체)를
 // 직접 하이라이트해야 해서 guardian-tour를 의도적으로 참조함(순환참조 없음, 자세한 이유는
 // ScheduleRegistrationModal.tsx의 동일 주석 참고).
-import { useHostModalTourStep, useTourStore } from '@features/guardian-tour/model';
-import { TourOverlayContent } from '@features/guardian-tour/ui';
+import { useHostModalTourStep } from '@features/guardian-tour/model';
+import { TourHostOverlay } from '@features/guardian-tour/ui';
 import {
   DAY_PRESETS,
   MEAL_TYPE_OPTIONS,
@@ -40,17 +40,15 @@ export function MedicationRegistrationModal({
 }: MedicationRegistrationModalProps) {
   const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
 
+  // 이 모달은 사용가이드가 "복약 등록" 단계에 도달했을 때 처음으로(!) 마운트되는 경우가 있음
+  // (복약 관리 화면 자체가 그 시점에 처음 push됨) — useHostModalTourStep이 대상 ref 등록을
+  // 측정 effect보다 먼저 실행해주므로 순서는 신경 쓰지 않아도 됨
   const cardRef = useRef<View>(null);
 
-  // 이 모달은 사용가이드가 "복약 등록" 단계에 도달했을 때 처음으로(!) 마운트되는 경우가 있어서
-  // (복약 관리 화면 자체가 그 시점에 처음 push됨), 대상 ref 등록이 useTourSpotlight의 effect보다
-  // 먼저 실행되어야 함 — 그래서 이 effect를 반드시 먼저 선언함
-  useEffect(() => {
-    useTourStore.getState().registerTargetRef('medication.registerModal', cardRef);
-  }, []);
-
   // 사용가이드가 "복약 등록" 단계에 도달하면 이 모달을 스스로 열어서 보여줌
-  const { isTourStep, tourStep, tourStepIndex, ready, box } = useHostModalTourStep('medicationRegisterModal');
+  const { isTourStep, tourStep, tourStepIndex, ready, box } = useHostModalTourStep('medicationRegisterModal', {
+    'medication.registerModal': cardRef,
+  });
   // 폼 훅에도 사용가이드가 강제로 연 경우를 같이 알려줘야, 이전에 수동으로 열었다 저장 없이 닫아서
   // 남아있던 값이 아니라 항상 깨끗한 상태로 초기화됨(훅 내부는 visible이 켜질 때만 리셋함)
   const { state, actions } = useMedicationRegistrationForm(wardId, visible || isTourStep, editingMedication, onClose);
@@ -214,15 +212,7 @@ export function MedicationRegistrationModal({
         onConfirm={handleDelete}
       />
 
-      {isTourStep && tourStep && (
-        <TourOverlayContent
-          step={tourStep}
-          currentStepIndex={tourStepIndex}
-          showSpotlight={ready && !!box}
-          ready={ready}
-          box={box}
-        />
-      )}
+      <TourHostOverlay isTourStep={isTourStep} tourStep={tourStep} tourStepIndex={tourStepIndex} ready={ready} box={box} />
     </Modal>
   );
 }
