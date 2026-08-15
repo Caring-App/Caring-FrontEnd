@@ -5,21 +5,10 @@ import { useMedicationStore, MealSlot, MedicationTaken } from '@features/medicat
 import EnvelopeFillIcon from '@assets/icons/report/envelope-fill.svg';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 import ChevronDownIcon from '@assets/icons/action/chevron-down.svg';
-import EmojiSmileOnIcon from '@assets/icons/emoji/emoji-smile-on.svg';
-import EmojiSmileOffIcon from '@assets/icons/emoji/emoji-smile-off.svg';
-import EmojiNeutralOnIcon from '@assets/icons/emoji/emoji-neutral-on.svg';
-import EmojiNeutralOffIcon from '@assets/icons/emoji/emoji-neutral-off.svg';
-import EmojiTearOnIcon from '@assets/icons/emoji/emoji-tear-on.svg';
-import EmojiTearOffIcon from '@assets/icons/emoji/emoji-tear-off.svg';
 import { HealthMetricsChart } from './HealthMetricsChart';
+import { HealthStatusEmojiButton } from './HealthStatusEmojiButton';
 import { DropdownAnchor, TimeDropdown } from './TimeDropdown';
 import { TourTarget } from '@features/guardian-tour/ui';
-
-const HEALTH_EMOJI_ICONS: Record<HealthStatus, { on: typeof EmojiSmileOnIcon; off: typeof EmojiSmileOnIcon }> = {
-  good: { on: EmojiSmileOnIcon, off: EmojiSmileOffIcon },
-  normal: { on: EmojiNeutralOnIcon, off: EmojiNeutralOffIcon },
-  bad: { on: EmojiTearOnIcon, off: EmojiTearOffIcon },
-};
 
 const HEALTH_STATUS_LABELS: Record<HealthStatus, string> = {
   good: '좋음',
@@ -106,9 +95,9 @@ export function DailyReportCard({
       <TourTarget id="dailyReport.healthStatus" className="mt-4 rounded-card border border-border bg-surface p-4">
         <Text className="text-md font-semibold text-text-primary">오늘의 건강 상태</Text>
         <View className="mt-3 flex-row justify-around">
-          <EmojiState wardId={wardId} status="good" />
-          <EmojiState wardId={wardId} status="normal" />
-          <EmojiState wardId={wardId} status="bad" />
+          <HealthStatusEmojiButton status="good" active={status === 'good'} />
+          <HealthStatusEmojiButton status="normal" active={status === 'normal'} />
+          <HealthStatusEmojiButton status="bad" active={status === 'bad'} />
         </View>
       </TourTarget>
 
@@ -126,18 +115,6 @@ export function DailyReportCard({
 
       {isDetailVisible && <CompoundHealthDataSection />}
     </TourTarget>
-  );
-}
-
-function EmojiState({ wardId, status }: { wardId: string; status: HealthStatus }) {
-  const activeStatus = useHealthStatusStore(state => state.statusByWard[wardId]);
-  const { on: OnIcon, off: OffIcon } = HEALTH_EMOJI_ICONS[status];
-  const isOn = activeStatus === status;
-
-  return (
-    <View className="h-[85px] w-[85px] items-center justify-center rounded-card bg-surface">
-      {isOn ? <OnIcon width={60} height={60} /> : <OffIcon width={60} height={60} />}
-    </View>
   );
 }
 
