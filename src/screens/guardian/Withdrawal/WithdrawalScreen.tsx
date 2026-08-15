@@ -9,12 +9,13 @@ import { RadioOption } from '@features/mypage/ui';
 export function WithdrawalScreen() {
   const navigation = useNavigation();
   const [reasonId, setReasonId] = useState<string | null>(null);
-  const [agreed, setAgreed] = useState(false);
+  const [checklistConfirmed, setChecklistConfirmed] = useState(false);
+  const [agreedToWithdraw, setAgreedToWithdraw] = useState(false);
 
-  const canWithdraw = agreed && reasonId !== null;
+  const canWithdraw = checklistConfirmed && reasonId !== null && agreedToWithdraw;
 
   return (
-    <SafeAreaView className="flex-1 bg-surface" edges={['top']}>
+    <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
       <View className="flex-row items-center gap-2 border-b border-border px-4 py-3">
         <Pressable onPress={() => navigation.goBack()} hitSlop={8} className="-rotate-180">
           <ChevronRightIcon width={24} height={24} />
@@ -22,7 +23,7 @@ export function WithdrawalScreen() {
         <Text className="text-xl font-pretendard-semibold text-text-primary">회원 탈퇴</Text>
       </View>
 
-      <ScrollView className="flex-1 px-4" contentContainerClassName="pb-8" showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 px-4" contentContainerClassName="pb-6" showsVerticalScrollIndicator={false}>
         <Text className="mt-4 text-xl font-pretendard-bold text-text-primary">탈퇴 시 유의사항 안내</Text>
         <Text className="mt-1 text-xs font-pretendard-medium text-text-muted">
           회원 탈퇴를 신청하기 전에 아래의 유의사항을 확인해 주세요.
@@ -35,6 +36,21 @@ export function WithdrawalScreen() {
             삭제되며 복구가 불가능합니다.
           </Text>
         </View>
+
+        <Pressable
+          className="mt-4 flex-row items-center gap-2"
+          onPress={() => setChecklistConfirmed(prev => !prev)}
+          hitSlop={4}>
+          <View
+            className={`h-4 w-4 items-center justify-center rounded-[2px] border ${
+              checklistConfirmed ? 'border-primary bg-primary' : 'border-border bg-transparent'
+            }`}>
+            {checklistConfirmed && <Text className="text-[10px] leading-none text-surface">✓</Text>}
+          </View>
+          <Text className="text-xs font-pretendard-medium text-text-muted">
+            위 내용을 모두 확인하였습니다.  <Text className="text-text-danger">필수</Text>
+          </Text>
+        </Pressable>
 
         <View className="mt-4 gap-1 rounded-card border border-border p-3">
           <Text className="text-md font-pretendard-bold text-text-heading">
@@ -51,29 +67,23 @@ export function WithdrawalScreen() {
             ))}
           </View>
         </View>
+      </ScrollView>
 
+      <View className="gap-3 bg-surface px-4 pb-10 pt-2">
         <Pressable
-          className="mt-4 flex-row items-center gap-2"
-          onPress={() => setAgreed(prev => !prev)}
-          hitSlop={4}>
-          <View
-            className={`h-4 w-4 items-center justify-center rounded-[2px] border ${
-              agreed ? 'border-primary bg-primary' : 'border-border bg-transparent'
-            }`}>
-            {agreed && <Text className="text-[10px] leading-none text-surface">✓</Text>}
-          </View>
-          <Text className="text-xs font-pretendard-medium text-text-muted">
-            위 내용을 모두 확인하였습니다.  <Text className="text-text-danger">필수</Text>
-          </Text>
+          onPress={() => setAgreedToWithdraw(prev => !prev)}
+          className="items-center justify-center rounded-card bg-primary py-4"
+          style={{ opacity: agreedToWithdraw ? 1 : 0.4 }}>
+          <Text className="text-2xl font-pretendard-semibold text-surface">동의하기</Text>
         </Pressable>
 
         <Pressable
           disabled={!canWithdraw}
-          className="mt-6 items-center justify-center rounded-card bg-primary py-4"
+          className="items-center justify-center rounded-card bg-primary py-4"
           style={{ opacity: canWithdraw ? 1 : 0.4 }}>
           <Text className="text-2xl font-pretendard-semibold text-surface">탈퇴하기</Text>
         </Pressable>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
