@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Svg, { Defs, FeGaussianBlur, Filter, Mask, Rect } from 'react-native-svg';
 import { TourStep, TOUR_STEPS } from '../model/tourSteps';
 import { TourTargetLayout, useTourStore } from '../model/useTourStore';
@@ -39,6 +39,10 @@ export function TourOverlayContent({ step, currentStepIndex, showSpotlight, read
 
   return (
     <View style={StyleSheet.absoluteFill}>
+      {/* 딤 처리된 영역(스포트라이트 구멍 포함)의 터치를 여기서 다 흡수함. 이게 없으면 안드로이드에서는
+          아무 반응도 없는 View가 터치를 그대로 아래로 흘려보내서(iOS의 UIKit 히트테스팅과 달리), 등록
+          모달을 사용가이드가 강제로 띄운 동안에도 그 아래 깔린 실제 폼의 입력/저장 버튼이 눌려버림 */}
+      <Pressable style={StyleSheet.absoluteFill} onPress={() => {}} />
       <Svg width={screenWidth} height={screenHeight} style={StyleSheet.absoluteFill} pointerEvents="none">
         <Defs>
           <Mask id="spotlightMask">
