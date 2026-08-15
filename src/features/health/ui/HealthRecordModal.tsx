@@ -1,6 +1,7 @@
 import React from 'react';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { FormLabel } from '@shared/ui';
+import { colors } from '@shared/theme/colors';
 import { useHealthRecordForm } from '../model';
 
 interface HealthRecordModalProps {
@@ -77,7 +78,7 @@ function HealthRecordField({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor="#6C757D"
+        placeholderTextColor={colors.textPlaceholder}
         keyboardType="numeric"
         className="mt-2 rounded-[8px] border border-border-input px-3.5 py-2 font-pretendard text-md text-text-primary"
       />
