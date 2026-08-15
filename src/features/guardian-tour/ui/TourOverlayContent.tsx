@@ -7,6 +7,10 @@ import { colors } from '@shared/theme/colors';
 import CloseIcon from '@assets/icons/action/close-x.svg';
 
 const SPOTLIGHT_RADIUS = 12;
+// SVG Rect의 fill은 nativewind className을 못 받는 네이티브 prop이라 색상을 여기서 직접 들고 있어야 함
+// (다른 모달들의 bg-black/30~40과 값이 다른 건 의도된 것 — 스포트라이트로 뚫린 부분과의 대비를 위해
+// 사용가이드 딤 처리만 더 진하게 줌)
+const DIM_OVERLAY_COLOR = 'rgba(0, 0, 0, 0.6)';
 
 interface TourOverlayContentProps {
   step: TourStep;
@@ -64,7 +68,7 @@ export function TourOverlayContent({ step, currentStepIndex, showSpotlight, read
         </Defs>
 
         {/* 딤 처리 + 둥근 모서리 스포트라이트 구멍 (마스크 사용, 사각형 4분할 방식과 달리 모서리가 자연스럽게 이어짐) */}
-        <Rect x={0} y={0} width={screenWidth} height={screenHeight} fill="rgba(0,0,0,0.6)" mask="url(#spotlightMask)" />
+        <Rect x={0} y={0} width={screenWidth} height={screenHeight} fill={DIM_OVERLAY_COLOR} mask="url(#spotlightMask)" />
 
         {showSpotlight && (
           <>
