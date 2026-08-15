@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import CalendarEventIcon from '@assets/icons/section/calendar-event.svg';
-import { isSameDay, to24Hour, useScheduleStore } from '../model';
+import { formatScheduleTime, isSameDay, to24Hour, useScheduleStore } from '../model';
 
 function formatTodayScheduleTitle(today: Date) {
   return `${today.getMonth() + 1}월 ${today.getDate()}일 오늘의 일정`;
@@ -32,16 +32,11 @@ export function WardScheduleCard({ wardId }: { wardId: string }) {
         <Text className="font-pretendard-semibold text-xl text-text-primary">{formatTodayScheduleTitle(today)}</Text>
         <View className="mt-3 gap-2">
           {todaySchedules.length > 0 ? (
-            todaySchedules.map(entry => {
-              const { hour, minute } = to24Hour(entry.scheduleTime);
-              const hh = String(hour).padStart(2, '0');
-              const mm = String(minute).padStart(2, '0');
-              return (
-                <Text key={entry.id} className="font-pretendard-semibold text-2xl text-text-primary">
-                  • {hh} : {mm} {entry.title}
-                </Text>
-              );
-            })
+            todaySchedules.map(entry => (
+              <Text key={entry.id} className="font-pretendard-semibold text-2xl text-text-primary">
+                • {formatScheduleTime(entry)} {entry.title}
+              </Text>
+            ))
           ) : (
             <Text className="font-pretendard-medium text-md text-text-muted">오늘 등록된 일정이 없어요.</Text>
           )}
