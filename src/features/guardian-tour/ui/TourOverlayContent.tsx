@@ -25,8 +25,8 @@ interface TourOverlayContentProps {
 }
 
 // 딤 처리 + 하이라이트 + 하단 안내 카드로 구성된 사용가이드 오버레이 UI.
-// 화면(TourOverlay)에서는 자기 자신의 Modal 안에, 등록 모달(일정/복약 등록)에서는 그 모달의
-// Modal 안에 그대로 얹어서 쓸 수 있도록 Modal 없이 순수 UI만 담당함
+// TourOverlay(화면)와 TourHostOverlay(등록 모달)가 각자의 Modal 안에
+// 그대로 얹어서 쓸 수 있도록 Modal 없이 순수 UI만 담당함
 export function TourOverlayContent({ step, currentStepIndex, showSpotlight, ready, box }: TourOverlayContentProps) {
   const handleNext = () => useTourStore.getState().next(TOUR_STEPS.length);
   const handleClose = () => useTourStore.getState().close();
