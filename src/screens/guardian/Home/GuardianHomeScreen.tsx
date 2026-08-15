@@ -35,7 +35,7 @@ export function GuardianHomeScreen() {
   const isTourActive = useTourStore(state => state.isActive);
   const tourStepIndex = useTourStore(state => state.currentStepIndex);
   // 사용가이드가 "건강 수치 그래프" 단계에 도달하면, 접혀 있던 상세 영역을 강제로 펼쳐서 보여줌
-  const forceShowDetail = isTourActive && CHART_STEP_INDEX !== -1 && tourStepIndex >= CHART_STEP_INDEX;
+  const forceShowDetail = isTourActive && CHART_STEP_INDEX !== -1 && tourStepIndex === CHART_STEP_INDEX;
 
   // 회원가입 직후 자동 시작뿐 아니라, 마이페이지 > 사용 가이드 안내에서 다시 보기로 진입한 경우에도
   // Home 탭이 포커스될 때마다 확인해야 하므로 mount 시점이 아닌 focus 시점에 체크함
