@@ -99,3 +99,7 @@ export const TOUR_STEPS: TourStep[] = [
     scrollId: 'wardManagement',
   },
 ];
+
+// "복약 등록" 스텝 인덱스 — GuardianHomeScreen(복약 화면으로 자동 이동)과 MedicationScreen(스텝을
+// 지나면 자동으로 뒤로 나가기) 양쪽에서 같은 값을 참조해야 하므로 여기서 한 번만 계산해 공유함
+export const MEDICATION_MODAL_STEP_INDEX = TOUR_STEPS.findIndex(step => step.screen === 'Medication');

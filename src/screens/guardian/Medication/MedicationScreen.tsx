@@ -8,9 +8,7 @@ import { MOCK_WARDS, useSelectedWardStore } from '@features/ward-management/mode
 import { MedicationEntry, useMedicationListStore } from '@features/medication/model';
 import { MedicationListItem, MedicationRegistrationModal } from '@features/medication/ui';
 import { sortMedicationsByTime } from '@features/medication/utils';
-import { TOUR_STEPS, useTourStore } from '@features/guardian-tour/model';
-
-const MEDICATION_MODAL_STEP_INDEX = TOUR_STEPS.findIndex(step => step.screen === 'Medication');
+import { MEDICATION_MODAL_STEP_INDEX, useTourStore } from '@features/guardian-tour/model';
 
 export function MedicationScreen() {
   const navigation = useNavigation();

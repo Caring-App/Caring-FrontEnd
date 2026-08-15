@@ -12,13 +12,17 @@ import { LocationSection } from '@features/location/ui';
 import { ScheduleSection } from '@features/schedule/ui';
 import { WelfareSection } from '@features/welfare-facility/ui';
 import { MOCK_WARDS, useSelectedWardStore } from '@features/ward-management/model';
-import { TOUR_STEPS, useTourScrollTracking, useTourStore } from '@features/guardian-tour/model';
+import {
+  MEDICATION_MODAL_STEP_INDEX,
+  TOUR_STEPS,
+  useTourScrollTracking,
+  useTourStore,
+} from '@features/guardian-tour/model';
 import { TourOverlay, TourTarget } from '@features/guardian-tour/ui';
 
 type GuardianStackNavigationProp = NativeStackNavigationProp<GuardianStackParamList>;
 
 const CHART_STEP_INDEX = TOUR_STEPS.findIndex(step => step.targetId === 'dailyReport.chart');
-const MEDICATION_MODAL_STEP_INDEX = TOUR_STEPS.findIndex(step => step.screen === 'Medication');
 const WARD_MANAGEMENT_STEP_INDEX = TOUR_STEPS.findIndex(step => step.screen === 'WardManagement');
 
 export function GuardianHomeScreen() {
