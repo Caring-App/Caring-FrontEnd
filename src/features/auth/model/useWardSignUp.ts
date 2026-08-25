@@ -25,6 +25,7 @@ export default function useWardSignUp(navigation: any) {
     if (!isFormValid || isSubmitting) return;
     setSubmitError('');
     setIsSubmitting(true);
+
     try {
       await registerWardApi({
         name,
@@ -35,8 +36,16 @@ export default function useWardSignUp(navigation: any) {
         address,
         diseases: selectedDiseases,
       });
+    } catch (error) {
+      logApiError('돌봄대상자 회원가입 실패:', error);
+      setSubmitError('회원가입에 실패했습니다. 입력하신 정보를 다시 확인해 주세요.');
+      setIsSubmitting(false);
+      return;
+    }
 
-      // 회원가입 응답에는 토큰이 없으므로 방금 만든 계정으로 바로 로그인해 토큰을 발급받음
+    // 회원가입 응답에는 토큰이 없으므로 방금 만든 계정으로 바로 로그인해 토큰을 발급받음.
+    // 이 단계는 계정이 이미 생성된 뒤라 실패해도 "회원가입 실패"가 아니라 별도 안내가 필요함.
+    try {
       const loginResult = await loginApi({ phone, password });
       await setTokens(loginResult.accessToken, loginResult.refreshToken);
       useSessionStore.getState().setPendingProfile('WARD', {
@@ -47,8 +56,8 @@ export default function useWardSignUp(navigation: any) {
 
       navigation.navigate('WardSignupWelcome', { userName: name });
     } catch (error) {
-      logApiError('돌봄대상자 회원가입 실패:', error);
-      setSubmitError('회원가입에 실패했습니다. 입력하신 정보를 다시 확인해 주세요.');
+      logApiError('회원가입 후 자동 로그인 실패:', error);
+      setSubmitError('가입은 완료됐지만 로그인에 실패했어요. 로그인 화면에서 다시 시도해 주세요.');
     } finally {
       setIsSubmitting(false);
     }
