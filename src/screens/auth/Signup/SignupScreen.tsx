@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { ActivityIndicator, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import useSignUp from '@features/auth/model/useSignUp';
 import { SignupCommonFields } from '@features/auth/ui';
 import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
+import { colors } from '@shared/theme/colors';
 
 export const SignupScreen = ({ navigation }: { navigation: any }) => {
   const {
@@ -14,11 +15,18 @@ export const SignupScreen = ({ navigation }: { navigation: any }) => {
     setAuthCode,
     setPassword,
     setPasswordConfirm,
-    setBirthDate,
     setAddress,
     handleSendAuthCode,
+    handleVerifyAuthCode,
+    isSendingCode,
+    isCodeSent,
+    isVerifyingCode,
+    isPhoneVerified,
+    authError,
     handleSubmit,
     isFormValid,
+    isSubmitting,
+    submitError,
   } = useSignUp(navigation);
 
   return (
@@ -40,19 +48,34 @@ export const SignupScreen = ({ navigation }: { navigation: any }) => {
             setAuthCode={setAuthCode}
             setPassword={setPassword}
             setPasswordConfirm={setPasswordConfirm}
-            setBirthDate={setBirthDate}
             setAddress={setAddress}
             handleSendAuthCode={handleSendAuthCode}
+            handleVerifyAuthCode={handleVerifyAuthCode}
+            isSendingCode={isSendingCode}
+            isCodeSent={isCodeSent}
+            isVerifyingCode={isVerifyingCode}
+            isPhoneVerified={isPhoneVerified}
+            authError={authError}
           />
         </View>
 
+        {!!submitError && (
+          <Text className="mt-2 text-center text-xs text-text-danger">{submitError}</Text>
+        )}
+
         <TouchableOpacity
-          className={`mt-6 h-[52px] items-center justify-center rounded-card ${isFormValid ? 'bg-primary' : 'bg-border-link'}`}
+          className={`mt-6 h-[52px] items-center justify-center rounded-card ${
+            isFormValid && !isSubmitting ? 'bg-primary' : 'bg-border-link'
+          }`}
           onPress={handleSubmit}
-          disabled={!isFormValid}
+          disabled={!isFormValid || isSubmitting}
           activeOpacity={0.8}
         >
-          <Text className="font-pretendard-semibold text-lg text-white">회원가입</Text>
+          {isSubmitting ? (
+            <ActivityIndicator size="small" color={colors.surface} />
+          ) : (
+            <Text className="font-pretendard-semibold text-lg text-white">회원가입</Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

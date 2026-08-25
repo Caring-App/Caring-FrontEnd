@@ -5,7 +5,7 @@ export type AuthStackParamList = {
   SignupTypeSelect: undefined;
   TermsAgreement: { role?: 'PROTECTOR' | 'WARD' } | undefined;
   Signup: undefined;
-  SignupWelcome: { userName?: string } | undefined;
+  SignupWelcome: { userName?: string; protectorCode?: string } | undefined;
   WardSignup: undefined;
   WardSignupWelcome: { userName?: string } | undefined;
   LinkAccount: undefined;

@@ -6,8 +6,9 @@ import { SignupWelcomeStep, WelcomeStep } from '@features/auth/ui/SignupWelcomeS
 export const SignupWelcomeScreen = ({ route }: { route?: any }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 가입 시 넘겨받은 유저 이름 (없을 경우 기본값 지정)
+  // 가입 시 넘겨받은 유저 이름 / 연동 코드 (없을 경우 기본값 지정)
   const userName = route?.params?.userName || '---';
+  const protectorCode = route?.params?.protectorCode || '';
 
   // 피그마 시안(151:17151, 151:17215, 151:17248)과 동일한 3단계 스텝 데이터
   const steps: WelcomeStep[] = [
@@ -51,6 +52,7 @@ export const SignupWelcomeScreen = ({ route }: { route?: any }) => {
   return (
     <SignupWelcomeStep
       userName={userName}
+      userCode={protectorCode}
       currentStep={steps[currentIndex]}
       onNext={handleNext}
       onClose={handleClose}
