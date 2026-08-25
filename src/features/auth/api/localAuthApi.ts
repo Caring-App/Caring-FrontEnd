@@ -5,6 +5,8 @@ import {
   RefreshTokenResponse,
   RegisterProtectorRequest,
   RegisterProtectorResponse,
+  RegisterSocialRequest,
+  RegisterSocialResponse,
   RegisterWardRequest,
   RegisterWardResponse,
 } from '../model/types';
@@ -36,6 +38,12 @@ export const registerProtectorApi = async (
 // [돌봄대상자 회원가입]
 export const registerWardApi = async (payload: RegisterWardRequest): Promise<RegisterWardResponse> => {
   const { data } = await axiosInstance.post<RegisterWardResponse>('/api/auth/register/ward', payload);
+  return data;
+};
+
+// [소셜 회원가입] — 소셜 로그인 시도 결과 신규 회원(newMember: true)인 경우 추가 정보를 받아 가입 처리
+export const registerSocialApi = async (payload: RegisterSocialRequest): Promise<RegisterSocialResponse> => {
+  const { data } = await axiosInstance.post<RegisterSocialResponse>('/api/auth/register/social', payload);
   return data;
 };
 

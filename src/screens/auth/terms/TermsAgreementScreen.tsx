@@ -20,13 +20,19 @@ function TermCheckbox({ checked }: { checked: boolean }) {
 
 export default function TermsAgreementScreen({ navigation, route }: any) {
   const role = route?.params?.role;
+  const social = route?.params?.social;
   const termList = role === 'WARD' ? WARD_TERM_LIST : TERM_LIST;
   const { checkedItems, isAllChecked, isRequiredChecked, handleCheckItem, handleCheckAll } = useTermsAgreement(termList);
 
   const handleNextPress = () => {
-    if (isRequiredChecked) {
-      navigation.navigate(role === 'WARD' ? 'WardSignup' : 'Signup');
+    if (!isRequiredChecked) return;
+
+    // 소셜 신규 회원가입이면 로컬 회원가입 폼이 아니라 추가 정보 입력 화면으로
+    if (social) {
+      navigation.navigate('SocialAdditionalInfo', { role, ...social });
+      return;
     }
+    navigation.navigate(role === 'WARD' ? 'WardSignup' : 'Signup');
   };
 
   const requiredTerms = termList.filter(term => term.required);

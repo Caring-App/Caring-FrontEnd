@@ -7,6 +7,7 @@ import { SignupTypeSelectScreen } from '@screens/auth/Signup/SignupTypeSelectScr
 import TermsAgreementScreen from '@screens/auth/terms/TermsAgreementScreen';
 import SignupScreen from '@screens/auth/Signup/SignupScreen';
 import WardSignupScreen from '@screens/auth/Signup/WardSignupScreen';
+import SocialAdditionalInfoScreen from '@screens/auth/Signup/SocialAdditionalInfoScreen';
 import { SignupWelcomeScreen } from '@screens/auth/welcome-guide/SignupWelcomeScreen';
 import { WardSignupWelcomeScreen } from '@screens/auth/welcome-guide/WardSignupWelcomeScreen';
 import LinkAccountScreen from '@screens/auth/LinkAccount/LinkAccountScreen';
@@ -40,6 +41,7 @@ export const RootNavigator = () => {
       <AuthStack.Screen name="Signup" component={SignupScreen} />
       <AuthStack.Screen name="SignupWelcome" component={SignupWelcomeScreen} />
       <AuthStack.Screen name="WardSignup" component={WardSignupScreen} />
+      <AuthStack.Screen name="SocialAdditionalInfo" component={SocialAdditionalInfoScreen} />
       <AuthStack.Screen name="WardSignupWelcome" component={WardSignupWelcomeScreen} />
       <AuthStack.Screen name="LinkAccount" component={LinkAccountScreen} />
       <AuthStack.Screen name="LinkAccountComplete" component={LinkAccountCompleteScreen} />
