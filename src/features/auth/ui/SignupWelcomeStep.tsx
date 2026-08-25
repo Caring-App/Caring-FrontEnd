@@ -19,14 +19,13 @@ export interface WelcomeStep {
 
 interface Props {
   userName?: string;
+  userCode?: string;
   currentStep: WelcomeStep;
   onNext: () => void;
   onClose: () => void;
 }
 
-export const SignupWelcomeStep = ({ userName = '---', currentStep, onNext, onClose }: Props) => {
-  const userCode = 'ABC123-DFG456';
-
+export const SignupWelcomeStep = ({ userName = '---', userCode = '', currentStep, onNext, onClose }: Props) => {
   const handleCopyCode = () => {
     Clipboard.setString(userCode);
     Alert.alert('복사 완료', '연동 코드가 복사되었습니다.');
