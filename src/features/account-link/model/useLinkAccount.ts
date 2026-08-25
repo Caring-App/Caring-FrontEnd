@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { linkConnectionApi } from '@features/account-link/api';
+import { logApiError } from '@shared/api';
 
 export default function useLinkAccount() {
   const [code, setCode] = useState('');
@@ -23,7 +24,7 @@ export default function useLinkAccount() {
     try {
       return await linkConnectionApi({ protectorCode: code });
     } catch (error) {
-      console.error('연동 코드 제출 실패:', error);
+      logApiError('연동 코드 제출 실패:', error);
       setSubmitError('연동 코드가 올바르지 않습니다. 다시 확인해 주세요.');
       return null;
     } finally {

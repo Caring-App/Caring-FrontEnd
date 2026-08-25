@@ -3,7 +3,7 @@ import { ActivityIndicator, View, Text, TextInput, TouchableOpacity, ScrollView,
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { loginApi, getSocialAccessToken } from '@features/auth/api';
 import { SocialProvider } from '@features/auth/model';
-import { setTokens } from '@shared/api/tokenStorage';
+import { logApiError, setTokens } from '@shared/api';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import { colors } from '@shared/theme/colors';
 import KakaoLoginButton from '@assets/images/kakao-login.png';
@@ -29,7 +29,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
         nickname: result.nickname,
       });
     } catch (error) {
-      console.error('로그인 실패:', error);
+      logApiError('로그인 실패:', error);
       setLoginError('전화번호 또는 비밀번호가 올바르지 않습니다.');
     } finally {
       setIsSubmitting(false);
@@ -46,7 +46,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
       const accessToken = await getSocialAccessToken(provider);
       navigation.navigate('SignupTypeSelect', { social: { provider, accessToken } });
     } catch (error) {
-      console.error(`${provider} 간편 로그인 실패:`, error);
+      logApiError(`${provider} 간편 로그인 실패:`, error);
       setLoginError('간편 로그인에 실패했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
       setIsSocialSubmitting(false);

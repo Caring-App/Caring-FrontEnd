@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { loginApi, registerProtectorApi } from '@features/auth/api';
-import { setTokens } from '@shared/api/tokenStorage';
+import { logApiError, setTokens } from '@shared/api';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import { useSignupFormBase } from './useSignupFormBase';
 
@@ -35,7 +35,7 @@ export default function useSignUp(navigation: any) {
 
       navigation.navigate('SignupWelcome', { userName: name, protectorCode });
     } catch (error) {
-      console.error('보호자 회원가입 실패:', error);
+      logApiError('보호자 회원가입 실패:', error);
       setSubmitError('회원가입에 실패했습니다. 입력하신 정보를 다시 확인해 주세요.');
     } finally {
       setIsSubmitting(false);

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { checkSocialMember } from '@features/auth/api';
+import { logApiError } from '@shared/api';
 import { UserRole } from '@shared/types';
 import { SocialAccessToken } from './types';
 
@@ -26,7 +27,7 @@ export function useSignupTypeSelect(navigation: any, social?: SocialAccessToken)
       }
       // 기존 회원이면 checkSocialMember 내부에서 이미 로그인 처리됨 — RootNavigator가 알아서 전환
     } catch (error) {
-      console.error('소셜 회원 확인 실패:', error);
+      logApiError('소셜 회원 확인 실패:', error);
       setSocialError('간편 로그인 확인에 실패했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
       setIsCheckingSocial(false);

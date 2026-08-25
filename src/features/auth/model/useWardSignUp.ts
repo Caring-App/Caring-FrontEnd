@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { loginApi, registerWardApi } from '@features/auth/api';
-import { setTokens } from '@shared/api/tokenStorage';
+import { logApiError, setTokens } from '@shared/api';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import { useSignupFormBase } from './useSignupFormBase';
 
@@ -44,7 +44,7 @@ export default function useWardSignUp(navigation: any) {
 
       navigation.navigate('WardSignupWelcome', { userName: name });
     } catch (error) {
-      console.error('돌봄대상자 회원가입 실패:', error);
+      logApiError('돌봄대상자 회원가입 실패:', error);
       setSubmitError('회원가입에 실패했습니다. 입력하신 정보를 다시 확인해 주세요.');
     } finally {
       setIsSubmitting(false);

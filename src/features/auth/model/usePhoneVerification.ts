@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { sendSmsCodeApi, verifySmsCodeApi } from '@features/auth/api';
+import { logApiError } from '@shared/api';
 
 // 전화번호 + SMS 인증번호 확인 흐름 — 회원가입, 비밀번호 찾기 등 여러 폼이 공유
 export function usePhoneVerification() {
@@ -35,7 +36,7 @@ export function usePhoneVerification() {
       setIsPhoneVerified(false);
       setAuthCode('');
     } catch (error) {
-      console.error('SMS 인증번호 발송 실패:', error);
+      logApiError('SMS 인증번호 발송 실패:', error);
       setAuthError('인증번호 발송에 실패했습니다. 전화번호를 확인해 주세요.');
     } finally {
       setIsSendingCode(false);
@@ -50,7 +51,7 @@ export function usePhoneVerification() {
       await verifySmsCodeApi(phone, authCode);
       setIsPhoneVerified(true);
     } catch (error) {
-      console.error('SMS 인증번호 확인 실패:', error);
+      logApiError('SMS 인증번호 확인 실패:', error);
       setIsPhoneVerified(false);
       setAuthError('인증번호가 일치하지 않습니다.');
     } finally {

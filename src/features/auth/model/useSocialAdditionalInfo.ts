@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { registerSocialApi } from '@features/auth/api';
-import { setTokens } from '@shared/api/tokenStorage';
+import { logApiError, setTokens } from '@shared/api';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import { UserRole } from '@shared/types';
 import { SocialProviderCode, SocialSignupProfile } from './types';
@@ -53,7 +53,7 @@ export default function useSocialAdditionalInfo(navigation: any, params: Params)
         navigation.navigate('SignupWelcome', { userName: response.name, protectorCode: response.protectorCode });
       }
     } catch (error) {
-      console.error('소셜 회원가입 실패:', error);
+      logApiError('소셜 회원가입 실패:', error);
       setSubmitError('회원가입에 실패했습니다. 입력하신 정보를 다시 확인해 주세요.');
     } finally {
       setIsSubmitting(false);

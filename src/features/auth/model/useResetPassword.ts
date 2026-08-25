@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Alert } from 'react-native';
 import { resetPasswordApi } from '@features/auth/api';
+import { logApiError } from '@shared/api';
 import { usePhoneVerification } from './usePhoneVerification';
 
 export default function useResetPassword(navigation: any) {
@@ -29,7 +30,7 @@ export default function useResetPassword(navigation: any) {
         { text: '확인', onPress: () => navigation.navigate('Login') },
       ]);
     } catch (error) {
-      console.error('비밀번호 재설정 실패:', error);
+      logApiError('비밀번호 재설정 실패:', error);
       setSubmitError('비밀번호 재설정에 실패했습니다. 입력하신 정보를 다시 확인해 주세요.');
     } finally {
       setIsSubmitting(false);
