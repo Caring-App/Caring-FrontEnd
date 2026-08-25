@@ -6,10 +6,13 @@ import { useSignupFormBase } from './useSignupFormBase';
 
 export default function useWardSignUp(navigation: any) {
   const base = useSignupFormBase();
-  const { name, phone, authCode, password, passwordConfirm, address, isFormValid } = base;
+  const { name, phone, authCode, password, passwordConfirm, address, isFormValid: isBaseFormValid } = base;
   const [selectedDiseases, setSelectedDiseases] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+
+  // 기저 질환은 최소 1개 이상 선택해야 함 (소셜 회원가입의 useSocialAdditionalInfo와 동일 조건)
+  const isFormValid = isBaseFormValid && selectedDiseases.length > 0;
 
   // 기저 질환은 중복 선택 가능 (Figma 504:13234)
   const toggleDisease = (disease: string) => {
@@ -56,6 +59,7 @@ export default function useWardSignUp(navigation: any) {
     form: { name, phone, authCode, password, passwordConfirm, address, selectedDiseases },
     toggleDisease,
     handleSubmit,
+    isFormValid,
     isSubmitting,
     submitError,
   };
