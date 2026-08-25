@@ -2,7 +2,6 @@ import { axiosInstance } from '@shared/api/axiosInstance';
 import {
   LoginRequest,
   LoginResponse,
-  RefreshTokenResponse,
   RegisterProtectorRequest,
   RegisterProtectorResponse,
   RegisterSocialRequest,
@@ -53,8 +52,6 @@ export const resetPasswordApi = async (payload: ResetPasswordRequest): Promise<v
   await axiosInstance.post('/api/auth/password/reset', payload);
 };
 
-// [액세스 토큰 재발급] — axiosInstance의 401 재시도 인터셉터에서 주로 사용됨
-export const refreshAccessTokenApi = async (refreshToken: string): Promise<RefreshTokenResponse> => {
-  const { data } = await axiosInstance.post<RefreshTokenResponse>('/api/auth/refresh', { refreshToken });
-  return data;
-};
+// 액세스 토큰 재발급은 axiosInstance의 401 인터셉터가 무한 재시도 방지를 위해 axiosInstance를 거치지 않고
+// 직접 axios로 호출함 (axiosInstance.ts 참고) — 여기서 별도 함수로 두면 실수로 axiosInstance를 통해 호출해
+// 무한루프에 빠질 수 있어 의도적으로 두지 않음.

@@ -53,10 +53,6 @@ export interface RegisterWardResponse {
   diseases: string[];
 }
 
-export interface RefreshTokenResponse {
-  accessToken: string;
-}
-
 export interface ResetPasswordRequest {
   phone: string;
   authNumber: string;
