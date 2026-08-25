@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { loginApi, registerWardApi } from '@features/auth/api';
-import { logApiError, setTokens } from '@shared/api';
-import { useSessionStore } from '@shared/store/useSessionStore';
+import { registerWardApi } from '@features/auth/api';
+import { loginAfterRegister } from '@features/auth/utils';
+import { logApiError } from '@shared/api';
 import { useSignupFormBase } from './useSignupFormBase';
 
 export default function useWardSignUp(navigation: any) {
@@ -43,17 +43,8 @@ export default function useWardSignUp(navigation: any) {
       return;
     }
 
-    // 회원가입 응답에는 토큰이 없으므로 방금 만든 계정으로 바로 로그인해 토큰을 발급받음.
-    // 이 단계는 계정이 이미 생성된 뒤라 실패해도 "회원가입 실패"가 아니라 별도 안내가 필요함.
     try {
-      const loginResult = await loginApi({ phone, password });
-      await setTokens(loginResult.accessToken, loginResult.refreshToken);
-      useSessionStore.getState().setPendingProfile('WARD', {
-        memberId: loginResult.memberId,
-        name: loginResult.name,
-        nickname: loginResult.nickname,
-      });
-
+      await loginAfterRegister(phone, password, 'WARD');
       navigation.navigate('WardSignupWelcome', { userName: name });
     } catch (error) {
       logApiError('회원가입 후 자동 로그인 실패:', error);
