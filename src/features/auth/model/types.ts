@@ -57,6 +57,13 @@ export interface RefreshTokenResponse {
   accessToken: string;
 }
 
+export interface ResetPasswordRequest {
+  phone: string;
+  authNumber: string;
+  newPassword: string;
+  newPasswordCheck: string;
+}
+
 // 간편 로그인/회원가입에서 URL 경로·SDK 분기에 쓰는 값 (구글은 지원 중단으로 제외)
 export type SocialProvider = 'kakao' | 'naver';
 

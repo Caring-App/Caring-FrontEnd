@@ -1,6 +1,7 @@
 export { default as useSignUp } from './useSignUp';
 export { default as useWardSignUp } from './useWardSignUp';
 export { default as useSocialAdditionalInfo } from './useSocialAdditionalInfo';
+export { default as useResetPassword } from './useResetPassword';
 export { usePhoneVerification } from './usePhoneVerification';
 export { useSignupTypeSelect } from './useSignupTypeSelect';
 export { useTermsAgreement, TERM_LIST, WARD_TERM_LIST } from './useTermsAgreement';

@@ -9,6 +9,7 @@ import {
   RegisterSocialResponse,
   RegisterWardRequest,
   RegisterWardResponse,
+  ResetPasswordRequest,
 } from '../model/types';
 
 // [로그인] 전화번호 + 비밀번호
@@ -45,6 +46,11 @@ export const registerWardApi = async (payload: RegisterWardRequest): Promise<Reg
 export const registerSocialApi = async (payload: RegisterSocialRequest): Promise<RegisterSocialResponse> => {
   const { data } = await axiosInstance.post<RegisterSocialResponse>('/api/auth/register/social', payload);
   return data;
+};
+
+// [비밀번호 재설정] — SMS 인증(authNumber) 완료 후 새 비밀번호로 변경
+export const resetPasswordApi = async (payload: ResetPasswordRequest): Promise<void> => {
+  await axiosInstance.post('/api/auth/password/reset', payload);
 };
 
 // [액세스 토큰 재발급] — axiosInstance의 401 재시도 인터셉터에서 주로 사용됨

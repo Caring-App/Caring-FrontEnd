@@ -3,6 +3,7 @@ import { SocialAccessToken, SocialSignupProfile } from '@features/auth/model';
 
 export type AuthStackParamList = {
   Login: undefined;
+  ResetPassword: undefined;
   // 간편 로그인 버튼으로 들어온 경우에만 social이 채워짐 — 로컬 회원가입 진입 시엔 undefined
   SignupTypeSelect: { social?: SocialAccessToken } | undefined;
   // 소셜 신규 회원 흐름에서만 social이 채워짐(신규 확인 후 프로필까지 포함)

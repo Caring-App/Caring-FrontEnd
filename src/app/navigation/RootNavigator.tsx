@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { useSessionStore } from '@shared/store/useSessionStore';
 import LoginScreen from '@screens/auth/Login/LoginScreen';
+import ResetPasswordScreen from '@screens/auth/ResetPassword/ResetPasswordScreen';
 import { SignupTypeSelectScreen } from '@screens/auth/Signup/SignupTypeSelectScreen';
 import TermsAgreementScreen from '@screens/auth/terms/TermsAgreementScreen';
 import SignupScreen from '@screens/auth/Signup/SignupScreen';
@@ -36,6 +37,7 @@ export const RootNavigator = () => {
   return (
     <AuthStack.Navigator screenOptions={{ headerShown: false }}>
       <AuthStack.Screen name="Login" component={LoginScreen} />
+      <AuthStack.Screen name="ResetPassword" component={ResetPasswordScreen} />
       <AuthStack.Screen name="SignupTypeSelect" component={SignupTypeSelectScreen} />
       <AuthStack.Screen name="TermsAgreement" component={TermsAgreementScreen} />
       <AuthStack.Screen name="Signup" component={SignupScreen} />
