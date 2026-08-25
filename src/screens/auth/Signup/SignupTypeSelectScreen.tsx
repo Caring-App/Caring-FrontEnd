@@ -1,15 +1,18 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { useSignupTypeSelect } from '@features/auth/model';
 import { CaringDogImage } from '@features/auth/ui';
 import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
+import { colors } from '@shared/theme/colors';
 
 export const SignupTypeSelectScreen = () => {
   const navigation = useNavigation();
-  const { handleRoleSelect } = useSignupTypeSelect(navigation);
+  const route = useRoute<any>();
+  const social = route.params?.social;
+  const { handleRoleSelect, isCheckingSocial, socialError } = useSignupTypeSelect(navigation, social);
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
@@ -30,6 +33,7 @@ export const SignupTypeSelectScreen = () => {
           <TouchableOpacity
             className="h-[74px] flex-1 items-center justify-center rounded-card border-2 border-primary bg-surface"
             onPress={() => handleRoleSelect('PROTECTOR')}
+            disabled={isCheckingSocial}
             activeOpacity={0.7}
           >
             <Text className="font-pretendard-medium text-[28px] text-text-primary">보호자</Text>
@@ -38,11 +42,15 @@ export const SignupTypeSelectScreen = () => {
           <TouchableOpacity
             className="h-[74px] flex-1 items-center justify-center rounded-card border-2 border-primary bg-surface"
             onPress={() => handleRoleSelect('WARD')}
+            disabled={isCheckingSocial}
             activeOpacity={0.7}
           >
             <Text className="font-pretendard-medium text-[28px] text-text-primary">돌봄대상자</Text>
           </TouchableOpacity>
         </View>
+
+        {isCheckingSocial && <ActivityIndicator className="mt-6" size="small" color={colors.primary} />}
+        {!!socialError && <Text className="mt-6 text-center text-xs text-text-danger">{socialError}</Text>}
       </View>
     </SafeAreaView>
   );

@@ -1,24 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { ActivityIndicator, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useWardSignUp } from '@features/auth/model';
-import { SignupCommonFields } from '@features/auth/ui';
+import { DiseaseSelector, SignupCommonFields } from '@features/auth/ui';
 import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
-
-// 기저 질환 목록 (Figma 504:13234) — 중복 선택 가능
-const DISEASE_LIST = [
-  '고혈압',
-  '당뇨병',
-  '치매',
-  '골다공증',
-  '고지혈증',
-  '관절염',
-  '심혈관 질환',
-  '만성 신부전',
-  '파킨슨병',
-  '기타',
-];
+import { colors } from '@shared/theme/colors';
 
 export const WardSignupScreen = ({ navigation }: { navigation: any }) => {
   const {
@@ -28,12 +15,19 @@ export const WardSignupScreen = ({ navigation }: { navigation: any }) => {
     setAuthCode,
     setPassword,
     setPasswordConfirm,
-    setBirthDate,
     setAddress,
     toggleDisease,
     handleSendAuthCode,
+    handleVerifyAuthCode,
+    isSendingCode,
+    isCodeSent,
+    isVerifyingCode,
+    isPhoneVerified,
+    authError,
     handleSubmit,
     isFormValid,
+    isSubmitting,
+    submitError,
   } = useWardSignUp(navigation);
 
   return (
@@ -55,44 +49,36 @@ export const WardSignupScreen = ({ navigation }: { navigation: any }) => {
             setAuthCode={setAuthCode}
             setPassword={setPassword}
             setPasswordConfirm={setPasswordConfirm}
-            setBirthDate={setBirthDate}
             setAddress={setAddress}
             handleSendAuthCode={handleSendAuthCode}
+            handleVerifyAuthCode={handleVerifyAuthCode}
+            isSendingCode={isSendingCode}
+            isCodeSent={isCodeSent}
+            isVerifyingCode={isVerifyingCode}
+            isPhoneVerified={isPhoneVerified}
+            authError={authError}
           />
 
-          {/* 기저 질환 선택 (중복 선택 가능) */}
-          <View className="mb-4">
-            <Text className="mb-3 font-pretendard-semibold text-lg text-text-body">기저 질환 선택</Text>
-            <View className="flex-row flex-wrap gap-y-3.5">
-              {DISEASE_LIST.map((disease) => {
-                const selected = form.selectedDiseases.includes(disease);
-                return (
-                  <TouchableOpacity
-                    key={disease}
-                    className="w-1/3 flex-row items-center gap-1.5 pr-2"
-                    onPress={() => toggleDisease(disease)}
-                    activeOpacity={0.7}
-                  >
-                    <View
-                      className={`h-[13px] w-[13px] rounded-sm border ${
-                        selected ? 'border-primary bg-primary' : 'border-border-input bg-surface'
-                      }`}
-                    />
-                    <Text className="font-pretendard-semibold text-sm text-text-body">{disease}</Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </View>
+          <DiseaseSelector selectedDiseases={form.selectedDiseases} onToggle={toggleDisease} />
         </View>
 
+        {!!submitError && (
+          <Text className="mt-2 text-center text-xs text-text-danger">{submitError}</Text>
+        )}
+
         <TouchableOpacity
-          className={`mt-6 h-[52px] items-center justify-center rounded-card ${isFormValid ? 'bg-primary' : 'bg-border-link'}`}
+          className={`mt-6 h-[52px] items-center justify-center rounded-card ${
+            isFormValid && !isSubmitting ? 'bg-primary' : 'bg-border-link'
+          }`}
           onPress={handleSubmit}
-          disabled={!isFormValid}
+          disabled={!isFormValid || isSubmitting}
           activeOpacity={0.8}
         >
-          <Text className="font-pretendard-semibold text-lg text-white">회원가입</Text>
+          {isSubmitting ? (
+            <ActivityIndicator size="small" color={colors.surface} />
+          ) : (
+            <Text className="font-pretendard-semibold text-lg text-white">회원가입</Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

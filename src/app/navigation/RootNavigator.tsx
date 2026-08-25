@@ -3,10 +3,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { useSessionStore } from '@shared/store/useSessionStore';
 import LoginScreen from '@screens/auth/Login/LoginScreen';
+import ResetPasswordScreen from '@screens/auth/ResetPassword/ResetPasswordScreen';
 import { SignupTypeSelectScreen } from '@screens/auth/Signup/SignupTypeSelectScreen';
 import TermsAgreementScreen from '@screens/auth/terms/TermsAgreementScreen';
 import SignupScreen from '@screens/auth/Signup/SignupScreen';
 import WardSignupScreen from '@screens/auth/Signup/WardSignupScreen';
+import SocialAdditionalInfoScreen from '@screens/auth/Signup/SocialAdditionalInfoScreen';
 import { SignupWelcomeScreen } from '@screens/auth/welcome-guide/SignupWelcomeScreen';
 import { WardSignupWelcomeScreen } from '@screens/auth/welcome-guide/WardSignupWelcomeScreen';
 import LinkAccountScreen from '@screens/auth/LinkAccount/LinkAccountScreen';
@@ -35,11 +37,13 @@ export const RootNavigator = () => {
   return (
     <AuthStack.Navigator screenOptions={{ headerShown: false }}>
       <AuthStack.Screen name="Login" component={LoginScreen} />
+      <AuthStack.Screen name="ResetPassword" component={ResetPasswordScreen} />
       <AuthStack.Screen name="SignupTypeSelect" component={SignupTypeSelectScreen} />
       <AuthStack.Screen name="TermsAgreement" component={TermsAgreementScreen} />
       <AuthStack.Screen name="Signup" component={SignupScreen} />
       <AuthStack.Screen name="SignupWelcome" component={SignupWelcomeScreen} />
       <AuthStack.Screen name="WardSignup" component={WardSignupScreen} />
+      <AuthStack.Screen name="SocialAdditionalInfo" component={SocialAdditionalInfoScreen} />
       <AuthStack.Screen name="WardSignupWelcome" component={WardSignupWelcomeScreen} />
       <AuthStack.Screen name="LinkAccount" component={LinkAccountScreen} />
       <AuthStack.Screen name="LinkAccountComplete" component={LinkAccountCompleteScreen} />

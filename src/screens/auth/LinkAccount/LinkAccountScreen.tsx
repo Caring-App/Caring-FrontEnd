@@ -1,21 +1,22 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useLinkAccount } from '@features/auth/model';
+import { useLinkAccount } from '@features/account-link/model';
 import { CodeInputField } from '@features/auth/ui';
 import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
 import { colors } from '@shared/theme/colors';
 import RssIcon from '@assets/icons/action/rss.svg';
 
 export default function LinkAccountScreen({ navigation }: { navigation: any }) {
-  const { code, setCode, handlePaste, handleSubmit, isValidCode } = useLinkAccount();
+  const { code, setCode, handlePaste, handleSubmit, isValidCode, isSubmitting, submitError } = useLinkAccount();
 
-  const handleNext = () => {
-    if (!isValidCode) return;
-    handleSubmit();
-    // TODO: 백엔드 연동 시 실제 보호자 이름으로 교체
-    navigation.navigate('LinkAccountComplete', { protectorName: '이세연' });
+  const handleNext = async () => {
+    if (!isValidCode || isSubmitting) return;
+    const result = await handleSubmit();
+    if (result) {
+      navigation.navigate('LinkAccountComplete', { protectorName: result.protectorName });
+    }
   };
 
   return (
@@ -54,18 +55,26 @@ export default function LinkAccountScreen({ navigation }: { navigation: any }) {
         <Text className="mt-10 text-center font-pretendard-bold text-lg text-text-primary">
           연동을 진행할{'\n'}보호자의 연동 코드를{'\n'}입력해주세요!
         </Text>
+
+        {!!submitError && (
+          <Text className="mt-4 text-center text-xs text-text-danger">{submitError}</Text>
+        )}
       </View>
 
       <View className="items-center px-6 pb-10 pt-2">
         <TouchableOpacity
           className={`h-[52px] w-full items-center justify-center rounded-card ${
-            isValidCode ? 'bg-primary' : 'bg-border-link'
+            isValidCode && !isSubmitting ? 'bg-primary' : 'bg-border-link'
           }`}
           onPress={handleNext}
-          disabled={!isValidCode}
+          disabled={!isValidCode || isSubmitting}
           activeOpacity={0.8}
         >
-          <Text className="font-pretendard-semibold text-lg text-white">다음</Text>
+          {isSubmitting ? (
+            <ActivityIndicator size="small" color={colors.surface} />
+          ) : (
+            <Text className="font-pretendard-semibold text-lg text-white">다음</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>

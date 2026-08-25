@@ -1,1 +1,1 @@
-export {};
+export { loginAfterRegister } from './loginAfterRegister';
