@@ -4,7 +4,7 @@ import { Toggle } from '@shared/ui';
 import CapsuleIcon from '@assets/icons/medication/capsule-on.svg';
 import EditIcon from '@assets/icons/action/edit-pencil.svg';
 import { MedicationEntry } from '../model/medicationTypes';
-import { formatDays, formatMedicationTime } from '../utils';
+import { MEAL_TYPE_LABELS, formatDays, formatMedicationTime } from '../utils';
 
 interface MedicationListItemProps {
   entry: MedicationEntry;
@@ -18,7 +18,9 @@ export function MedicationListItem({ entry, onEdit, onToggleEnabled }: Medicatio
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center gap-1.5">
           <CapsuleIcon width={16} height={15} />
-          <Text className="font-pretendard-semibold text-xl text-text-primary">{entry.name}</Text>
+          <Text className="font-pretendard-semibold text-xl text-text-primary">
+            {MEAL_TYPE_LABELS[entry.mealType]} 약
+          </Text>
         </View>
         <Pressable onPress={onEdit} hitSlop={8}>
           <EditIcon width={19} height={17} />

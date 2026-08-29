@@ -1,5 +1,13 @@
 import type { TimeState } from '@shared/types';
-import { MedicationEntry, Weekday } from '../model/medicationTypes';
+import {
+  MealType,
+  MedicationEntry,
+  MedicationSoundType,
+  PillAlarmType,
+  PillName,
+  PillSchedule,
+  Weekday,
+} from '../model/medicationTypes';
 
 export function formatMedicationTime({ hour, minute, amPm }: TimeState) {
   const periodLabel = amPm === 'AM' ? '오전' : '오후';
@@ -45,4 +53,101 @@ export function formatDays(days: Weekday[]) {
   return WEEKDAY_ORDER.filter(day => days.includes(day))
     .map(day => WEEKDAY_LABELS[day])
     .join(', ');
+}
+
+export const MEAL_TYPE_LABELS: Record<MealType, string> = { morning: '아침', lunch: '점심', dinner: '저녁' };
+
+const MEAL_TYPE_TO_PILL_NAME: Record<MealType, PillName> = { morning: 'MORNING', lunch: 'LUNCH', dinner: 'DINNER' };
+const PILL_NAME_TO_MEAL_TYPE: Record<PillName, MealType> = { MORNING: 'morning', LUNCH: 'lunch', DINNER: 'dinner' };
+
+export function mealTypeToPillName(mealType: MealType): PillName {
+  return MEAL_TYPE_TO_PILL_NAME[mealType];
+}
+
+export function pillNameToMealType(pillName: PillName): MealType {
+  return PILL_NAME_TO_MEAL_TYPE[pillName] ?? 'morning';
+}
+
+const WEEKDAY_CODE: Record<Weekday, string> = {
+  mon: 'MON',
+  tue: 'TUE',
+  wed: 'WED',
+  thu: 'THU',
+  fri: 'FRI',
+  sat: 'SAT',
+  sun: 'SUN',
+};
+const CODE_TO_WEEKDAY: Record<string, Weekday> = {
+  MON: 'mon',
+  TUE: 'tue',
+  WED: 'wed',
+  THU: 'thu',
+  FRI: 'fri',
+  SAT: 'sat',
+  SUN: 'sun',
+};
+
+// takeDays 포맷은 스웨거에 "string"으로만 나와 있어 형식이 명시돼있지 않음 — 콤마로 구분된 영문 3글자 코드로 가정.
+export function daysToTakeDays(days: Weekday[]): string {
+  return WEEKDAY_ORDER.filter(day => days.includes(day))
+    .map(day => WEEKDAY_CODE[day])
+    .join(',');
+}
+
+export function takeDaysToDays(takeDays: string): Weekday[] {
+  return takeDays
+    .split(',')
+    .map(code => CODE_TO_WEEKDAY[code.trim()])
+    .filter((day): day is Weekday => Boolean(day));
+}
+
+// takeTime도 형식이 명시돼있지 않아 24시간제 "HH:mm"으로 가정.
+export function timeStateToTakeTime({ hour, minute, amPm }: TimeState): string {
+  const hour24 = (Number(hour) % 12) + (amPm === 'PM' ? 12 : 0);
+  return `${String(hour24).padStart(2, '0')}:${minute}`;
+}
+
+export function takeTimeToTimeState(takeTime: string): TimeState {
+  const [hourStr, minuteStr] = takeTime.split(':');
+  const hour24 = Number(hourStr) || 0;
+  const amPm: TimeState['amPm'] = hour24 >= 12 ? 'PM' : 'AM';
+  const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12;
+  return { hour: String(hour12).padStart(2, '0'), minute: minuteStr ?? '00', second: '00', amPm };
+}
+
+const REMINDER_MINUTES: Record<string, number> = {
+  '5분 후': 5,
+  '10분 후': 10,
+  '15분 후': 15,
+  '20분 후': 20,
+  '30분 후': 30,
+  '1시간 후': 60,
+};
+
+export function reminderIntervalToMinutes(interval: string): number {
+  return REMINDER_MINUTES[interval] ?? 10;
+}
+
+export function minutesToReminderInterval(minutes: number): string {
+  return Object.keys(REMINDER_MINUTES).find(key => REMINDER_MINUTES[key] === minutes) ?? '10분 후';
+}
+
+export function soundTypeToAlarmType(soundType: MedicationSoundType): PillAlarmType {
+  return soundType === 'voice' ? 'VOICE' : 'TTS';
+}
+
+export function alarmTypeToSoundType(alarmType: PillAlarmType): MedicationSoundType {
+  return alarmType === 'VOICE' ? 'voice' : 'tts';
+}
+
+export function pillScheduleToEntry(schedule: PillSchedule): MedicationEntry {
+  return {
+    id: schedule.pillScheduleId,
+    mealType: pillNameToMealType(schedule.pillName),
+    days: takeDaysToDays(schedule.takeDays),
+    time: takeTimeToTimeState(schedule.takeTime),
+    reminderInterval: minutesToReminderInterval(schedule.retryAlarm),
+    soundType: alarmTypeToSoundType(schedule.alarmType),
+    enabled: schedule.active,
+  };
 }
