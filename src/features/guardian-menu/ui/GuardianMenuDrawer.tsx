@@ -5,7 +5,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GuardianStackParamList } from '@app/navigation/types';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import { MOCK_PROFILE } from '@features/mypage/model';
-import { MOCK_WARDS, useSelectedWardStore } from '@features/ward-management/model';
+import { useSelectedWardStore } from '@features/ward-management/model';
 import { useGuardianMenuStore } from '../model/useGuardianMenuStore';
 import GearIcon from '@assets/icons/menu/gear-white.svg';
 import PersonVcardIcon from '@assets/icons/menu/person-vcard.svg';
@@ -17,6 +17,7 @@ export function GuardianMenuDrawer() {
   const isOpen = useGuardianMenuStore(state => state.isOpen);
   const close = useGuardianMenuStore(state => state.close);
   const navigation = useNavigation<GuardianStackNavigationProp>();
+  const wards = useSelectedWardStore(state => state.wards);
 
   if (!isOpen) {
     return null;
@@ -57,7 +58,7 @@ export function GuardianMenuDrawer() {
           className="flex-1 bg-surface px-4 pt-4"
           showsVerticalScrollIndicator={false}
           contentContainerClassName="gap-3">
-          {MOCK_WARDS.map(ward => (
+          {wards.map(ward => (
             <Pressable
               key={ward.id}
               className="flex-row items-center gap-2 rounded-card border border-border bg-surface px-4 py-3"

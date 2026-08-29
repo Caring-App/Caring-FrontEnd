@@ -1,7 +1,12 @@
 import React from 'react';
-import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { FormLabel } from '@shared/ui';
 import { colors } from '@shared/theme/colors';
+// FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, 어르신 글자 크기 배율은
+// ward-management가 유일한 소스라(useWardFontScaleStore) 이 화면에서도 그대로 가져다 씀
+// (순환참조 없음, ward-management는 health를 참조하지 않음).
+import { useWardFontScaleStore } from '@features/ward-management/model';
+import { WardText } from '@features/ward-management/ui';
 import { useHealthRecordForm } from '../model';
 
 interface HealthRecordModalProps {
@@ -20,10 +25,12 @@ export function HealthRecordModal({ visible, wardId, onClose }: HealthRecordModa
       <Pressable className="flex-1 items-center justify-center bg-black/30 px-5" onPress={onClose}>
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="w-full max-h-[85%]">
           <Pressable onPress={() => {}} className="max-h-full rounded-card border border-border bg-surface p-4">
-            <Text className="font-pretendard-bold text-xl text-text-primary">오늘의 건강 기록하기</Text>
-            <Text className="mt-1 text-xs font-pretendard-medium text-text-muted">
+            <WardText size="xl" className="font-pretendard-bold text-text-primary">
+              오늘의 건강 기록하기
+            </WardText>
+            <WardText size="xs" className="mt-1 font-pretendard-medium text-text-muted">
               입력하신 수치는 오늘 저녁 보호자님 레포트에 반영됩니다.
-            </Text>
+            </WardText>
 
             <ScrollView showsVerticalScrollIndicator={false} className="mt-4">
               <View className="gap-4">
@@ -50,7 +57,9 @@ export function HealthRecordModal({ visible, wardId, onClose }: HealthRecordModa
               <Pressable
                 onPress={() => actions.handleSave(onClose)}
                 className="mt-6 items-center justify-center rounded-card bg-primary py-4">
-                <Text className="font-pretendard-semibold text-xl text-white">저장하기</Text>
+                <WardText size="xl" className="font-pretendard-semibold text-white">
+                  저장하기
+                </WardText>
               </Pressable>
             </ScrollView>
           </Pressable>
@@ -71,6 +80,9 @@ function HealthRecordField({
   value: string;
   onChangeText: (value: string) => void;
 }) {
+  // TextInput은 WardText(Text 전용)를 못 써서 글자 크기 배율을 직접 계산해서 style로 넣음
+  const fontScale = useWardFontScaleStore(state => state.scale);
+
   return (
     <View className="rounded-card border border-border p-3">
       <FormLabel>{label}</FormLabel>
@@ -80,7 +92,8 @@ function HealthRecordField({
         placeholder={placeholder}
         placeholderTextColor={colors.textPlaceholder}
         keyboardType="numeric"
-        className="mt-2 rounded-[8px] border border-border-input px-3.5 py-2 font-pretendard text-md text-text-primary"
+        style={{ fontSize: 15 * fontScale }}
+        className="mt-2 rounded-[8px] border border-border-input px-3.5 py-2 font-pretendard text-text-primary"
       />
     </View>
   );
