@@ -11,9 +11,10 @@ const THUMB_INSET = 5;
 interface ToggleProps {
   value: boolean;
   onValueChange: (value: boolean) => void;
+  disabled?: boolean;
 }
 
-export function Toggle({ value, onValueChange }: ToggleProps) {
+export function Toggle({ value, onValueChange, disabled }: ToggleProps) {
   const progress = useRef(new Animated.Value(value ? 1 : 0)).current;
 
   useEffect(() => {
@@ -36,10 +37,11 @@ export function Toggle({ value, onValueChange }: ToggleProps) {
   return (
     <Pressable
       accessibilityRole="switch"
-      accessibilityState={{ checked: value }}
+      accessibilityState={{ checked: value, disabled }}
       onPress={() => onValueChange(!value)}
+      disabled={disabled}
       hitSlop={8}>
-      <Animated.View style={[styles.track, { backgroundColor: trackColor }]}>
+      <Animated.View style={[styles.track, { backgroundColor: trackColor, opacity: disabled ? 0.6 : 1 }]}>
         <Animated.View style={[styles.thumb, { transform: [{ translateX: thumbTranslateX }] }]} />
       </Animated.View>
     </Pressable>

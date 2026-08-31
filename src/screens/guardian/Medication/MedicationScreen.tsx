@@ -20,6 +20,7 @@ export function MedicationScreen() {
   const medications = useMedicationListStore(state => state.medicationsByWard[wardIdNumber]) ?? [];
   const sortedMedications = sortMedicationsByTime(medications);
   const toggleEnabled = useMedicationListStore(state => state.toggleEnabled);
+  const togglingIds = useMedicationListStore(state => state.togglingIds);
   const fetchMedications = useMedicationListStore(state => state.fetchMedications);
 
   useEffect(() => {
@@ -81,6 +82,7 @@ export function MedicationScreen() {
             key={entry.id}
             entry={entry}
             onEdit={() => openEdit(entry)}
+            isToggling={togglingIds.has(entry.id)}
             onToggleEnabled={() => {
               toggleEnabled(wardIdNumber, entry.id).catch(error => {
                 logApiError('복약 스케줄 상태 변경 실패', error);

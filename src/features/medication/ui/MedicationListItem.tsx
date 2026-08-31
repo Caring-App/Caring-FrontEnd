@@ -10,9 +10,10 @@ interface MedicationListItemProps {
   entry: MedicationEntry;
   onEdit: () => void;
   onToggleEnabled: () => void;
+  isToggling?: boolean;
 }
 
-export function MedicationListItem({ entry, onEdit, onToggleEnabled }: MedicationListItemProps) {
+export function MedicationListItem({ entry, onEdit, onToggleEnabled, isToggling }: MedicationListItemProps) {
   return (
     <View className="rounded-card border border-border bg-surface px-4 py-3">
       <View className="flex-row items-center justify-between">
@@ -33,7 +34,7 @@ export function MedicationListItem({ entry, onEdit, onToggleEnabled }: Medicatio
           </Text>
           <Text className="font-pretendard-medium text-base text-text-muted">{formatDays(entry.days)}</Text>
         </View>
-        <Toggle value={entry.enabled} onValueChange={onToggleEnabled} />
+        <Toggle value={entry.enabled} onValueChange={onToggleEnabled} disabled={isToggling} />
       </View>
     </View>
   );

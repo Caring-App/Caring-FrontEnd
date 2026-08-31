@@ -20,6 +20,8 @@ import { MedicationEntry, MedicationRegistrationData, PillScheduleRequest } from
 interface MedicationListState {
   medicationsByWard: Record<number, MedicationEntry[]>;
   isLoading: boolean;
+  // 켜짐/꺼짐 토글이 진행 중인 스케줄 id 집합 — 연타로 같은 스케줄에 요청이 중복으로 나가는 것을 막는 용도.
+  togglingIds: Set<number>;
   fetchMedications: (wardId: number) => Promise<void>;
   addMedication: (wardId: number, data: MedicationRegistrationData) => Promise<void>;
   updateMedication: (wardId: number, entry: MedicationEntry, data: MedicationRegistrationData) => Promise<void>;
@@ -68,6 +70,7 @@ function firstRejection(results: PromiseSettledResult<unknown>[]) {
 export const useMedicationListStore = create<MedicationListState>((set, get) => ({
   medicationsByWard: {},
   isLoading: false,
+  togglingIds: new Set(),
 
   fetchMedications: async wardId => {
     set({ isLoading: true });
@@ -154,16 +157,26 @@ export const useMedicationListStore = create<MedicationListState>((set, get) => 
   },
 
   toggleEnabled: async (wardId, id) => {
+    if (get().togglingIds.has(id)) return;
     const current = get().medicationsByWard[wardId]?.find(item => item.id === id);
     if (!current) return;
-    const updated = await togglePillScheduleApi(id, !current.enabled);
-    set(state => ({
-      medicationsByWard: {
-        ...state.medicationsByWard,
-        [wardId]: (state.medicationsByWard[wardId] ?? []).map(item =>
-          item.id === id ? pillScheduleToEntry(updated) : item,
-        ),
-      },
-    }));
+    set(state => ({ togglingIds: new Set(state.togglingIds).add(id) }));
+    try {
+      const updated = await togglePillScheduleApi(id, !current.enabled);
+      set(state => ({
+        medicationsByWard: {
+          ...state.medicationsByWard,
+          [wardId]: (state.medicationsByWard[wardId] ?? []).map(item =>
+            item.id === id ? pillScheduleToEntry(updated) : item,
+          ),
+        },
+      }));
+    } finally {
+      set(state => {
+        const next = new Set(state.togglingIds);
+        next.delete(id);
+        return { togglingIds: next };
+      });
+    }
   },
 }));
