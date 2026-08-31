@@ -75,13 +75,13 @@ export function MedicationRegistrationModal({
     setIsDeleting(true);
     try {
       await useMedicationListStore.getState().deleteMedication(wardId, editingMedication.id);
+      onClose();
     } catch (error) {
       logApiError('복약 스케줄 삭제 실패', error);
       Alert.alert('', '삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
       setIsDeleting(false);
     }
-    onClose();
   };
 
   return (
