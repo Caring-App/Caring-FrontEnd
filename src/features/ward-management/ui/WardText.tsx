@@ -1,33 +1,11 @@
 import React from 'react';
 import { Text, TextProps } from 'react-native';
+import { FONT_SIZES, FONT_SIZE_LINE_HEIGHT_RATIO, FontSizeToken } from '@shared/theme/typography';
 import { useWardFontScaleStore } from '../model/useWardFontScaleStore';
 
-// tailwind.config.js의 theme.extend.fontSize와 동일한 값 — 어르신 화면에서 배율을 곱하려면
-// className(text-xl 등, 빌드 시 고정 px로 컴파일됨)이 아니라 이 표를 직접 계산해서 써야 함.
-export type WardTextSize = '2xs' | 'xs' | 'sm' | 'base' | 'md' | 'lg' | 'xl' | '2xl';
-
-const SIZE_PX: Record<WardTextSize, number> = {
-  '2xs': 12,
-  xs: 11,
-  sm: 13,
-  base: 14,
-  md: 15,
-  lg: 16,
-  xl: 20,
-  '2xl': 18,
-};
-
-const LETTER_SPACING_PX: Partial<Record<WardTextSize, number>> = {
-  '2xs': -0.3,
-  xs: -0.275,
-  sm: -0.325,
-  base: -0.35,
-  md: -0.375,
-  lg: -0.4,
-  xl: -0.5,
-};
-
-const LINE_HEIGHT_RATIO = 1.4;
+// 어르신 화면에서 배율을 곱하려면 className(text-xl 등, 빌드 시 고정 px로 컴파일됨)이 아니라
+// shared/theme/typography.ts의 값을 직접 계산해서 써야 함.
+export type WardTextSize = FontSizeToken;
 
 interface WardTextProps extends TextProps {
   size?: WardTextSize;
@@ -38,8 +16,8 @@ interface WardTextProps extends TextProps {
 // 적용됨(색상/폰트 굵기 등 크기 아닌 유틸리티는 className 그대로 사용 가능).
 export function WardText({ size = 'base', style, ...props }: WardTextProps) {
   const scale = useWardFontScaleStore(state => state.scale);
-  const fontSize = SIZE_PX[size] * scale;
-  const letterSpacingBase = LETTER_SPACING_PX[size];
+  const { size: baseSize, letterSpacing: baseLetterSpacing } = FONT_SIZES[size];
+  const fontSize = baseSize * scale;
 
   return (
     <Text
@@ -47,8 +25,8 @@ export function WardText({ size = 'base', style, ...props }: WardTextProps) {
       style={[
         {
           fontSize,
-          lineHeight: fontSize * LINE_HEIGHT_RATIO,
-          letterSpacing: letterSpacingBase !== undefined ? letterSpacingBase * scale : undefined,
+          lineHeight: fontSize * FONT_SIZE_LINE_HEIGHT_RATIO,
+          letterSpacing: baseLetterSpacing !== undefined ? baseLetterSpacing * scale : undefined,
         },
         style,
       ]}
