@@ -43,6 +43,9 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
+# 로컬 디버깅 중 리다이렉트한 로그 파일 (예: metro.log)
+*.log
+
 # fastlane
 #
 # It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the

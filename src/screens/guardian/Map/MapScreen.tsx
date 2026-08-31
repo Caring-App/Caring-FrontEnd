@@ -1,16 +1,17 @@
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NaverMapView, NaverMapMarkerOverlay } from '@mj-studio/react-native-naver-map';
-import { getWardLocation } from '@features/location/model';
+import { useWardLocation } from '@features/location/model';
 import { useSelectedWardStore } from '@features/ward-management/model';
+import { colors } from '@shared/theme/colors';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 
 export function MapScreen() {
   const navigation = useNavigation();
   const selectedWardId = useSelectedWardStore(state => state.selectedWardId);
-  const location = getWardLocation(selectedWardId);
+  const location = useWardLocation(selectedWardId);
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top']}>
@@ -21,16 +22,23 @@ export function MapScreen() {
         <Text className="text-md font-bold text-text-primary">위치 GPS</Text>
       </View>
 
-      <NaverMapView
-        key={selectedWardId}
-        style={{ flex: 1 }}
-        initialCamera={{
-          latitude: location.latitude,
-          longitude: location.longitude,
-          zoom: 16,
-        }}>
-        <NaverMapMarkerOverlay latitude={location.latitude} longitude={location.longitude} />
-      </NaverMapView>
+      {location ? (
+        <NaverMapView
+          key={selectedWardId}
+          style={{ flex: 1 }}
+          initialCamera={{
+            latitude: location.latitude,
+            longitude: location.longitude,
+            zoom: 16,
+          }}>
+          <NaverMapMarkerOverlay latitude={location.latitude} longitude={location.longitude} />
+        </NaverMapView>
+      ) : (
+        // 좌표가 준비되기 전엔 NaverMapView에 넘길 값이 없어 렌더링하지 않음(LocationSection과 동일한 이유).
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="small" color={colors.primary} />
+        </View>
+      )}
     </SafeAreaView>
   );
 }
