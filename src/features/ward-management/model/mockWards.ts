@@ -8,7 +8,7 @@ export const MOCK_WARDS: Ward[] = [
     name: '홍길동',
     phone: '010-2222-3333',
     address: '서울시 ㅇㅇㅇ ㅇㅇㅇㅇ',
-    ttsSpeed: 40,
+    ttsRate: 1,
     fontSize: 'large',
   },
   {
@@ -17,7 +17,7 @@ export const MOCK_WARDS: Ward[] = [
     name: '홍길동',
     phone: '010-2222-3333',
     address: '서울시 ㅇㅇㅇ ㅇㅇㅇㅇ',
-    ttsSpeed: 40,
+    ttsRate: 1,
     fontSize: 'large',
   },
 ];

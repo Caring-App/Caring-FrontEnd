@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import type { TimeState } from '@shared/types';
 import { useVoiceRecording } from '@shared/model';
+import { logApiError } from '@shared/api';
 import { isSameDaySet } from '../utils';
 import { MedicationEntry, MedicationRegistrationData, MedicationSoundType, MealType, Weekday } from './medicationTypes';
 import { useMedicationListStore } from './useMedicationListStore';
@@ -33,12 +34,11 @@ export const DAY_PRESETS: { key: 'daily' | 'weekday' | 'weekend'; label: string;
 export const REMINDER_INTERVAL_OPTIONS = ['5분 후', '10분 후', '15분 후', '20분 후', '30분 후', '1시간 후'];
 
 export const useMedicationRegistrationForm = (
-  wardId: string,
+  wardId: number,
   visible: boolean,
   editingMedication: MedicationEntry | null,
   onClose: () => void,
 ) => {
-  const [name, setName] = useState('');
   const [mealTypes, setMealTypes] = useState<MealType[]>([]);
   const [days, setDays] = useState<Weekday[]>([]);
 
@@ -51,21 +51,20 @@ export const useMedicationRegistrationForm = (
 
   const [soundType, setSoundType] = useState<MedicationSoundType>('tts');
   const voiceRecording = useVoiceRecording();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!visible) {
       return;
     }
     if (editingMedication) {
-      setName(editingMedication.name);
-      setMealTypes(editingMedication.mealTypes);
+      setMealTypes([editingMedication.mealType]);
       setDays(editingMedication.days);
       setTimeState(editingMedication.time);
       setHasTime(true);
       setReminderInterval(editingMedication.reminderInterval);
       setSoundType(editingMedication.soundType);
     } else {
-      setName('');
       setMealTypes([]);
       setDays([]);
       setTimeState(INITIAL_TIME);
@@ -102,9 +101,12 @@ export const useMedicationRegistrationForm = (
     setShowReminderOptions(false);
   };
 
-  const handleSave = () => {
-    if (!name.trim()) {
-      Alert.alert('', '약 이름을 입력해주세요.');
+  const handleSave = async () => {
+    if (isSubmitting) {
+      return;
+    }
+    if (Number.isNaN(wardId)) {
+      Alert.alert('', '연동된 어르신 정보를 확인할 수 없습니다. 잠시 후 다시 시도해주세요.');
       return;
     }
     if (mealTypes.length === 0) {
@@ -120,18 +122,25 @@ export const useMedicationRegistrationForm = (
       return;
     }
 
-    const data: MedicationRegistrationData = { name, mealTypes, days, time, reminderInterval, soundType };
-    if (editingMedication) {
-      useMedicationListStore.getState().updateMedication(wardId, editingMedication.id, data);
-    } else {
-      useMedicationListStore.getState().addMedication(wardId, data);
+    const data: MedicationRegistrationData = { mealTypes, days, time, reminderInterval, soundType };
+    setIsSubmitting(true);
+    try {
+      if (editingMedication) {
+        await useMedicationListStore.getState().updateMedication(wardId, editingMedication, data);
+      } else {
+        await useMedicationListStore.getState().addMedication(wardId, data);
+      }
+      onClose();
+    } catch (error) {
+      logApiError('복약 스케줄 저장 실패', error);
+      Alert.alert('', '저장에 실패했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+      setIsSubmitting(false);
     }
-    onClose();
   };
 
   return {
     state: {
-      name,
       mealTypes,
       days,
       activeDayPreset,
@@ -143,9 +152,9 @@ export const useMedicationRegistrationForm = (
       soundType,
       isRecording: voiceRecording.isRecording,
       hasRecorded: voiceRecording.hasRecorded,
+      isSubmitting,
     },
     actions: {
-      setName,
       toggleMealType,
       toggleDay,
       toggleDayPreset,

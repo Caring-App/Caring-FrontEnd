@@ -1,6 +1,18 @@
 import React, { useRef, useState } from 'react';
-import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 import { ConfirmModal, FormLabel, SoundSettingsCard, TimeTriggerInput, WheelTimePicker, formatTime } from '@shared/ui';
+import { logApiError } from '@shared/api';
+import { colors } from '@shared/theme/colors';
 import CapsuleIcon from '@assets/icons/medication/capsule-on.svg';
 import CloseIcon from '@assets/icons/action/close-x.svg';
 import ChevronDownIcon from '@assets/icons/section/chevron-down-select.svg';
@@ -21,7 +33,7 @@ import { useMedicationListStore } from '../model/useMedicationListStore';
 
 interface MedicationRegistrationModalProps {
   visible: boolean;
-  wardId: string;
+  wardId: number;
   wardName: string;
   editingMedication: MedicationEntry | null;
   onClose: () => void;
@@ -39,6 +51,7 @@ export function MedicationRegistrationModal({
   onClose,
 }: MedicationRegistrationModalProps) {
   const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // 이 모달은 사용가이드가 "복약 등록" 단계에 도달했을 때 처음으로(!) 마운트되는 경우가 있음
   // (복약 관리 화면 자체가 그 시점에 처음 push됨) — useHostModalTourStep이 대상 ref 등록을
@@ -53,12 +66,22 @@ export function MedicationRegistrationModal({
   // 남아있던 값이 아니라 항상 깨끗한 상태로 초기화됨(훅 내부는 visible이 켜질 때만 리셋함)
   const { state, actions } = useMedicationRegistrationForm(wardId, visible || isTourStep, editingMedication, onClose);
 
-  const handleDelete = () => {
-    if (editingMedication) {
-      useMedicationListStore.getState().deleteMedication(wardId, editingMedication.id);
+  const handleDelete = async () => {
+    if (!editingMedication || isDeleting) {
+      return;
     }
+    // 삭제 중엔 확인 모달을 바로 닫아서 연타로 다시 뜬 삭제 버튼을 못 누르게 함 + isDeleting으로도 이중 방어
     setIsDeleteConfirmVisible(false);
-    onClose();
+    setIsDeleting(true);
+    try {
+      await useMedicationListStore.getState().deleteMedication(wardId, editingMedication.id);
+      onClose();
+    } catch (error) {
+      logApiError('복약 스케줄 삭제 실패', error);
+      Alert.alert('', '삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -80,17 +103,7 @@ export function MedicationRegistrationModal({
 
             <ScrollView showsVerticalScrollIndicator={false}>
               <View className="gap-3 rounded-card border border-border px-3.5 pb-3.5 pt-5">
-                <View>
-                  <FormLabel>약 이름</FormLabel>
-                  <TextInput
-                    value={state.name}
-                    onChangeText={actions.setName}
-                    placeholder="약 이름을 입력하세요"
-                    placeholderTextColor="#6C757D"
-                    className="rounded-md border border-border-input px-3.5 py-2 font-pretendard text-lg text-text-primary"
-                  />
-                </View>
-
+                <FormLabel>약 이름</FormLabel>
                 <View className="flex-row gap-2">
                   {MEAL_TYPE_OPTIONS.map(option => {
                     const selected = state.mealTypes.includes(option.value);
@@ -189,12 +202,22 @@ export function MedicationRegistrationModal({
 
               <Pressable
                 onPress={actions.handleSave}
-                className="mt-5 items-center justify-center rounded-md bg-primary py-4">
-                <Text className="font-pretendard-semibold text-2xl text-white">저장하기</Text>
+                disabled={state.isSubmitting}
+                className={`mt-5 items-center justify-center rounded-md bg-primary py-4 ${
+                  state.isSubmitting ? 'opacity-60' : ''
+                }`}>
+                {state.isSubmitting ? (
+                  <ActivityIndicator size="small" color={colors.surface} />
+                ) : (
+                  <Text className="font-pretendard-semibold text-2xl text-white">저장하기</Text>
+                )}
               </Pressable>
 
               {editingMedication && (
-                <Pressable onPress={() => setIsDeleteConfirmVisible(true)} className="mt-4 items-center self-center">
+                <Pressable
+                  onPress={() => setIsDeleteConfirmVisible(true)}
+                  disabled={isDeleting}
+                  className="mt-4 items-center self-center">
                   <Text className="border-b border-border-danger font-pretendard-light text-lg text-text-danger">
                     복약 정보 삭제하기
                   </Text>

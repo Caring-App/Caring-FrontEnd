@@ -7,12 +7,14 @@ import { FontSizeSegmentedControl } from './FontSizeSegmentedControl';
 
 export function WardCard({
   ward,
-  onChangeTtsSpeed,
+  onChangeTtsRate,
+  onCommitTtsRate,
   onChangeFontSize,
   onPressEdit,
 }: {
   ward: Ward;
-  onChangeTtsSpeed: (speed: number) => void;
+  onChangeTtsRate: (rate: number) => void;
+  onCommitTtsRate: (rate: number) => void;
   onChangeFontSize: (size: FontSizeOption) => void;
   onPressEdit: () => void;
 }) {
@@ -33,7 +35,7 @@ export function WardCard({
 
       <View className="mt-4 flex-row items-center justify-between">
         <Text className="text-md font-pretendard-semibold text-text-primary">음성 알림 속도 설정</Text>
-        <TtsSpeedSlider value={ward.ttsSpeed} onChange={onChangeTtsSpeed} />
+        <TtsSpeedSlider value={ward.ttsRate} onChange={onChangeTtsRate} onChangeCommit={onCommitTtsRate} />
       </View>
 
       <View className="mt-4 flex-row items-center justify-between">

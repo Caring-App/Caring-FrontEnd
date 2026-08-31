@@ -1,17 +1,18 @@
 import React, { useCallback, useEffect } from 'react';
-import { Dimensions, ScrollView } from 'react-native';
+import { ActivityIndicator, Dimensions, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GuardianStackParamList } from '@app/navigation/types';
 import { AppHeader } from '@shared/ui';
+import { colors } from '@shared/theme/colors';
 import { useGuardianMenuStore } from '@features/guardian-menu/model';
 import { DailyReportCard } from '@features/health/ui';
 import { MedicationSection } from '@features/medication/ui';
 import { LocationSection } from '@features/location/ui';
 import { ScheduleSection } from '@features/schedule/ui';
 import { WelfareSection } from '@features/welfare-facility/ui';
-import { MOCK_WARDS, useSelectedWardStore } from '@features/ward-management/model';
+import { useSelectedWardStore } from '@features/ward-management/model';
 import {
   MEDICATION_MODAL_STEP_INDEX,
   TOUR_STEPS,
@@ -29,8 +30,16 @@ export function GuardianHomeScreen() {
   const navigation = useNavigation();
   const stackNavigation = navigation.getParent<GuardianStackNavigationProp>();
   const selectedWardId = useSelectedWardStore(state => state.selectedWardId);
-  const ward = MOCK_WARDS.find(item => item.id === selectedWardId) ?? MOCK_WARDS[0];
+  const wards = useSelectedWardStore(state => state.wards);
+  const isWardsLoaded = useSelectedWardStore(state => state.isLoaded);
+  const ward = wards.find(item => item.id === selectedWardId) ?? wards[0];
   const tourScroll = useTourScrollTracking('home');
+
+  useEffect(() => {
+    if (!isWardsLoaded) {
+      useSelectedWardStore.getState().fetchWards();
+    }
+  }, [isWardsLoaded]);
 
   const isTourActive = useTourStore(state => state.isActive);
   const tourStepIndex = useTourStore(state => state.currentStepIndex);
@@ -60,6 +69,18 @@ export function GuardianHomeScreen() {
       stackNavigation?.navigate('Tabs', { screen: 'WardManagement' });
     }
   }, [isTourActive, tourStepIndex, stackNavigation]);
+
+  // 어르신 목록 로드 전(mock) → 로드 후(실제 연동)로 selectedWardId가 바뀔 수 있는데, 그 사이에
+  // LocationSection의 NaverMapView가 key={wardId}로 이미 마운트돼있으면 바로 리마운트되면서
+  // 네이티브 쪽 레이스 컨디션으로 크래시남("Index 0 out of bounds for length 0" in RNCNaverMapViewManager).
+  // 목록이 확정된 뒤에만 화면을 그려서 지도가 최종 wardId로 한 번만 마운트되게 함.
+  if (!isWardsLoaded) {
+    return (
+      <SafeAreaView className="flex-1 items-center justify-center bg-surface" edges={['top']}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top']}>

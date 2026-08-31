@@ -4,21 +4,24 @@ import { Toggle } from '@shared/ui';
 import CapsuleIcon from '@assets/icons/medication/capsule-on.svg';
 import EditIcon from '@assets/icons/action/edit-pencil.svg';
 import { MedicationEntry } from '../model/medicationTypes';
-import { formatDays, formatMedicationTime } from '../utils';
+import { MEAL_TYPE_LABELS, formatDays, formatMedicationTime } from '../utils';
 
 interface MedicationListItemProps {
   entry: MedicationEntry;
   onEdit: () => void;
   onToggleEnabled: () => void;
+  isToggling?: boolean;
 }
 
-export function MedicationListItem({ entry, onEdit, onToggleEnabled }: MedicationListItemProps) {
+export function MedicationListItem({ entry, onEdit, onToggleEnabled, isToggling }: MedicationListItemProps) {
   return (
     <View className="rounded-card border border-border bg-surface px-4 py-3">
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center gap-1.5">
           <CapsuleIcon width={16} height={15} />
-          <Text className="font-pretendard-semibold text-xl text-text-primary">{entry.name}</Text>
+          <Text className="font-pretendard-semibold text-xl text-text-primary">
+            {MEAL_TYPE_LABELS[entry.mealType]} 약
+          </Text>
         </View>
         <Pressable onPress={onEdit} hitSlop={8}>
           <EditIcon width={19} height={17} />
@@ -31,7 +34,7 @@ export function MedicationListItem({ entry, onEdit, onToggleEnabled }: Medicatio
           </Text>
           <Text className="font-pretendard-medium text-base text-text-muted">{formatDays(entry.days)}</Text>
         </View>
-        <Toggle value={entry.enabled} onValueChange={onToggleEnabled} />
+        <Toggle value={entry.enabled} onValueChange={onToggleEnabled} disabled={isToggling} />
       </View>
     </View>
   );

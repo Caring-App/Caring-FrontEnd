@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 import PlusIcon from '@assets/icons/action/plus.svg';
-import { MOCK_WARDS, useSelectedWardStore } from '@features/ward-management/model';
+import { logApiError } from '@shared/api';
+import { useSelectedWardStore } from '@features/ward-management/model';
 import { MedicationEntry, useMedicationListStore } from '@features/medication/model';
 import { MedicationListItem, MedicationRegistrationModal } from '@features/medication/ui';
 import { sortMedicationsByTime } from '@features/medication/utils';
@@ -13,10 +14,20 @@ import { MEDICATION_MODAL_STEP_INDEX, useTourStore } from '@features/guardian-to
 export function MedicationScreen() {
   const navigation = useNavigation();
   const selectedWardId = useSelectedWardStore(state => state.selectedWardId);
-  const ward = MOCK_WARDS.find(item => item.id === selectedWardId) ?? MOCK_WARDS[0];
-  const medications = useMedicationListStore(state => state.medicationsByWard[selectedWardId]) ?? [];
+  const wards = useSelectedWardStore(state => state.wards);
+  const ward = wards.find(item => item.id === selectedWardId) ?? wards[0];
+  const wardIdNumber = Number(selectedWardId);
+  const medications = useMedicationListStore(state => state.medicationsByWard[wardIdNumber]) ?? [];
   const sortedMedications = sortMedicationsByTime(medications);
   const toggleEnabled = useMedicationListStore(state => state.toggleEnabled);
+  const togglingIds = useMedicationListStore(state => state.togglingIds);
+  const fetchMedications = useMedicationListStore(state => state.fetchMedications);
+
+  useEffect(() => {
+    if (!Number.isNaN(wardIdNumber)) {
+      fetchMedications(wardIdNumber);
+    }
+  }, [wardIdNumber, fetchMedications]);
 
   const [isRegistrationVisible, setIsRegistrationVisible] = useState(false);
   const [editingMedication, setEditingMedication] = useState<MedicationEntry | null>(null);
@@ -71,14 +82,20 @@ export function MedicationScreen() {
             key={entry.id}
             entry={entry}
             onEdit={() => openEdit(entry)}
-            onToggleEnabled={() => toggleEnabled(selectedWardId, entry.id)}
+            isToggling={togglingIds.has(entry.id)}
+            onToggleEnabled={() => {
+              toggleEnabled(wardIdNumber, entry.id).catch(error => {
+                logApiError('복약 스케줄 상태 변경 실패', error);
+                Alert.alert('', '상태 변경에 실패했습니다. 잠시 후 다시 시도해주세요.');
+              });
+            }}
           />
         ))}
       </ScrollView>
 
       <MedicationRegistrationModal
         visible={isRegistrationVisible}
-        wardId={selectedWardId}
+        wardId={wardIdNumber}
         wardName={ward.name}
         editingMedication={editingMedication}
         onClose={closeRegistration}
