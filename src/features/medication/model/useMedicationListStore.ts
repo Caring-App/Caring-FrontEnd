@@ -15,7 +15,7 @@ import {
   soundTypeToAlarmType,
   timeStateToTakeTime,
 } from '../utils';
-import { MedicationEntry, MedicationRegistrationData, PillSchedule, PillScheduleRequest } from './medicationTypes';
+import { MedicationEntry, MedicationRegistrationData, PillScheduleRequest } from './medicationTypes';
 
 interface MedicationListState {
   medicationsByWard: Record<number, MedicationEntry[]>;
@@ -43,6 +43,28 @@ function buildRequestBase(
   };
 }
 
+// 여러 API 호출 중 일부만 실패해도, 이미 성공한 호출은 로컬 상태에 바로 반영해서 서버와 어긋나지
+// 않게 함(전부 끝난 뒤 한 번에 반영하면 일부 실패 시 성공한 것까지 유실됨 → 재시도 시 중복 생성 위험).
+function upsertMedicationEntry(wardId: number, entry: MedicationEntry) {
+  useMedicationListStore.setState(state => {
+    const others = (state.medicationsByWard[wardId] ?? []).filter(item => item.id !== entry.id);
+    return { medicationsByWard: { ...state.medicationsByWard, [wardId]: [...others, entry] } };
+  });
+}
+
+function removeMedicationEntry(wardId: number, id: number) {
+  useMedicationListStore.setState(state => ({
+    medicationsByWard: {
+      ...state.medicationsByWard,
+      [wardId]: (state.medicationsByWard[wardId] ?? []).filter(item => item.id !== id),
+    },
+  }));
+}
+
+function firstRejection(results: PromiseSettledResult<unknown>[]) {
+  return results.find((result): result is PromiseRejectedResult => result.status === 'rejected');
+}
+
 export const useMedicationListStore = create<MedicationListState>((set, get) => ({
   medicationsByWard: {},
   isLoading: false,
@@ -61,62 +83,64 @@ export const useMedicationListStore = create<MedicationListState>((set, get) => 
     }
   },
 
-  // mealTypes를 여러 개 선택했으면 시간대별로 스케줄을 각각 생성함 (백엔드는 스케줄 1건당 pillName 1개만 허용)
+  // mealTypes를 여러 개 선택했으면 시간대별로 스케줄을 각각 생성함 (백엔드는 스케줄 1건당 pillName 1개만 허용).
+  // 여러 건을 동시에 요청하되, 일부만 실패하더라도 성공한 건은 즉시 로컬 상태에 반영함.
   addMedication: async (wardId, data) => {
     const base = buildRequestBase(wardId, data);
-    // 새로 등록하는 스케줄은 항상 켜진 상태로 시작(끄는 건 등록 후 토글로).
-    const created = await Promise.all(
-      data.mealTypes.map(mealType =>
-        createPillScheduleApi({ ...base, pillName: mealTypeToPillName(mealType), active: true, isActive: true }),
-      ),
+    const results = await Promise.allSettled(
+      data.mealTypes.map(async mealType => {
+        // 새로 등록하는 스케줄은 항상 켜진 상태로 시작(끄는 건 등록 후 토글로).
+        const created = await createPillScheduleApi({
+          ...base,
+          pillName: mealTypeToPillName(mealType),
+          active: true,
+          isActive: true,
+        });
+        upsertMedicationEntry(wardId, pillScheduleToEntry(created));
+      }),
     );
-    set(state => ({
-      medicationsByWard: {
-        ...state.medicationsByWard,
-        [wardId]: [...(state.medicationsByWard[wardId] ?? []), ...created.map(pillScheduleToEntry)],
-      },
-    }));
+    const rejected = firstRejection(results);
+    if (rejected) {
+      throw rejected.reason;
+    }
   },
 
   // 기존 항목(시간대 1개)을 수정하면서 다른 시간대를 추가로 체크한 경우: 원래 시간대는 PUT으로 업데이트하고
   // 나머지 새로 체크한 시간대는 POST로 별도 스케줄을 새로 만듦. 원래 시간대 체크를 해제했다면 그 스케줄은 삭제.
+  // 모든 요청을 동시에 보내고(원래 시간대는 서로 독립적), 실패 여부와 무관하게 성공한 건은 각자 도착하는 대로
+  // 바로 로컬 상태에 반영함 — 일부만 실패해도 나머지가 사라지거나 재시도 시 중복 생성되지 않도록.
   updateMedication: async (wardId, entry, data) => {
     const base = buildRequestBase(wardId, data);
     const remaining = [...data.mealTypes];
-    const results: PillSchedule[] = [];
-
     const originalIndex = remaining.indexOf(entry.mealType);
-    if (originalIndex !== -1) {
-      // 켜짐/꺼짐 상태는 그대로 유지 — 수정 저장이 토글 상태를 되돌리면 안 됨.
-      const updated = await updatePillScheduleApi(entry.id, {
-        ...base,
-        pillName: mealTypeToPillName(entry.mealType),
-        active: entry.enabled,
-        isActive: entry.enabled,
-      });
-      results.push(updated);
+    const keepsOriginalSlot = originalIndex !== -1;
+    if (keepsOriginalSlot) {
       remaining.splice(originalIndex, 1);
-    } else {
-      await deletePillScheduleApi(entry.id);
     }
 
-    // 새로 추가된 시간대는 항상 켜진 상태로 시작.
-    const createdRest = await Promise.all(
-      remaining.map(mealType =>
-        createPillScheduleApi({ ...base, pillName: mealTypeToPillName(mealType), active: true, isActive: true }),
+    const tasks: Promise<void>[] = [
+      keepsOriginalSlot
+        ? // 켜짐/꺼짐 상태는 그대로 유지 — 수정 저장이 토글 상태를 되돌리면 안 됨.
+          updatePillScheduleApi(entry.id, {
+            ...base,
+            pillName: mealTypeToPillName(entry.mealType),
+            active: entry.enabled,
+            isActive: entry.enabled,
+          }).then(updated => upsertMedicationEntry(wardId, pillScheduleToEntry(updated)))
+        : deletePillScheduleApi(entry.id).then(() => removeMedicationEntry(wardId, entry.id)),
+      // 새로 추가된 시간대는 항상 켜진 상태로 시작.
+      ...remaining.map(mealType =>
+        createPillScheduleApi({ ...base, pillName: mealTypeToPillName(mealType), active: true, isActive: true }).then(
+          created => upsertMedicationEntry(wardId, pillScheduleToEntry(created)),
+        ),
       ),
-    );
-    results.push(...createdRest);
+    ];
 
-    set(state => {
-      const others = (state.medicationsByWard[wardId] ?? []).filter(item => item.id !== entry.id);
-      return {
-        medicationsByWard: {
-          ...state.medicationsByWard,
-          [wardId]: [...others, ...results.map(pillScheduleToEntry)],
-        },
-      };
-    });
+    const results = await Promise.allSettled(tasks);
+    const rejected = firstRejection(results);
+    if (rejected) {
+      throw rejected.reason;
+    }
   },
 
   deleteMedication: async (wardId, id) => {
