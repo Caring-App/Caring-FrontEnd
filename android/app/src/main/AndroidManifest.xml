@@ -3,6 +3,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- 어르신 위치를 앱이 백그라운드에 있을 때도 계속 서버로 보고하기 위한 포그라운드 서비스(위치)용 권한.
+         Android 13+에서 지속 알림을 띄우려면 POST_NOTIFICATIONS도 필요함. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
       android:name=".MainApplication"
@@ -19,6 +25,11 @@
       <meta-data
         android:name="com.naver.maps.map.CLIENT_ID"
         android:value="@string/NAVER_MAP_CLIENT_ID" />
+      <!-- react-native-background-actions가 위치 보고 작업을 실행하는 포그라운드 서비스.
+           foregroundServiceType은 위에서 요청한 권한(FOREGROUND_SERVICE_LOCATION)과 일치해야 함. -->
+      <service
+        android:name="com.asterinet.react.bgactions.RNBackgroundActionsTask"
+        android:foregroundServiceType="location" />
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
