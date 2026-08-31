@@ -105,6 +105,10 @@ export const useMedicationRegistrationForm = (
     if (isSubmitting) {
       return;
     }
+    if (Number.isNaN(wardId)) {
+      Alert.alert('', '연동된 어르신 정보를 확인할 수 없습니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
     if (mealTypes.length === 0) {
       Alert.alert('', '식사 시간을 선택해주세요.');
       return;
