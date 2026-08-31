@@ -27,7 +27,11 @@ interface MedicationListState {
   toggleEnabled: (wardId: number, id: number) => Promise<void>;
 }
 
-function buildRequestBase(wardId: number, data: MedicationRegistrationData): Omit<PillScheduleRequest, 'pillName'> {
+// active/isActive는 여기서 고정하지 않음 — 스케줄마다 켜짐/꺼짐 상태가 다를 수 있어 호출부에서 채움.
+function buildRequestBase(
+  wardId: number,
+  data: MedicationRegistrationData,
+): Omit<PillScheduleRequest, 'pillName' | 'active' | 'isActive'> {
   return {
     wardId,
     takeDays: daysToTakeDays(data.days),
@@ -36,8 +40,6 @@ function buildRequestBase(wardId: number, data: MedicationRegistrationData): Omi
     alarmType: soundTypeToAlarmType(data.soundType),
     // TODO: useVoiceRecording이 아직 로컬 스텁이라(실제 파일 업로드 없음) 항상 빈 값으로 보냄 — 녹음 업로드 붙으면 채우기
     voiceFileUrl: '',
-    active: true,
-    isActive: true,
   };
 }
 
@@ -62,8 +64,11 @@ export const useMedicationListStore = create<MedicationListState>((set, get) => 
   // mealTypes를 여러 개 선택했으면 시간대별로 스케줄을 각각 생성함 (백엔드는 스케줄 1건당 pillName 1개만 허용)
   addMedication: async (wardId, data) => {
     const base = buildRequestBase(wardId, data);
+    // 새로 등록하는 스케줄은 항상 켜진 상태로 시작(끄는 건 등록 후 토글로).
     const created = await Promise.all(
-      data.mealTypes.map(mealType => createPillScheduleApi({ ...base, pillName: mealTypeToPillName(mealType) })),
+      data.mealTypes.map(mealType =>
+        createPillScheduleApi({ ...base, pillName: mealTypeToPillName(mealType), active: true, isActive: true }),
+      ),
     );
     set(state => ({
       medicationsByWard: {
@@ -82,15 +87,24 @@ export const useMedicationListStore = create<MedicationListState>((set, get) => 
 
     const originalIndex = remaining.indexOf(entry.mealType);
     if (originalIndex !== -1) {
-      const updated = await updatePillScheduleApi(entry.id, { ...base, pillName: mealTypeToPillName(entry.mealType) });
+      // 켜짐/꺼짐 상태는 그대로 유지 — 수정 저장이 토글 상태를 되돌리면 안 됨.
+      const updated = await updatePillScheduleApi(entry.id, {
+        ...base,
+        pillName: mealTypeToPillName(entry.mealType),
+        active: entry.enabled,
+        isActive: entry.enabled,
+      });
       results.push(updated);
       remaining.splice(originalIndex, 1);
     } else {
       await deletePillScheduleApi(entry.id);
     }
 
+    // 새로 추가된 시간대는 항상 켜진 상태로 시작.
     const createdRest = await Promise.all(
-      remaining.map(mealType => createPillScheduleApi({ ...base, pillName: mealTypeToPillName(mealType) })),
+      remaining.map(mealType =>
+        createPillScheduleApi({ ...base, pillName: mealTypeToPillName(mealType), active: true, isActive: true }),
+      ),
     );
     results.push(...createdRest);
 
