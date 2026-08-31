@@ -5,6 +5,9 @@ import { startWardLocationReporting, stopWardLocationReporting } from './locatio
 // Android 6+(API 23)는 위치 권한을, Android 13+(API 33)는 알림 권한(포그라운드 서비스 알림 표시용)을
 // 런타임에 따로 요청해야 함 — 안 하면 위치 조회가 조용히 실패하거나 알림이 안 뜸.
 async function requestPermissions(): Promise<boolean> {
+  // 현재는 Android만 대응하기로 결정함(react-native-background-actions/@react-native-community/geolocation
+  // 둘 다 iOS 백그라운드 실행은 별도의 훨씬 큰 네이티브 설정이 필요해 범위에서 제외). iOS에서는 위치 보고
+  // 기능 자체가 그냥 켜지지 않음 — Info.plist 권한 설명 문구도 아직 없음.
   if (Platform.OS !== 'android') return false;
 
   const fineLocation = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
