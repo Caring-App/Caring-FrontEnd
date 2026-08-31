@@ -1,30 +1,22 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ActivityIndicator, Pressable, View } from 'react-native';
 import { NaverMapView, NaverMapMarkerOverlay } from '@mj-studio/react-native-naver-map';
-import { useWardLocationStore } from '@features/location/model';
+import { useWardLocation } from '@features/location/model';
 import { SectionCard } from '@shared/ui';
 import { colors } from '@shared/theme/colors';
 import GeoAltFillIcon from '@assets/icons/section/geo-alt-fill.svg';
 
 export function LocationSection({ wardId, onPressMore }: { wardId: string; onPressMore?: () => void }) {
-  const wardIdNumber = Number(wardId);
-  const location = useWardLocationStore(state => state.locationsByWard[wardIdNumber]);
-  const fetchLocation = useWardLocationStore(state => state.fetchLocation);
-
-  useEffect(() => {
-    if (!Number.isNaN(wardIdNumber)) {
-      fetchLocation(wardIdNumber);
-    }
-  }, [wardIdNumber, fetchLocation]);
+  const location = useWardLocation(wardId);
 
   return (
     <SectionCard title="위치 GPS" icon={<GeoAltFillIcon width={15} height={20} />} className="">
-      <View className="relative mt-3 h-[160px] overflow-hidden rounded-card border border-border">
+      <View className="relative mt-3 h-[200px] overflow-hidden rounded-card border border-border">
         {location ? (
           <>
             <NaverMapView
               key={wardId}
-              style={{ height: 160 }}
+              style={{ height: 200 }}
               initialCamera={{
                 latitude: location.latitude,
                 longitude: location.longitude,
