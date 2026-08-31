@@ -29,6 +29,10 @@ export const useWardFontScaleStore = create<WardFontScaleState>(set => ({
       set({ scale: SCALE_BY_OPTION[connectionFontSizeToOption(setting.fontSize)], isLoaded: true });
     } catch (error) {
       logApiError('어르신 글자 크기 설정 조회 실패', error);
+      // TODO: 백엔드가 400 "본인과 연결된 돌봄대상자가 아닙니다"를 반환함(2026-08-31 확인) — 이 GET을
+      // 어르신(WARD) 계정이 자기 자신의 wardId로 호출할 때만 실패함(보호자 계정이 스웨거로 연동된
+      // 어르신 조회했을 땐 200 정상). 권한 체크가 "호출자가 이 wardId와 연동된 보호자인지"만 보고
+      // "호출자 자신이 이 wardId인 경우"는 안 걸러주는 것으로 보임 — 백엔드에 확인 요청 필요.
       set({ isLoaded: true });
     }
   },
