@@ -12,6 +12,7 @@ import { Ward } from './types';
 interface SelectedWardState {
   wards: Ward[];
   isLoaded: boolean;
+  isLoading: boolean;
   selectedWardId: string;
   selectWard: (wardId: string) => void;
   fetchWards: () => Promise<void>;
@@ -20,14 +21,19 @@ interface SelectedWardState {
   updateWard: (id: string, patch: Partial<Ward>) => void;
 }
 
-export const useSelectedWardStore = create<SelectedWardState>(set => ({
+export const useSelectedWardStore = create<SelectedWardState>((set, get) => ({
   wards: MOCK_WARDS,
   isLoaded: false,
+  isLoading: false,
   selectedWardId: MOCK_WARDS[0].id,
   selectWard: wardId => set({ selectedWardId: wardId }),
   // 연동된 어르신 목록(GET /api/connection)을 실제 wardId 기준으로 불러옴.
   // 아직 한 명도 연동 안 됐거나 조회 실패 시엔 데모/개발용 MOCK_WARDS를 그대로 유지.
   fetchWards: async () => {
+    // 여러 화면이 동시에 마운트되며 각자 fetchWards를 부르는 경우가 있어(홈/돌봄대상자 관리 탭 등)
+    // 이미 진행 중이면 중복 요청하지 않음.
+    if (get().isLoading) return;
+    set({ isLoading: true });
     try {
       const connections = await getConnectionsApi();
       if (connections.length === 0) {
@@ -55,6 +61,8 @@ export const useSelectedWardStore = create<SelectedWardState>(set => ({
     } catch (error) {
       logApiError('연동된 어르신 목록 조회 실패', error);
       set({ isLoaded: true });
+    } finally {
+      set({ isLoading: false });
     }
   },
   updateWard: (id, patch) =>
