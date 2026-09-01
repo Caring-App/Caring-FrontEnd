@@ -44,9 +44,11 @@ export function PolicyDetailScreen() {
         </View>
       ) : (
         <ScrollView className="flex-1 px-4" contentContainerClassName="py-4" showsVerticalScrollIndicator={false}>
-          <Text className="text-xs font-pretendard-medium text-text-muted">
-            최종 수정일 {formatPolicyUpdatedAt(detail.updatedAt)}
-          </Text>
+          {!!formatPolicyUpdatedAt(detail.updatedAt) && (
+            <Text className="text-xs font-pretendard-medium text-text-muted">
+              최종 수정일 {formatPolicyUpdatedAt(detail.updatedAt)}
+            </Text>
+          )}
           <Text className="mt-3 text-md font-pretendard-medium leading-6 text-text-body">{detail.content}</Text>
         </ScrollView>
       )}
