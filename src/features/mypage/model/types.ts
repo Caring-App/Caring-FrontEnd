@@ -11,11 +11,6 @@ export interface FaqItem {
   answer: string;
 }
 
-export interface PolicyItem {
-  id: string;
-  title: string;
-}
-
 export interface WithdrawReasonOption {
   id: string;
   label: string;
