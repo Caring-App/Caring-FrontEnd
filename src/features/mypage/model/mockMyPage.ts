@@ -1,4 +1,4 @@
-import { FaqItem, PolicyItem, ProfileInfo, WithdrawReasonOption } from './types';
+import { FaqItem, ProfileInfo, WithdrawReasonOption } from './types';
 
 export const MOCK_PROFILE: ProfileInfo = {
   name: '이세연님',
@@ -46,13 +46,6 @@ export const MOCK_FAQS: FaqItem[] = [
     question: '복약 알림 시간은 어떻게 설정하나요?',
     answer: '복약 관리 화면에서 어르신별로 알림 시간을 직접 설정할 수 있습니다.',
   },
-];
-
-export const MOCK_POLICIES: PolicyItem[] = [
-  { id: '1', title: '일정 및 복약 관리 정책' },
-  { id: '2', title: '법적 이슈 및 개인정보 보호' },
-  { id: '3', title: 'API 및 시스템 장애 대응 정책' },
-  { id: '4', title: '기타 운영 정책' },
 ];
 
 export const WITHDRAW_REASONS: WithdrawReasonOption[] = [

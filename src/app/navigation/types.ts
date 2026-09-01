@@ -1,5 +1,6 @@
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { SocialAccessToken, SocialSignupProfile } from '@features/auth/model';
+import { PolicyType } from '@features/policy/model';
 
 export type AuthStackParamList = {
   Login: undefined;
@@ -38,6 +39,7 @@ export type GuardianStackParamList = {
   InquiryChat: undefined;
   Faq: undefined;
   Policy: undefined;
+  PolicyDetail: { type: PolicyType };
 };
 
 export type SeniorStackParamList = {
