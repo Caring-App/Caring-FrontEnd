@@ -15,6 +15,7 @@ export function PolicyScreen() {
   const navigation = useNavigation<GuardianStackNavigationProp>();
   const policies = usePolicyStore(state => state.policies);
   const isLoadingList = usePolicyStore(state => state.isLoadingList);
+  const hasListError = usePolicyStore(state => state.hasListError);
   const fetchPolicies = usePolicyStore(state => state.fetchPolicies);
 
   useFocusEffect(
@@ -35,6 +36,12 @@ export function PolicyScreen() {
       {isLoadingList && policies.length === 0 ? (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="small" color={colors.primary} />
+        </View>
+      ) : hasListError && policies.length === 0 ? (
+        <View className="flex-1 items-center justify-center">
+          <Text className="text-sm font-pretendard-medium text-text-muted">
+            정책 및 약관을 불러오지 못했어요. 잠시 후 다시 시도해주세요.
+          </Text>
         </View>
       ) : policies.length === 0 ? (
         <View className="flex-1 items-center justify-center">

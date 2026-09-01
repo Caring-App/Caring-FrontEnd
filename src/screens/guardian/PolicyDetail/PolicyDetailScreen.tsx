@@ -14,6 +14,7 @@ export function PolicyDetailScreen() {
   const navigation = useNavigation();
   const { params } = useRoute<PolicyDetailRouteProp>();
   const detail = usePolicyStore(state => state.detailsByType[params.type]);
+  const hasError = usePolicyStore(state => state.errorTypes.has(params.type));
   const fetchPolicyDetail = usePolicyStore(state => state.fetchPolicyDetail);
 
   useFocusEffect(
@@ -31,7 +32,13 @@ export function PolicyDetailScreen() {
         <Text className="text-xl font-pretendard-semibold text-text-primary">{detail?.title ?? '정책 및 약관'}</Text>
       </View>
 
-      {!detail ? (
+      {!detail && hasError ? (
+        <View className="flex-1 items-center justify-center">
+          <Text className="text-sm font-pretendard-medium text-text-muted">
+            정책 내용을 불러오지 못했어요. 잠시 후 다시 시도해주세요.
+          </Text>
+        </View>
+      ) : !detail ? (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="small" color={colors.primary} />
         </View>
