@@ -42,6 +42,10 @@ export function NotificationScreen() {
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="small" color={colors.primary} />
         </View>
+      ) : notifications.length === 0 ? (
+        <View className="flex-1 items-center justify-center">
+          <Text className="text-sm font-pretendard-medium text-text-muted">알림이 없어요.</Text>
+        </View>
       ) : (
         <ScrollView
           className="flex-1 px-4"
