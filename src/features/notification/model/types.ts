@@ -1,6 +1,7 @@
-export interface AppNotification {
-  id: string;
+export interface NotificationItem {
+  notificationId: number;
   title: string;
-  body: string;
-  date: string;
+  content: string;
+  createdAt: string;
+  isRead: boolean;
 }
