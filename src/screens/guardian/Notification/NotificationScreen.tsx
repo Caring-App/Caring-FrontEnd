@@ -2,14 +2,18 @@ import React, { useCallback } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { GuardianStackParamList } from '@app/navigation/types';
 import { colors } from '@shared/theme/colors';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 import GearIcon from '@assets/icons/header/gear.svg';
 import { useNotificationStore } from '@features/notification/model';
 import { NotificationCard } from '@features/notification/ui';
 
+type GuardianStackNavigationProp = NativeStackNavigationProp<GuardianStackParamList>;
+
 export function NotificationScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<GuardianStackNavigationProp>();
   const notifications = useNotificationStore(state => state.notifications);
   const isLoading = useNotificationStore(state => state.isLoading);
   const fetchNotifications = useNotificationStore(state => state.fetchNotifications);
@@ -29,7 +33,7 @@ export function NotificationScreen() {
           <ChevronRightIcon width={20} height={20} />
         </Pressable>
         <Text className="text-xl font-pretendard-bold text-text-primary">알림</Text>
-        <Pressable hitSlop={8}>
+        <Pressable onPress={() => navigation.navigate('Settings')} hitSlop={8}>
           <GearIcon width={22} height={22} />
         </Pressable>
       </View>
