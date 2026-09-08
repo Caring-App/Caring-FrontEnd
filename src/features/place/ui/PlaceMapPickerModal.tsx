@@ -1,18 +1,9 @@
 import React, { useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  Pressable,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Modal, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { NaverMapView, NaverMapMarkerOverlay, NaverMapViewRef } from '@mj-studio/react-native-naver-map';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
-import { FormLabel } from '@shared/ui';
+import SearchIcon from '@assets/icons/action/search.svg';
+import { AddressSearchModal, AddressSearchResult, FormLabel } from '@shared/ui';
 import { colors } from '@shared/theme/colors';
 import { logApiError } from '@shared/api';
 import { searchAddressApi } from '../api/geocodeApi';
@@ -34,8 +25,8 @@ interface PlaceMapPickerModalProps {
 export function PlaceMapPickerModal({ visible, wardId, initialCenter, onClose, onCreated }: PlaceMapPickerModalProps) {
   const mapRef = useRef<NaverMapViewRef>(null);
   const [placeName, setPlaceName] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isSearching, setIsSearching] = useState(false);
+  const [isAddressSearchVisible, setIsAddressSearchVisible] = useState(false);
+  const [isGeocoding, setIsGeocoding] = useState(false);
   const [selectedCoord, setSelectedCoord] = useState<{ latitude: number; longitude: number } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -43,7 +34,6 @@ export function PlaceMapPickerModal({ visible, wardId, initialCenter, onClose, o
 
   const reset = () => {
     setPlaceName('');
-    setSearchQuery('');
     setSelectedCoord(null);
   };
 
@@ -55,25 +45,25 @@ export function PlaceMapPickerModal({ visible, wardId, initialCenter, onClose, o
     onClose();
   };
 
-  const handleSearch = async () => {
-    if (isSearching || !searchQuery.trim()) {
-      return;
-    }
-    setIsSearching(true);
+  // 다음 우편번호 서비스는 주소만 주고 좌표는 안 줘서, 고른 주소를 다시 NCP Geocoding에 넣어 좌표를 얻음.
+  const handleAddressSelected = async (result: AddressSearchResult) => {
+    setIsGeocoding(true);
     try {
-      const results = await searchAddressApi(searchQuery.trim());
-      if (results.length === 0) {
-        Alert.alert('', '검색 결과가 없어요. 다른 주소나 장소명으로 시도해주세요.');
+      const [geocoded] = await searchAddressApi(result.address);
+      if (!geocoded) {
+        Alert.alert('', '이 주소의 좌표를 찾지 못했어요. 지도를 눌러 직접 위치를 선택해주세요.');
         return;
       }
-      const [first] = results;
-      setSelectedCoord({ latitude: first.latitude, longitude: first.longitude });
-      mapRef.current?.animateCameraTo({ latitude: first.latitude, longitude: first.longitude, zoom: 17 });
+      setSelectedCoord({ latitude: geocoded.latitude, longitude: geocoded.longitude });
+      mapRef.current?.animateCameraTo({ latitude: geocoded.latitude, longitude: geocoded.longitude, zoom: 17 });
+      if (!placeName.trim()) {
+        setPlaceName(result.buildingName || result.address);
+      }
     } catch (error) {
-      logApiError('주소 검색 실패', error);
-      Alert.alert('', '주소 검색에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      logApiError('주소 지오코딩 실패', error);
+      Alert.alert('', '좌표를 찾는 데 실패했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
-      setIsSearching(false);
+      setIsGeocoding(false);
     }
   };
 
@@ -116,24 +106,20 @@ export function PlaceMapPickerModal({ visible, wardId, initialCenter, onClose, o
           <Text className="text-md font-bold text-text-primary">장소 추가</Text>
         </View>
 
-        <View className="flex-row gap-2 border-b border-border px-4 py-3">
-          <TextInput
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            onSubmitEditing={handleSearch}
-            returnKeyType="search"
-            placeholder="주소나 장소명으로 검색"
-            placeholderTextColor="#6C757D"
-            className="flex-1 rounded-md border border-border-input px-3.5 py-2 font-pretendard text-lg text-text-primary"
-          />
+        <View className="border-b border-border px-4 py-3">
           <Pressable
-            onPress={handleSearch}
-            disabled={isSearching}
-            className={`items-center justify-center rounded-md bg-primary px-4 ${isSearching ? 'opacity-60' : ''}`}>
-            {isSearching ? (
-              <ActivityIndicator size="small" color={colors.surface} />
+            onPress={() => setIsAddressSearchVisible(true)}
+            disabled={isGeocoding}
+            className={`flex-row items-center justify-center gap-1.5 rounded-md border border-border-input py-2.5 ${
+              isGeocoding ? 'opacity-60' : ''
+            }`}>
+            {isGeocoding ? (
+              <ActivityIndicator size="small" color={colors.primary} />
             ) : (
-              <Text className="font-pretendard-semibold text-lg text-white">검색</Text>
+              <>
+                <SearchIcon width={16} height={16} />
+                <Text className="font-pretendard-semibold text-lg text-text-primary">주소 검색</Text>
+              </>
             )}
           </Pressable>
         </View>
@@ -183,6 +169,12 @@ export function PlaceMapPickerModal({ visible, wardId, initialCenter, onClose, o
           </View>
         </KeyboardAvoidingView>
       </View>
+
+      <AddressSearchModal
+        visible={isAddressSearchVisible}
+        onClose={() => setIsAddressSearchVisible(false)}
+        onSelect={handleAddressSelected}
+      />
     </Modal>
   );
 }
