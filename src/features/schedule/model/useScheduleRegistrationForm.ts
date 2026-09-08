@@ -20,11 +20,19 @@ export const useScheduleRegistrationForm = (
   onClose: () => void,
 ) => {
   const [title, setTitle] = useState('');
-  const [location, setLocation] = useState('');
+  // 수정 진입 시 서버가 준 원래 장소 이름의 스냅샷 — 아래 selectedPlace를 못 찾았을 때(장소 목록이 아직
+  // 로딩 전이거나 이미 삭제된 경우)의 표시용 대체값으로만 씀. 장소를 새로 고르면 placeId만 바꾸면 되고
+  // 이 값은 그대로 둬도 됨(더 이상 참조되지 않으므로).
+  const [savedLocationName, setSavedLocationName] = useState('');
   const [placeId, setPlaceId] = useState<number | null>(null);
   const [showLocationOptions, setShowLocationOptions] = useState(false);
   const [isPlacePickerVisible, setIsPlacePickerVisible] = useState(false);
   const places = usePlaceStore(state => state.placesByWard[wardId]) ?? EMPTY_PLACES;
+  // location은 placeId 하나만 소스로 삼아 매번 계산함 — location/placeId를 여러 핸들러에서 각자
+  // 손으로 동기화하다 보면(선택/생성/삭제 등) 한 곳이라도 빠뜨렸을 때 서버로 나가는 locationName이
+  // 실제 선택된 장소와 어긋나는 문제가 있어서 그 방식을 피함.
+  const selectedPlace = places.find(place => place.placeId === placeId);
+  const location = selectedPlace?.placeName ?? savedLocationName;
 
   const [calendarMonth, setCalendarMonth] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState(() => new Date());
@@ -47,7 +55,7 @@ export const useScheduleRegistrationForm = (
     }
     if (editingSchedule) {
       setTitle(editingSchedule.title);
-      setLocation(editingSchedule.location);
+      setSavedLocationName(editingSchedule.location);
       setPlaceId(editingSchedule.placeId);
       setCalendarMonth(editingSchedule.date);
       setSelectedDate(editingSchedule.date);
@@ -59,7 +67,7 @@ export const useScheduleRegistrationForm = (
     } else {
       const now = new Date();
       setTitle('');
-      setLocation('');
+      setSavedLocationName('');
       setPlaceId(null);
       setCalendarMonth(now);
       setSelectedDate(now);
@@ -87,7 +95,6 @@ export const useScheduleRegistrationForm = (
 
   const toggleLocationOptions = () => setShowLocationOptions((prev) => !prev);
   const selectPlace = (place: Place) => {
-    setLocation(place.placeName);
     setPlaceId(place.placeId);
     setShowLocationOptions(false);
   };
@@ -97,7 +104,6 @@ export const useScheduleRegistrationForm = (
   };
   const closePlacePicker = () => setIsPlacePickerVisible(false);
   const handlePlaceCreated = (place: Place) => {
-    setLocation(place.placeName);
     setPlaceId(place.placeId);
     setIsPlacePickerVisible(false);
   };
@@ -111,7 +117,7 @@ export const useScheduleRegistrationForm = (
           try {
             await usePlaceStore.getState().deletePlace(wardId, place.placeId);
             if (placeId === place.placeId) {
-              setLocation('');
+              setSavedLocationName('');
               setPlaceId(null);
             }
           } catch (error) {
