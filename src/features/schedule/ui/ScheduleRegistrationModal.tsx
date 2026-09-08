@@ -20,7 +20,10 @@ import { colors } from '@shared/theme/colors';
 // 화면 계층으로 끌어올리는 대안도 검토했으나 ref/콜백 prop-drilling이 늘어나 오히려 가독성이 떨어져 보류.
 import { useHostModalTourStep, useTourScrollTracking } from '@features/guardian-tour/model';
 import { TourHostOverlay } from '@features/guardian-tour/ui';
-import { LOCATION_OPTIONS, useScheduleRegistrationForm } from '../model/useScheduleRegistrationForm';
+// FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, "새 장소 추가"가 지도에서 좌표를 찍는
+// @features/place의 모달이라 의도적으로 참조함(순환참조 없음, place는 schedule을 참조하지 않음).
+import { PlaceMapPickerModal } from '@features/place/ui';
+import { useScheduleRegistrationForm } from '../model/useScheduleRegistrationForm';
 import { ScheduleEntry } from '../model/scheduleRegistrationTypes';
 import { ScheduleCalendarPicker } from './ScheduleCalendarPicker';
 
@@ -96,11 +99,19 @@ export function ScheduleRegistrationModal({
                 </Pressable>
                 {state.showLocationOptions && (
                   <View className="mt-1 rounded-md border border-border-divider bg-surface py-1">
-                    {LOCATION_OPTIONS.map((option) => (
-                      <Pressable key={option} onPress={() => actions.selectLocation(option)} className="px-4 py-2">
-                        <Text className="font-pretendard text-lg text-text-body">{option}</Text>
-                      </Pressable>
+                    {state.places.map((place) => (
+                      <View key={place.placeId} className="flex-row items-center justify-between px-4 py-2">
+                        <Pressable className="flex-1" onPress={() => actions.selectPlace(place)}>
+                          <Text className="font-pretendard text-lg text-text-body">{place.placeName}</Text>
+                        </Pressable>
+                        <Pressable onPress={() => actions.deletePlaceOption(place)} hitSlop={8}>
+                          <CloseIcon width={12} height={12} />
+                        </Pressable>
+                      </View>
                     ))}
+                    <Pressable onPress={actions.openPlacePicker} className="px-4 py-2">
+                      <Text className="font-pretendard-semibold text-lg text-primary">+ 새 장소 추가</Text>
+                    </Pressable>
                   </View>
                 )}
               </View>
@@ -171,6 +182,13 @@ export function ScheduleRegistrationModal({
       </View>
 
       <TourHostOverlay isTourStep={isTourStep} tourStep={tourStep} tourStepIndex={tourStepIndex} ready={ready} box={box} />
+
+      <PlaceMapPickerModal
+        visible={state.isPlacePickerVisible}
+        wardId={wardId}
+        onClose={actions.closePlacePicker}
+        onCreated={actions.handlePlaceCreated}
+      />
     </Modal>
   );
 }

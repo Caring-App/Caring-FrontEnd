@@ -46,6 +46,7 @@ export function taskScheduleToEntry(schedule: TaskSchedule): ScheduleEntry {
     id: schedule.taskId,
     title: schedule.taskName,
     location: schedule.locationName,
+    placeId: schedule.placeId,
     date: taskDateToDate(schedule.taskDate),
     scheduleTime: taskTimeToTimeState(schedule.taskTime),
     alarmTime: taskTimeToTimeState(schedule.ttsVoiceTime),
@@ -57,6 +58,7 @@ export function buildTaskScheduleRequest(data: ScheduleRegistrationData): TaskSc
   return {
     taskName: data.title,
     locationName: data.location,
+    placeId: data.placeId,
     taskDate: dateToTaskDate(data.date),
     taskTime: timeStateToTaskTime(data.scheduleTime),
     ttsVoiceTime: timeStateToTaskTime(data.alarmTime),

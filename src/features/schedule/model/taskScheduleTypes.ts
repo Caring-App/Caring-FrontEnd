@@ -17,9 +17,7 @@ export interface TaskSchedule {
   placeId: number;
 }
 
-// POST/PATCH 요청 바디.
-// placeId는 요청 예시엔 있지만, "자주 가는 장소" 관리 기능이 프론트에 아직 없어(장소는 자유 텍스트
-// locationName으로만 입력받음) 항상 미전송.
+// POST/PATCH 요청 바디. placeId는 @features/place로 등록/조회한 실제 장소의 id.
 export interface TaskScheduleRequest {
   taskName: string;
   locationName: string;
@@ -29,4 +27,5 @@ export interface TaskScheduleRequest {
   ttsMessage: string;
   alarmType: TaskAlarmType;
   voiceFileUrl: string;
+  placeId: number;
 }

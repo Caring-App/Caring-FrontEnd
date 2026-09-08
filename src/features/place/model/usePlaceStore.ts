@@ -7,7 +7,7 @@ interface PlaceState {
   placesByWard: Record<string, Place[]>;
   isLoading: boolean;
   fetchPlaces: (wardId: string) => Promise<void>;
-  addPlace: (wardId: string, placeName: string, latitude: number, longitude: number) => Promise<void>;
+  addPlace: (wardId: string, placeName: string, latitude: number, longitude: number) => Promise<Place>;
   deletePlace: (wardId: string, placeId: number) => Promise<void>;
 }
 
@@ -32,6 +32,7 @@ export const usePlaceStore = create<PlaceState>((set) => ({
     set(state => ({
       placesByWard: { ...state.placesByWard, [wardId]: [...(state.placesByWard[wardId] ?? []), created] },
     }));
+    return created;
   },
 
   deletePlace: async (wardId, placeId) => {

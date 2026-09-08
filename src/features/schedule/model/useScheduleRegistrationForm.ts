@@ -2,13 +2,16 @@ import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import { useVoiceRecording } from '@shared/model';
 import { logApiError } from '@shared/api';
+// FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, "장소" 선택이 곧 @features/place가 관리하는
+// 실제 등록된 장소를 고르는 것이라 의도적으로 참조함(순환참조 없음, place는 schedule을 참조하지 않음).
+import { Place, usePlaceStore } from '@features/place/model';
 import { addMonths } from './calendarUtils';
 import { ScheduleEntry, ScheduleRegistrationData, ScheduleSoundType, TimeState } from './scheduleRegistrationTypes';
 import { useScheduleStore } from './useScheduleStore';
 
 const INITIAL_TIME: TimeState = { hour: '1', minute: '00', second: '00', amPm: 'AM' };
 
-export const LOCATION_OPTIONS = ['장소 1', '장소 2', '장소 3'];
+const EMPTY_PLACES: Place[] = [];
 
 export const useScheduleRegistrationForm = (
   wardId: string,
@@ -18,7 +21,10 @@ export const useScheduleRegistrationForm = (
 ) => {
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
+  const [placeId, setPlaceId] = useState<number | null>(null);
   const [showLocationOptions, setShowLocationOptions] = useState(false);
+  const [isPlacePickerVisible, setIsPlacePickerVisible] = useState(false);
+  const places = usePlaceStore(state => state.placesByWard[wardId]) ?? EMPTY_PLACES;
 
   const [calendarMonth, setCalendarMonth] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState(() => new Date());
@@ -42,6 +48,7 @@ export const useScheduleRegistrationForm = (
     if (editingSchedule) {
       setTitle(editingSchedule.title);
       setLocation(editingSchedule.location);
+      setPlaceId(editingSchedule.placeId);
       setCalendarMonth(editingSchedule.date);
       setSelectedDate(editingSchedule.date);
       setScheduleTimeState(editingSchedule.scheduleTime);
@@ -53,6 +60,7 @@ export const useScheduleRegistrationForm = (
       const now = new Date();
       setTitle('');
       setLocation('');
+      setPlaceId(null);
       setCalendarMonth(now);
       setSelectedDate(now);
       setScheduleTimeState(INITIAL_TIME);
@@ -62,16 +70,56 @@ export const useScheduleRegistrationForm = (
       setSoundType('tts');
     }
     setShowLocationOptions(false);
+    setIsPlacePickerVisible(false);
     setShowSchedulePicker(false);
     setShowAlarmPicker(false);
     voiceRecording.reset();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, editingSchedule]);
 
+  // 모달이 열려있는 동안엔 장소 드롭다운을 열 때마다 최신 목록을 봐야 하므로 visible 기준으로 조회
+  useEffect(() => {
+    if (visible) {
+      usePlaceStore.getState().fetchPlaces(wardId);
+    }
+  }, [visible, wardId]);
+
   const toggleLocationOptions = () => setShowLocationOptions((prev) => !prev);
-  const selectLocation = (option: string) => {
-    setLocation(option);
+  const selectPlace = (place: Place) => {
+    setLocation(place.placeName);
+    setPlaceId(place.placeId);
     setShowLocationOptions(false);
+  };
+  const openPlacePicker = () => {
+    setShowLocationOptions(false);
+    setIsPlacePickerVisible(true);
+  };
+  const closePlacePicker = () => setIsPlacePickerVisible(false);
+  const handlePlaceCreated = (place: Place) => {
+    setLocation(place.placeName);
+    setPlaceId(place.placeId);
+    setIsPlacePickerVisible(false);
+  };
+  const deletePlaceOption = (place: Place) => {
+    Alert.alert('', `'${place.placeName}'을(를) 삭제하시겠어요?`, [
+      { text: '취소', style: 'cancel' },
+      {
+        text: '삭제',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await usePlaceStore.getState().deletePlace(wardId, place.placeId);
+            if (placeId === place.placeId) {
+              setLocation('');
+              setPlaceId(null);
+            }
+          } catch (error) {
+            logApiError('장소 삭제 실패', error);
+            Alert.alert('', '삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
+          }
+        },
+      },
+    ]);
   };
 
   const goToPrevMonth = () => setCalendarMonth((prev) => addMonths(prev, -1));
@@ -103,7 +151,7 @@ export const useScheduleRegistrationForm = (
       Alert.alert('', '일정 이름을 입력해주세요.');
       return;
     }
-    if (!location) {
+    if (placeId == null) {
       Alert.alert('', '장소를 선택해주세요.');
       return;
     }
@@ -116,7 +164,15 @@ export const useScheduleRegistrationForm = (
       return;
     }
 
-    const data: ScheduleRegistrationData = { title, location, date: selectedDate, scheduleTime, alarmTime, soundType };
+    const data: ScheduleRegistrationData = {
+      title,
+      location,
+      placeId,
+      date: selectedDate,
+      scheduleTime,
+      alarmTime,
+      soundType,
+    };
     setIsSubmitting(true);
     try {
       if (editingSchedule) {
@@ -137,7 +193,10 @@ export const useScheduleRegistrationForm = (
     state: {
       title,
       location,
+      placeId,
+      places,
       showLocationOptions,
+      isPlacePickerVisible,
       calendarMonth,
       selectedDate,
       scheduleTime,
@@ -154,7 +213,11 @@ export const useScheduleRegistrationForm = (
     actions: {
       setTitle,
       toggleLocationOptions,
-      selectLocation,
+      selectPlace,
+      openPlacePicker,
+      closePlacePicker,
+      handlePlaceCreated,
+      deletePlaceOption,
       goToPrevMonth,
       goToNextMonth,
       selectDate,
