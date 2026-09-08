@@ -1,2 +1,2 @@
 export * from './types';
-export * from './mockNotifications';
+export * from './useNotificationStore';
