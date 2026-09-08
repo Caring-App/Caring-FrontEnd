@@ -1,9 +1,20 @@
 import React, { useRef } from 'react';
-import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import CalendarEventIcon from '@assets/icons/section/calendar-event.svg';
 import CloseIcon from '@assets/icons/action/close-x.svg';
 import ChevronDownIcon from '@assets/icons/section/chevron-down-select.svg';
 import { FormLabel, SoundSettingsCard, TimeTriggerInput, WheelTimePicker, formatTime } from '@shared/ui';
+import { colors } from '@shared/theme/colors';
 // FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, 사용가이드가 이 모달 내부(카드 전체 /
 // 시간 섹션)를 직접 하이라이트해야 해서 guardian-tour를 의도적으로 참조함(순환참조 없음).
 // 화면 계층으로 끌어올리는 대안도 검토했으나 ref/콜백 prop-drilling이 늘어나 오히려 가독성이 떨어져 보류.
@@ -144,8 +155,15 @@ export function ScheduleRegistrationModal({
 
             <Pressable
               onPress={actions.handleSave}
-              className="mt-5 items-center justify-center rounded-md bg-primary py-4">
-              <Text className="font-pretendard-semibold text-xl text-white">저장하기</Text>
+              disabled={state.isSubmitting}
+              className={`mt-5 items-center justify-center rounded-md bg-primary py-4 ${
+                state.isSubmitting ? 'opacity-60' : ''
+              }`}>
+              {state.isSubmitting ? (
+                <ActivityIndicator size="small" color={colors.surface} />
+              ) : (
+                <Text className="font-pretendard-semibold text-xl text-white">저장하기</Text>
+              )}
             </Pressable>
           </ScrollView>
         </View>

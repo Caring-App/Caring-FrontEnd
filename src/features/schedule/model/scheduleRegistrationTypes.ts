@@ -14,5 +14,5 @@ export interface ScheduleRegistrationData {
 }
 
 export interface ScheduleEntry extends ScheduleRegistrationData {
-  id: string;
+  id: number;
 }

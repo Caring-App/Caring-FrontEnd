@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
+import { logApiError } from '@shared/api';
 import { WEEKDAY_LABELS_KO, addMonths, getCalendarWeeks, isSameDay } from '../model/calendarUtils';
 import { ScheduleEntry } from '../model/scheduleRegistrationTypes';
 import { to24Hour } from '../model/scheduleFormat';
 import { useScheduleStore } from '../model/useScheduleStore';
+import { useWardSchedules } from '../model/useWardSchedules';
 import { MonthYearPickerModal } from './MonthYearPickerModal';
 import { ScheduleDetailModal } from './ScheduleDetailModal';
 import { DeleteScheduleConfirmModal } from './DeleteScheduleConfirmModal';
@@ -29,7 +31,7 @@ export function HomeScheduleCalendar({ wardId, wardName, onRequestEdit }: HomeSc
   const [selectedSchedules, setSelectedSchedules] = useState<ScheduleEntry[]>([]);
   const [scheduleToDelete, setScheduleToDelete] = useState<ScheduleEntry | null>(null);
 
-  const schedules = useScheduleStore((state) => state.schedulesByWard[wardId]) ?? [];
+  const schedules = useWardSchedules(wardId);
 
   const weeks = getCalendarWeeks(month).filter((week) => week.some(({ inCurrentMonth }) => inCurrentMonth));
 
@@ -138,11 +140,18 @@ export function HomeScheduleCalendar({ wardId, wardName, onRequestEdit }: HomeSc
         visible={!!scheduleToDelete}
         schedule={scheduleToDelete}
         onCancel={() => setScheduleToDelete(null)}
-        onConfirm={() => {
-          if (scheduleToDelete) {
-            useScheduleStore.getState().deleteSchedule(wardId, scheduleToDelete.id);
-          }
+        onConfirm={async () => {
+          const target = scheduleToDelete;
           setScheduleToDelete(null);
+          if (!target) {
+            return;
+          }
+          try {
+            await useScheduleStore.getState().deleteSchedule(wardId, target.id);
+          } catch (error) {
+            logApiError('일정 삭제 실패', error);
+            Alert.alert('', '삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
+          }
         }}
       />
     </View>

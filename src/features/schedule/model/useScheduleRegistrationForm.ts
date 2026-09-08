@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import { useVoiceRecording } from '@shared/model';
+import { logApiError } from '@shared/api';
 import { addMonths } from './calendarUtils';
 import { ScheduleEntry, ScheduleRegistrationData, ScheduleSoundType, TimeState } from './scheduleRegistrationTypes';
 import { useScheduleStore } from './useScheduleStore';
@@ -32,6 +33,7 @@ export const useScheduleRegistrationForm = (
 
   const [soundType, setSoundType] = useState<ScheduleSoundType>('tts');
   const voiceRecording = useVoiceRecording();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!visible) {
@@ -88,7 +90,15 @@ export const useScheduleRegistrationForm = (
     setHasAlarmTime(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (isSubmitting) {
+      return;
+    }
+    const wardIdNumber = Number(wardId);
+    if (Number.isNaN(wardIdNumber)) {
+      Alert.alert('', '연동된 어르신 정보를 확인할 수 없습니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
     if (!title.trim()) {
       Alert.alert('', '일정 이름을 입력해주세요.');
       return;
@@ -107,12 +117,20 @@ export const useScheduleRegistrationForm = (
     }
 
     const data: ScheduleRegistrationData = { title, location, date: selectedDate, scheduleTime, alarmTime, soundType };
-    if (editingSchedule) {
-      useScheduleStore.getState().updateSchedule(wardId, editingSchedule.id, data);
-    } else {
-      useScheduleStore.getState().addSchedule(wardId, data);
+    setIsSubmitting(true);
+    try {
+      if (editingSchedule) {
+        await useScheduleStore.getState().updateSchedule(wardId, editingSchedule.id, data);
+      } else {
+        await useScheduleStore.getState().addSchedule(wardId, data);
+      }
+      onClose();
+    } catch (error) {
+      logApiError('일정 저장 실패', error);
+      Alert.alert('', '저장에 실패했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+      setIsSubmitting(false);
     }
-    onClose();
   };
 
   return {
@@ -131,6 +149,7 @@ export const useScheduleRegistrationForm = (
       soundType,
       isRecording: voiceRecording.isRecording,
       hasRecorded: voiceRecording.hasRecorded,
+      isSubmitting,
     },
     actions: {
       setTitle,
