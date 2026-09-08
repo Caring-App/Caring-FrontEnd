@@ -163,7 +163,7 @@ export function PlaceMapPickerModal({ visible, wardId, initialCenter, onClose, o
                 value={placeName}
                 onChangeText={setPlaceName}
                 placeholder="장소 이름을 입력하세요"
-                placeholderTextColor="#6C757D"
+                placeholderTextColor={colors.textPlaceholder}
                 className="rounded-md border border-border-input px-3.5 py-2 font-pretendard text-lg text-text-primary"
               />
             </View>
