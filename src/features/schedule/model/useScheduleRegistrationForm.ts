@@ -77,9 +77,10 @@ export const useScheduleRegistrationForm = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, editingSchedule]);
 
-  // 모달이 열려있는 동안엔 장소 드롭다운을 열 때마다 최신 목록을 봐야 하므로 visible 기준으로 조회
+  // 모달이 열려있는 동안엔 장소 드롭다운을 열 때마다 최신 목록을 봐야 하므로 visible 기준으로 조회.
+  // wardId가 아직 유효한 숫자가 아니면(어르신 미연동 등) useWardSchedules와 동일하게 조회를 건너뜀.
   useEffect(() => {
-    if (visible) {
+    if (visible && !Number.isNaN(Number(wardId))) {
       usePlaceStore.getState().fetchPlaces(wardId);
     }
   }, [visible, wardId]);
