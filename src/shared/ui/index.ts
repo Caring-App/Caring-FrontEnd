@@ -13,3 +13,5 @@ export { FormLabel } from './FormLabel';
 export { FormField } from './FormField';
 export { TimeTriggerInput } from './TimeTriggerInput';
 export { ConfirmModal } from './ConfirmModal';
+export { AddressSearchModal } from './AddressSearchModal';
+export type { AddressSearchResult } from './AddressSearchModal';
