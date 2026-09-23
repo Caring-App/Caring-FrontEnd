@@ -5,7 +5,7 @@ import CalendarEventIcon from '@assets/icons/section/calendar-event.svg';
 // ward-management가 유일한 소스라(useWardFontScaleStore) 이 화면에서도 그대로 가져다 씀
 // (순환참조 없음, ward-management는 schedule을 참조하지 않음).
 import { WardText } from '@features/ward-management/ui';
-import { formatScheduleTime, isSameDay, to24Hour, useWardSchedules } from '../model';
+import { formatScheduleTime, isSameDay, to24Hour, useMyTodaySchedules } from '../model';
 
 function formatTodayScheduleTitle(today: Date) {
   return `${today.getMonth() + 1}월 ${today.getDate()}일 오늘의 일정`;
@@ -14,8 +14,8 @@ function formatTodayScheduleTitle(today: Date) {
 // 돌봄대상자 메인 화면의 "일정 관리" 카드. 보호자가 등록해둔 오늘 일정을 시간순으로 보여주고,
 // "일정 다시 듣기"로 음성 안내를 다시 들을 수 있게 함
 // TODO: 실제 TTS 음성 재생 연동 전이라 지금은 버튼 UI만 있고 눌러도 동작하지 않음
-export function WardScheduleCard({ wardId }: { wardId: string }) {
-  const schedules = useWardSchedules(wardId);
+export function WardScheduleCard() {
+  const schedules = useMyTodaySchedules();
   // 화면이 떠 있는 동안 자정을 넘기는 경우까지는 고려하지 않음(이 컴포넌트 수명 동안엔 고정값으로 취급)
   const today = useMemo(() => new Date(), []);
   const todaySchedules = useMemo(

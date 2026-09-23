@@ -3,6 +3,7 @@ import { logApiError } from '@shared/api';
 import {
   createTaskScheduleApi,
   deleteTaskScheduleApi,
+  getMyTodayTaskSchedulesApi,
   getTaskSchedulesApi,
   updateTaskScheduleApi,
 } from '../api/taskScheduleApi';
@@ -12,7 +13,10 @@ import { ScheduleEntry, ScheduleRegistrationData } from './scheduleRegistrationT
 interface ScheduleState {
   schedulesByWard: Record<string, ScheduleEntry[]>;
   isLoading: boolean;
+  // 돌봄대상자(WARD) 본인 화면 전용 — 보호자용 schedulesByWard와 조회 API가 달라서 따로 둠
+  myTodaySchedules: ScheduleEntry[];
   fetchSchedules: (wardId: string) => Promise<void>;
+  fetchMyTodaySchedules: () => Promise<void>;
   addSchedule: (wardId: string, data: ScheduleRegistrationData) => Promise<void>;
   updateSchedule: (wardId: string, id: number, data: ScheduleRegistrationData) => Promise<void>;
   deleteSchedule: (wardId: string, id: number) => Promise<void>;
@@ -21,6 +25,7 @@ interface ScheduleState {
 export const useScheduleStore = create<ScheduleState>((set) => ({
   schedulesByWard: {},
   isLoading: false,
+  myTodaySchedules: [],
 
   fetchSchedules: async (wardId) => {
     set({ isLoading: true });
@@ -33,6 +38,15 @@ export const useScheduleStore = create<ScheduleState>((set) => ({
       logApiError('일정 목록 조회 실패', error);
     } finally {
       set({ isLoading: false });
+    }
+  },
+
+  fetchMyTodaySchedules: async () => {
+    try {
+      const schedules = await getMyTodayTaskSchedulesApi();
+      set({ myTodaySchedules: schedules.map(taskScheduleToEntry) });
+    } catch (error) {
+      logApiError('오늘 일정 조회 실패', error);
     }
   },
 
