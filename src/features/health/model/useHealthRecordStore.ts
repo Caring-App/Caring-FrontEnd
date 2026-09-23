@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { resetOnLogout } from '@shared/store/resetOnLogout';
 
 export interface HealthRecordEntry {
   bloodSugar: string;
@@ -24,3 +25,5 @@ export const useHealthRecordStore = create<HealthRecordState>(set => ({
 export function getEmptyHealthRecord(): HealthRecordEntry {
   return { ...EMPTY_RECORD };
 }
+
+resetOnLogout(useHealthRecordStore);

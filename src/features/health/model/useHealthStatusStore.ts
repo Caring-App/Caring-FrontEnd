@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { resetOnLogout } from '@shared/store/resetOnLogout';
 import { logApiError } from '@shared/api';
 import { checkMoodApi, getMoodCheckApi } from '../api';
 import { healthStatusToMoodStatus, moodStatusToHealthStatus } from '../utils';
@@ -56,3 +57,5 @@ export const useHealthStatusStore = create<HealthStatusState>((set, get) => ({
     }
   },
 }));
+
+resetOnLogout(useHealthStatusStore);

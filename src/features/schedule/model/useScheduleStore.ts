@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { resetOnLogout } from '@shared/store/resetOnLogout';
 import { logApiError } from '@shared/api';
 import {
   createTaskScheduleApi,
@@ -82,3 +83,5 @@ export const useScheduleStore = create<ScheduleState>((set) => ({
     }));
   },
 }));
+
+resetOnLogout(useScheduleStore);

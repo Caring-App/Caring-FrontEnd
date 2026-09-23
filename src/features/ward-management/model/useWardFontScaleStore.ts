@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { resetOnLogout } from '@shared/store/resetOnLogout';
 import { logApiError } from '@shared/api';
 import { getWardSettingApi } from '../api';
 import { connectionFontSizeToOption } from '../utils';
@@ -40,3 +41,5 @@ export const useWardFontScaleStore = create<WardFontScaleState>(set => ({
     }
   },
 }));
+
+resetOnLogout(useWardFontScaleStore);

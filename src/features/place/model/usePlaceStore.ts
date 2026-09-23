@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { resetOnLogout } from '@shared/store/resetOnLogout';
 import { logApiError } from '@shared/api';
 import { createPlaceApi, deletePlaceApi, getPlacesApi } from '../api/placeApi';
 import { Place } from './placeTypes';
@@ -45,3 +46,5 @@ export const usePlaceStore = create<PlaceState>((set) => ({
     }));
   },
 }));
+
+resetOnLogout(usePlaceStore);
