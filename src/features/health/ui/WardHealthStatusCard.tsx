@@ -5,7 +5,7 @@ import ClipboardPulseIcon from '@assets/icons/section/clipboard-pulse.svg';
 // ward-management가 유일한 소스라(useWardFontScaleStore) 이 화면에서도 WardText를 그대로 가져다 씀
 // (순환참조 없음, ward-management는 health를 참조하지 않음).
 import { WardText } from '@features/ward-management/ui';
-import { useHealthStatusStore } from '../model';
+import { useHealthStatusStore, useWardMoodStatus } from '../model';
 import { HealthStatusEmojiButton } from './HealthStatusEmojiButton';
 
 interface WardHealthStatusCardProps {
@@ -14,10 +14,11 @@ interface WardHealthStatusCardProps {
 }
 
 // 돌봄대상자 메인 화면의 "오늘의 건강 상태" 카드. 어르신이 직접 눌러서 오늘 상태를 기록하면
-// useHealthStatusStore를 통해 보호자 화면(DailyReportCard)에 그대로 반영됨.
+// mood-check API를 통해 보호자 화면(DailyReportCard)에 그대로 반영됨.
 // "오늘의 건강 기록하기" 버튼도 같은 섹션에 속해 있어서 이 카드 안에 같이 둠(Figma 기준)
 export function WardHealthStatusCard({ wardId, onPressRecord }: WardHealthStatusCardProps) {
-  const status = useHealthStatusStore(state => state.statusByWard[wardId]);
+  const status = useWardMoodStatus(wardId);
+  const wardIdNumber = Number(wardId);
 
   return (
     <View className="rounded-card border border-border bg-surface p-4">
@@ -33,17 +34,17 @@ export function WardHealthStatusCard({ wardId, onPressRecord }: WardHealthStatus
           <HealthStatusEmojiButton
             status="good"
             active={status === 'good'}
-            onPress={() => useHealthStatusStore.getState().setStatus(wardId, 'good')}
+            onPress={() => !Number.isNaN(wardIdNumber) && useHealthStatusStore.getState().checkStatus(wardIdNumber, 'good')}
           />
           <HealthStatusEmojiButton
             status="normal"
             active={status === 'normal'}
-            onPress={() => useHealthStatusStore.getState().setStatus(wardId, 'normal')}
+            onPress={() => !Number.isNaN(wardIdNumber) && useHealthStatusStore.getState().checkStatus(wardIdNumber, 'normal')}
           />
           <HealthStatusEmojiButton
             status="bad"
             active={status === 'bad'}
-            onPress={() => useHealthStatusStore.getState().setStatus(wardId, 'bad')}
+            onPress={() => !Number.isNaN(wardIdNumber) && useHealthStatusStore.getState().checkStatus(wardIdNumber, 'bad')}
           />
         </View>
       </View>
