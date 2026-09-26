@@ -8,7 +8,7 @@ import { AppHeader } from '@shared/ui';
 import { useGuardianMenuStore } from '@features/guardian-menu/model';
 import { useTourScrollTracking } from '@features/guardian-tour/model';
 import { TourOverlay, TourTarget } from '@features/guardian-tour/ui';
-import { WardInfo, useSelectedWardStore, useWardManagement } from '@features/ward-management/model';
+import { WardInfoUpdate, useSelectedWardStore, useWardManagement } from '@features/ward-management/model';
 import { EditWardModal, WardCard } from '@features/ward-management/ui';
 
 type GuardianStackNavigationProp = NativeStackNavigationProp<GuardianStackParamList>;
@@ -22,9 +22,9 @@ export function WardManagementScreen() {
 
   const editingWard = wards.find(ward => ward.id === editingWardId) ?? null;
 
-  async function handleSaveWard(info: WardInfo) {
+  async function handleSaveWard(update: WardInfoUpdate) {
     if (!editingWard) return;
-    const success = await saveWardInfo(editingWard.id, info);
+    const success = await saveWardInfo(editingWard.id, update);
     if (success) {
       setEditingWardId(null);
     }

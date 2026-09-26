@@ -1,11 +1,12 @@
 import React from 'react';
 import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { FormField } from '@shared/ui';
+import { AddressInput, FormField } from '@shared/ui';
 import { colors } from '@shared/theme/colors';
 
 // 회원가입 폼 입력창 공용 스타일 (SignupScreen, WardSignupScreen)
-const FORM_INPUT_CLASSNAME =
-  'rounded-md border border-border-input bg-surface px-3.5 py-2 font-pretendard-light text-lg text-text-body';
+const FORM_INPUT_BOX_CLASSNAME = 'rounded-md border border-border-input bg-surface px-3.5 py-2';
+const FORM_INPUT_TEXT_CLASSNAME = 'font-pretendard-light text-lg text-text-body';
+const FORM_INPUT_CLASSNAME = `${FORM_INPUT_BOX_CLASSNAME} ${FORM_INPUT_TEXT_CLASSNAME}`;
 const FORM_INPUT_PLACEHOLDER_COLOR = colors.textPlaceholder;
 
 // 보호자/돌봄대상자 회원가입 폼이 공유하는 필드(이름/전화번호/인증번호/비밀번호/주소)
@@ -16,14 +17,16 @@ interface SignupCommonFieldsProps {
     authCode: string;
     password: string;
     passwordConfirm: string;
-    address: string;
+    baseAddress: string;
+    detailAddress: string;
   };
   setName: (value: string) => void;
   setPhone: (value: string) => void;
   setAuthCode: (value: string) => void;
   setPassword: (value: string) => void;
   setPasswordConfirm: (value: string) => void;
-  setAddress: (value: string) => void;
+  setBaseAddress: (value: string) => void;
+  setDetailAddress: (value: string) => void;
   handleSendAuthCode: () => void;
   handleVerifyAuthCode: () => void;
   isSendingCode: boolean;
@@ -40,7 +43,8 @@ export function SignupCommonFields({
   setAuthCode,
   setPassword,
   setPasswordConfirm,
-  setAddress,
+  setBaseAddress,
+  setDetailAddress,
   handleSendAuthCode,
   handleVerifyAuthCode,
   isSendingCode,
@@ -152,12 +156,13 @@ export function SignupCommonFields({
       </FormField>
 
       <FormField label="주소">
-        <TextInput
-          className={FORM_INPUT_CLASSNAME}
-          placeholder="주소를 입력해 주세요"
-          placeholderTextColor={FORM_INPUT_PLACEHOLDER_COLOR}
-          value={form.address}
-          onChangeText={setAddress}
+        <AddressInput
+          baseAddress={form.baseAddress}
+          detailAddress={form.detailAddress}
+          onChangeBaseAddress={setBaseAddress}
+          onChangeDetailAddress={setDetailAddress}
+          boxClassName={FORM_INPUT_BOX_CLASSNAME}
+          textClassName={FORM_INPUT_TEXT_CLASSNAME}
         />
       </FormField>
     </>

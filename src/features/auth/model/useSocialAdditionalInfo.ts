@@ -13,7 +13,8 @@ interface Params extends SocialSignupProfile {
 // (이름/전화번호는 카카오/네이버 프로필에서, 생년월일은 백엔드 협의로 더 이상 받지 않음)
 export default function useSocialAdditionalInfo(navigation: any, params: Params) {
   const { provider, providerId, role, name, phone } = params;
-  const [address, setAddress] = useState('');
+  const [baseAddress, setBaseAddress] = useState('');
+  const [detailAddress, setDetailAddress] = useState('');
   const [selectedDiseases, setSelectedDiseases] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
@@ -22,7 +23,7 @@ export default function useSocialAdditionalInfo(navigation: any, params: Params)
     setSelectedDiseases(prev => (prev.includes(disease) ? prev.filter(item => item !== disease) : [...prev, disease]));
   };
 
-  const isFormValid = !!address && (role !== 'WARD' || selectedDiseases.length > 0);
+  const isFormValid = !!baseAddress && (role !== 'WARD' || selectedDiseases.length > 0);
 
   const handleSubmit = async () => {
     if (!isFormValid || isSubmitting) return;
@@ -35,7 +36,8 @@ export default function useSocialAdditionalInfo(navigation: any, params: Params)
         role,
         name,
         phone,
-        address,
+        baseAddress,
+        detailAddress,
         ...(role === 'WARD' ? { diseases: selectedDiseases } : {}),
       });
 
@@ -62,8 +64,10 @@ export default function useSocialAdditionalInfo(navigation: any, params: Params)
 
   return {
     role,
-    address,
-    setAddress,
+    baseAddress,
+    setBaseAddress,
+    detailAddress,
+    setDetailAddress,
     selectedDiseases,
     toggleDisease,
     isFormValid,

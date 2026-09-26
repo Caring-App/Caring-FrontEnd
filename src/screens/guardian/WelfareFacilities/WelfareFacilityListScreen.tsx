@@ -1,19 +1,22 @@
 import React from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GuardianStackParamList } from '@app/navigation/types';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 import CrosshairIcon from '@assets/icons/action/crosshair.svg';
-import PencilSquareIcon from '@assets/icons/action/pencil-square.svg';
-import { MOCK_WELFARE_FACILITIES } from '@features/welfare-facility/model';
-import { WelfareFacilityListItem } from '@features/welfare-facility/ui';
+import { useSelectedWardStore } from '@features/ward-management/model';
+import { WELFARE_SEARCH_RADIUS_KM } from '@features/welfare-facility/model';
+import { NearbyWelfareFacilityList } from '@features/welfare-facility/ui';
 
 type GuardianStackNavigationProp = NativeStackNavigationProp<GuardianStackParamList>;
 
 export function WelfareFacilityListScreen() {
   const navigation = useNavigation<GuardianStackNavigationProp>();
+  const selectedWardId = useSelectedWardStore(state => state.selectedWardId);
+  const wards = useSelectedWardStore(state => state.wards);
+  const ward = wards.find(item => item.id === selectedWardId) ?? wards[0];
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top']}>
@@ -24,31 +27,19 @@ export function WelfareFacilityListScreen() {
         <Text className="text-xl font-bold text-text-primary">주변 공공 복지 시설</Text>
       </View>
 
+      {/* 백엔드가 기기 GPS가 아니라 어르신 회원 정보에 등록된 주소 기준으로 찾아주므로 그 기준을 안내함
+          (등록 주소 변경은 돌봄대상자 관리 화면에서) */}
       <View className="flex-row items-center gap-2 px-4 py-3">
         <CrosshairIcon width={16} height={16} />
         <Text className="text-md font-pretendard-bold text-text-primary">
-          위치 : 서울시 구로구 고척동
+          {ward.nickname}님 등록 주소 기준 반경 {WELFARE_SEARCH_RADIUS_KM}km
         </Text>
-        {/* TODO: 실제 위치 수정 기능 연동 전까지는 표시만 함 */}
-        <Pressable hitSlop={8}>
-          <PencilSquareIcon width={14} height={14} />
-        </Pressable>
       </View>
 
-      <ScrollView
-        className="flex-1 px-4"
-        contentContainerClassName="gap-4 pb-8"
-        showsVerticalScrollIndicator={false}>
-        {MOCK_WELFARE_FACILITIES.map(facility => (
-          <WelfareFacilityListItem
-            key={facility.id}
-            facility={facility}
-            onPressDetail={() =>
-              navigation.navigate('WelfareFacilityDetail', { facilityId: facility.id })
-            }
-          />
-        ))}
-      </ScrollView>
+      <NearbyWelfareFacilityList
+        wardId={selectedWardId}
+        onPressFacility={facility => navigation.navigate('WelfareFacilityDetail', { facility })}
+      />
     </SafeAreaView>
   );
 }

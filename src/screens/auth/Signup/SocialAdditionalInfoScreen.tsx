@@ -1,20 +1,26 @@
 import React from 'react';
-import { ActivityIndicator, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import useSocialAdditionalInfo from '@features/auth/model/useSocialAdditionalInfo';
 import { DiseaseSelector } from '@features/auth/ui';
 import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
-import { FormField } from '@shared/ui';
+import { AddressInput, FormField } from '@shared/ui';
 import { colors } from '@shared/theme/colors';
 
-const FORM_INPUT_CLASSNAME =
-  'rounded-md border border-border-input bg-surface px-3.5 py-2 font-pretendard-light text-lg text-text-body';
+const FORM_INPUT_BOX_CLASSNAME = 'rounded-md border border-border-input bg-surface px-3.5 py-2';
+const FORM_INPUT_TEXT_CLASSNAME = 'font-pretendard-light text-lg text-text-body';
 
 // 소셜 간편 회원가입 마지막 단계 — 카카오/네이버 프로필로 채워지지 않는 정보만 직접 입력받음
 // (보호자: 주소, 돌봄대상자: 주소 + 기저질환)
 export default function SocialAdditionalInfoScreen({ navigation, route }: any) {
-  const { role, address, setAddress, selectedDiseases, toggleDisease, isFormValid, isSubmitting, submitError, handleSubmit } =
+  const {
+    role,
+    baseAddress,
+    setBaseAddress,
+    detailAddress,
+    setDetailAddress,
+    selectedDiseases, toggleDisease, isFormValid, isSubmitting, submitError, handleSubmit } =
     useSocialAdditionalInfo(navigation, route.params);
 
   return (
@@ -34,12 +40,13 @@ export default function SocialAdditionalInfoScreen({ navigation, route }: any) {
 
         <View className="mt-6">
           <FormField label="주소">
-            <TextInput
-              className={FORM_INPUT_CLASSNAME}
-              placeholder="주소를 입력해 주세요"
-              placeholderTextColor={colors.textPlaceholder}
-              value={address}
-              onChangeText={setAddress}
+            <AddressInput
+              baseAddress={baseAddress}
+              detailAddress={detailAddress}
+              onChangeBaseAddress={setBaseAddress}
+              onChangeDetailAddress={setDetailAddress}
+              boxClassName={FORM_INPUT_BOX_CLASSNAME}
+              textClassName={FORM_INPUT_TEXT_CLASSNAME}
             />
           </FormField>
 

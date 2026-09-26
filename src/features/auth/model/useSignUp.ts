@@ -6,7 +6,7 @@ import { useSignupFormBase } from './useSignupFormBase';
 
 export default function useSignUp(navigation: any) {
   const base = useSignupFormBase();
-  const { name, phone, authCode, password, passwordConfirm, address, isFormValid } = base;
+  const { name, phone, authCode, password, passwordConfirm, baseAddress, detailAddress, isFormValid } = base;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
@@ -23,7 +23,8 @@ export default function useSignUp(navigation: any) {
         authNumber: authCode,
         password,
         passwordCheck: passwordConfirm,
-        address,
+        baseAddress,
+        detailAddress,
       }));
     } catch (error) {
       logApiError('보호자 회원가입 실패:', error);
@@ -45,7 +46,7 @@ export default function useSignUp(navigation: any) {
 
   return {
     ...base,
-    form: { name, phone, authCode, password, passwordConfirm, address },
+    form: { name, phone, authCode, password, passwordConfirm, baseAddress, detailAddress },
     handleSubmit,
     isSubmitting,
     submitError,

@@ -32,7 +32,9 @@ export interface RegisterProtectorRequest {
   authNumber: string;
   password: string;
   passwordCheck: string;
-  address: string;
+  // 다음 우편번호 검색으로 고른 도로명 주소 — 백엔드가 이 값을 지오코딩해 회원 좌표로 저장함
+  baseAddress: string;
+  detailAddress: string;
 }
 
 export interface RegisterProtectorResponse {
@@ -72,7 +74,9 @@ export interface RegisterSocialRequest {
   role: UserRole;
   name: string;
   phone: string;
-  address: string;
+  // 다음 우편번호 검색으로 고른 도로명 주소 — 백엔드가 이 값을 지오코딩해 회원 좌표로 저장함
+  baseAddress: string;
+  detailAddress: string;
   diseases?: string[];
 }
 

@@ -1,6 +1,7 @@
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { SocialAccessToken, SocialSignupProfile } from '@features/auth/model';
 import { PolicyType } from '@features/policy/model';
+import { WelfareFacility } from '@features/welfare-facility/model';
 
 export type AuthStackParamList = {
   Login: undefined;
@@ -32,7 +33,8 @@ export type GuardianStackParamList = {
   Schedule: undefined;
   Notification: undefined;
   WelfareFacilities: undefined;
-  WelfareFacilityDetail: { facilityId: string };
+  // 백엔드 응답에 시설 고유 id가 없어서 목록에서 받은 시설 정보를 통째로 넘김
+  WelfareFacilityDetail: { facility: WelfareFacility };
   Settings: undefined;
   Withdrawal: undefined;
   Inquiry: undefined;
