@@ -31,7 +31,7 @@ export function HomeScheduleCalendar({ wardId, wardName, onRequestEdit }: HomeSc
   const [selectedSchedules, setSelectedSchedules] = useState<ScheduleEntry[]>([]);
   const [scheduleToDelete, setScheduleToDelete] = useState<ScheduleEntry | null>(null);
 
-  const schedules = useWardSchedules(wardId);
+  const schedules = useWardSchedules(wardId, month);
 
   const weeks = getCalendarWeeks(month).filter((week) => week.some(({ inCurrentMonth }) => inCurrentMonth));
 

@@ -1,10 +1,14 @@
 import { axiosInstance } from '@shared/api/axiosInstance';
 import { TaskSchedule, TaskScheduleRequest } from '../model/taskScheduleTypes';
 
-// [일정 목록 조회] — 보호자 전용. 어르신 1명의 일정 조회
-// 주의: date를 안 보내면 전체 기간이 아니라 서버 기준 오늘 일정만 옴(백엔드 getTasksByDate 참고)
-export const getTaskSchedulesApi = async (wardId: number): Promise<TaskSchedule[]> => {
-  const { data } = await axiosInstance.get<TaskSchedule[]>('/api/task-schedule', { params: { wardId } });
+// [일정 목록 조회] — 보호자 전용. 어르신 1명의 startDate~endDate(yyyy-MM-dd, 양끝 포함) 일정 조회
+// TODO: startDate/endDate는 백엔드에 요청해서 추가 예정인 파라미터 — 반영 전 서버는 모르는 파라미터를
+// 무시하고 오늘 일정만 돌려줌(date 미지정 시 동작). 반영되면 스웨거에서 파라미터 이름 확인할 것.
+export const getTaskSchedulesApi = async (
+  wardId: number,
+  range: { startDate: string; endDate: string },
+): Promise<TaskSchedule[]> => {
+  const { data } = await axiosInstance.get<TaskSchedule[]>('/api/task-schedule', { params: { wardId, ...range } });
   return data;
 };
 
