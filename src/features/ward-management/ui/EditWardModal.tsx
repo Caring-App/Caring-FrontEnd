@@ -83,6 +83,19 @@ export function EditWardModal({
                 boxClassName="rounded-[6px] border border-border-input px-3 py-2"
                 textClassName="text-base text-text-primary"
               />
+              {!!newBaseAddress && (
+                <Pressable
+                  onPress={() => {
+                    setNewBaseAddress('');
+                    setNewDetailAddress('');
+                  }}
+                  hitSlop={8}
+                  className="self-end">
+                  <Text className="border-b border-border-link text-xs font-pretendard-medium text-text-link">
+                    주소 변경 취소
+                  </Text>
+                </Pressable>
+              )}
             </SharedFormField>
           </View>
 
