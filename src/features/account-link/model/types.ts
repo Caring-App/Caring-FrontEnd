@@ -40,5 +40,7 @@ export interface UpdateConnectionRequest {
   nickname: string;
   name: string;
   phone: string;
-  address: string;
+  // 백엔드가 baseAddress가 바뀌었을 때만 지오코딩해서 어르신 좌표를 갱신하고, address는 base+detail을 합쳐 저장함
+  baseAddress: string;
+  detailAddress: string;
 }

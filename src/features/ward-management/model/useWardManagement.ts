@@ -7,12 +7,17 @@ import { logApiError } from '@shared/api';
 import { getConnectionDetailApi, updateConnectionApi } from '@features/account-link/api';
 import { updateWardSettingApi } from '../api';
 import { optionToConnectionFontSize } from '../utils';
-import { FontSizeOption, WardInfo } from './types';
+import { FontSizeOption, WardInfoUpdate } from './types';
 import { useSelectedWardStore } from './useSelectedWardStore';
 
 // WardManagementScreen(돌봄대상자 관리 탭)의 데이터 로딩/저장 로직 전부.
 // wards 목록 자체는 useSelectedWardStore(getConnectionsApi 기반, 연동 없으면 MOCK_WARDS 폴백) —
 // 홈 화면 어르신 전환 스위처·메뉴 드로어와 동일한 소스라, 여기서 수정하면 다른 화면에도 바로 반영됨.
+// 백엔드 combineAddress와 같은 규칙(상세 주소가 있으면 공백으로 이어 붙임) — mock 어르신 로컬 반영용
+function combineAddress(baseAddress: string, detailAddress: string) {
+  return detailAddress.trim() ? `${baseAddress} ${detailAddress.trim()}` : baseAddress;
+}
+
 export function useWardManagement() {
   const wards = useSelectedWardStore(state => state.wards);
   const isWardsLoaded = useSelectedWardStore(state => state.isLoaded);
@@ -57,21 +62,36 @@ export function useWardManagement() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isWardsLoaded]);
 
-  // nickname/name/phone/address 저장 — updateConnectionApi(PATCH /api/connection/{wardId})로 실제 반영됨.
+  // nickname/name/phone/주소 저장 — updateConnectionApi(PATCH /api/connection/{wardId})로 실제 반영됨.
   // 성공 여부를 반환해서, 호출한 화면이 성공했을 때만 수정 모달을 닫을 수 있게 함.
-  async function saveWardInfo(wardId: string, info: WardInfo): Promise<boolean> {
+  async function saveWardInfo(wardId: string, update: WardInfoUpdate): Promise<boolean> {
+    const ward = useSelectedWardStore.getState().wards.find(item => item.id === wardId);
+    if (!ward) return false;
+    const { newAddress, ...info } = update;
     // 별명을 비운 채로 저장해도 목록엔 이름으로 대체 표시(fetchWards의 초기 매핑과 동일한 규칙).
     // 서버엔 사용자가 입력한 값(빈 문자열 포함) 그대로 보내서 "별명 미설정" 상태 자체는 유지함.
-    const displayInfo: WardInfo = { ...info, nickname: info.nickname || info.name };
+    const displayNickname = info.nickname || info.name;
     const wardIdNumber = Number(wardId);
     // 연동된 어르신이 없어 mock 데이터로 표시 중인 경우엔 보낼 실제 wardId가 없으므로 로컬에만 반영
     if (Number.isNaN(wardIdNumber)) {
-      useSelectedWardStore.getState().updateWard(wardId, displayInfo);
+      const address = newAddress ? combineAddress(newAddress.baseAddress, newAddress.detailAddress) : ward.address;
+      useSelectedWardStore.getState().updateWard(wardId, { ...info, nickname: displayNickname, address });
       return true;
     }
     try {
-      await updateConnectionApi(wardIdNumber, info);
-      useSelectedWardStore.getState().updateWard(wardId, displayInfo);
+      const detail = await updateConnectionApi(wardIdNumber, {
+        ...info,
+        // 백엔드 PATCH는 baseAddress/detailAddress를 항상 받아서 address를 다시 조합해 저장함. 그런데 상세 조회
+        // 응답엔 합쳐진 address만 있어서, 주소를 안 바꿨을 땐 원래 기본/상세 주소를 따로 알 수 없음 —
+        // 현재 전체 주소를 baseAddress로 그대로 보내 address가 그대로 유지되게 함(좌표는 백엔드 지오코딩이
+        // 실패해도 기존 값을 유지하므로 영향 없음).
+        // TODO: 백엔드 상세 응답에 baseAddress/detailAddress가 따로 오면 그 값을 그대로 보내도록 교체
+        baseAddress: newAddress?.baseAddress ?? ward.address,
+        detailAddress: newAddress?.detailAddress ?? '',
+      });
+      useSelectedWardStore
+        .getState()
+        .updateWard(wardId, { ...info, nickname: displayNickname, address: detail.address });
       return true;
     } catch (error) {
       logApiError('돌봄대상자 정보 수정 실패', error);
