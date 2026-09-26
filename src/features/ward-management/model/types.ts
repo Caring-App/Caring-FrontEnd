@@ -13,8 +13,6 @@ export interface Ward {
   fontSize: FontSizeOption;
 }
 
-export type WardInfo = Pick<Ward, 'nickname' | 'name' | 'phone' | 'address'>;
-
 // 돌봄대상자 정보 수정 모달에서 저장할 값. 주소는 새로 검색해서 바꾼 경우에만 채워짐(바꾸지 않으면 undefined)
 export interface WardInfoUpdate extends Pick<Ward, 'nickname' | 'name' | 'phone'> {
   newAddress?: { baseAddress: string; detailAddress: string };
