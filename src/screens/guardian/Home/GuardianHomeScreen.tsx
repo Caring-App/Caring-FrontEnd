@@ -108,7 +108,11 @@ export function GuardianHomeScreen() {
           <LocationSection wardId={ward.id} onPressMore={() => stackNavigation?.navigate('Map')} />
         </TourTarget>
         <TourTarget id="welfare.section" className="mt-4">
-          <WelfareSection onPressMore={() => stackNavigation?.navigate('WelfareFacilities')} />
+          <WelfareSection
+            wardId={ward.id}
+            onPressMore={() => stackNavigation?.navigate('WelfareFacilities')}
+            onPressFacility={facility => stackNavigation?.navigate('WelfareFacilityDetail', { facility })}
+          />
         </TourTarget>
       </ScrollView>
       <TourOverlay />

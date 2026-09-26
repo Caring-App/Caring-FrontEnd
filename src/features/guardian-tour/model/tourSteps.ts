@@ -88,7 +88,7 @@ export const TOUR_STEPS: TourStep[] = [
   {
     targetId: 'welfare.section',
     title: '주변 공공 복지 시설',
-    description: '돌봄 대상자의 집 주소를 기반으로\n근처 공공 복지 시설과 혜택을 추천해드려요!',
+    description: '돌봄 대상자의 집 주소를 기반으로\n가까운 공공 복지 시설을 찾아드려요!',
     scrollId: 'home',
   },
   {
