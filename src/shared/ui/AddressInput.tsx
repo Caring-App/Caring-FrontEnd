@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { colors } from '@shared/theme/colors';
-import { AddressSearchModal } from './AddressSearchModal';
+import { AddressSearchModal, AddressSearchResult } from './AddressSearchModal';
 
 interface AddressInputProps {
   baseAddress: string;
@@ -27,6 +27,14 @@ export function AddressInput({
 }: AddressInputProps) {
   const [isSearchVisible, setIsSearchVisible] = useState(false);
 
+  // 다른 기본 주소를 고르면 이전 주소 기준으로 입력한 상세 주소(동·호수)는 맞지 않으므로 비움
+  const handleSelect = (result: AddressSearchResult) => {
+    if (result.address !== baseAddress) {
+      onChangeDetailAddress('');
+    }
+    onChangeBaseAddress(result.address);
+  };
+
   return (
     <View className="gap-2">
       <Pressable onPress={() => setIsSearchVisible(true)} className={boxClassName}>
@@ -48,7 +56,7 @@ export function AddressInput({
       <AddressSearchModal
         visible={isSearchVisible}
         onClose={() => setIsSearchVisible(false)}
-        onSelect={result => onChangeBaseAddress(result.address)}
+        onSelect={handleSelect}
       />
     </View>
   );
