@@ -10,6 +10,8 @@ import { HealthStatus, useHealthStatusStore } from '../model';
 import { HealthStatusCheckFailedModal } from './HealthStatusCheckFailedModal';
 import { HealthStatusEmojiButton } from './HealthStatusEmojiButton';
 
+const HEALTH_STATUS_OPTIONS: HealthStatus[] = ['good', 'normal', 'bad'];
+
 interface WardHealthStatusCardProps {
   wardId: string;
   onPressRecord: () => void;
@@ -45,21 +47,14 @@ export function WardHealthStatusCard({ wardId, onPressRecord }: WardHealthStatus
 
       <View className="mt-4 rounded-card border border-border bg-surface p-4">
         <View className="flex-row justify-around">
-          <HealthStatusEmojiButton
-            status="good"
-            active={status === 'good'}
-            onPress={() => handlePressStatus('good')}
-          />
-          <HealthStatusEmojiButton
-            status="normal"
-            active={status === 'normal'}
-            onPress={() => handlePressStatus('normal')}
-          />
-          <HealthStatusEmojiButton
-            status="bad"
-            active={status === 'bad'}
-            onPress={() => handlePressStatus('bad')}
-          />
+          {HEALTH_STATUS_OPTIONS.map(option => (
+            <HealthStatusEmojiButton
+              key={option}
+              status={option}
+              active={status === option}
+              onPress={() => handlePressStatus(option)}
+            />
+          ))}
         </View>
       </View>
 
