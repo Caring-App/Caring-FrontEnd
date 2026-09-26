@@ -28,7 +28,9 @@ export function WelfareSection({ wardId, onPressMore, onPressFacility }: Welfare
       icon={<BuildingFillIcon width={15} height={20} />}
       action={<DetailLinkText onPress={onPressMore} />}
       className="">
-      <View className="mt-3 min-h-[120px] gap-2">
+      {/* 로딩/에러/결과 없음일 때만 목록 2줄 높이(h-14 두 개 + gap)만큼 자리를 잡아 섹션 높이가 들쭉날쭉하지 않게 함 —
+          목록이 있을 땐 최소 높이 없이 내용 높이 그대로 써서 아래 여백이 더 생기지 않게 함 */}
+      <View className={`mt-3 gap-2 ${facilities && facilities.length > 0 && !errorMessage ? '' : 'min-h-[120px]'}`}>
         {errorMessage ? (
           <SectionMessage text="시설 정보를 불러오지 못했어요." />
         ) : isLoading || !facilities ? (
