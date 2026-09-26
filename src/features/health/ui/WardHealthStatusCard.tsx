@@ -5,7 +5,7 @@ import ClipboardPulseIcon from '@assets/icons/section/clipboard-pulse.svg';
 // ward-management가 유일한 소스라(useWardFontScaleStore) 이 화면에서도 WardText를 그대로 가져다 씀
 // (순환참조 없음, ward-management는 health를 참조하지 않음).
 import { WardText } from '@features/ward-management/ui';
-import { useHealthStatusStore, useWardMoodStatus } from '../model';
+import { useHealthStatusStore } from '../model';
 import { HealthStatusEmojiButton } from './HealthStatusEmojiButton';
 
 interface WardHealthStatusCardProps {
@@ -17,8 +17,10 @@ interface WardHealthStatusCardProps {
 // mood-check API를 통해 보호자 화면(DailyReportCard)에 그대로 반영됨.
 // "오늘의 건강 기록하기" 버튼도 같은 섹션에 속해 있어서 이 카드 안에 같이 둠(Figma 기준)
 export function WardHealthStatusCard({ wardId, onPressRecord }: WardHealthStatusCardProps) {
-  const status = useWardMoodStatus(wardId);
   const wardIdNumber = Number(wardId);
+  // 오늘 상태 조회 API(GET /api/mood-check/{wardId})는 보호자 전용이라 어르신 토큰으로 부르면 항상 400 —
+  // 어르신 본인용 조회 API가 생기기 전까지는 조회 없이 이 세션에서 누른 값만 보여줌(앱 재시작 시 선택 표시 사라짐).
+  const status = useHealthStatusStore(state => state.statusByWard[wardIdNumber]);
 
   return (
     <View className="rounded-card border border-border bg-surface p-4">

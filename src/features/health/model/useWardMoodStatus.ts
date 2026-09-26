@@ -15,9 +15,9 @@ const MOCK_STATUS_BY_WARD: Record<string, HealthStatus> = {
   [MOCK_WARDS[1].id]: 'normal',
 };
 
-// wardId(string) 기준으로 오늘의 건강 상태를 구독하고, 필요하면 자동으로 조회함.
-// 어르신이 하루 중 언제든 상태를 새로 기록할 수 있어(WardHealthStatusCard), useWardLocation과 같은
-// 이유로 포커스될 때마다 재조회함.
+// 보호자 화면 전용 — wardId(string) 기준으로 오늘의 건강 상태를 구독하고, 필요하면 자동으로 조회함.
+// (조회 API가 보호자 전용이라 어르신 화면의 WardHealthStatusCard에서는 쓰지 않음)
+// 어르신이 하루 중 언제든 상태를 새로 기록할 수 있어, useWardLocation과 같은 이유로 포커스될 때마다 재조회함.
 export function useWardMoodStatus(wardId: string): HealthStatus | undefined {
   const wardIdNumber = Number(wardId);
   const status = useHealthStatusStore(state => state.statusByWard[wardIdNumber]);
