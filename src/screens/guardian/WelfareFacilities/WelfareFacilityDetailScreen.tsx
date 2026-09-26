@@ -1,11 +1,16 @@
 import React from 'react';
-import { Linking, Pressable, ScrollView, Text, View } from 'react-native';
+import { Alert, Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { GuardianStackParamList } from '@app/navigation/types';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 import { FacilityInfoRow } from '@features/welfare-facility/ui';
 import { formatDistance, toHomepageUrl } from '@features/welfare-facility/utils';
+
+// 전화 앱이 없는 기기(태블릿 등)나 형식이 이상한 홈페이지 주소면 openURL이 실패함 — 눌러도 아무 반응이 없지 않게 알림
+function openUrl(url: string, failMessage: string) {
+  Linking.openURL(url).catch(() => Alert.alert('', failMessage));
+}
 
 type WelfareFacilityDetailRouteProp = RouteProp<GuardianStackParamList, 'WelfareFacilityDetail'>;
 
@@ -30,16 +35,26 @@ export function WelfareFacilityDetailScreen() {
         <View className="mt-4 gap-1.5">
           <FacilityInfoRow label="거리" value={`어르신 등록 주소에서 ${formatDistance(facility.distanceKm)}`} />
           {facility.operator && <FacilityInfoRow label="운영 법인" value={facility.operator} />}
-          {phone && <FacilityInfoRow label="문의 전화번호" value={phone} onPress={() => Linking.openURL(`tel:${phone}`)} />}
+          {phone && (
+            <FacilityInfoRow
+              label="문의 전화번호"
+              value={phone}
+              onPress={() => openUrl(`tel:${phone}`, '전화를 걸 수 없어요.')}
+            />
+          )}
           {facility.address && <FacilityInfoRow label="주소" value={facility.address} />}
           {homepage && (
-            <FacilityInfoRow label="홈페이지" value={homepage} onPress={() => Linking.openURL(toHomepageUrl(homepage))} />
+            <FacilityInfoRow
+              label="홈페이지"
+              value={homepage}
+              onPress={() => openUrl(toHomepageUrl(homepage), '홈페이지를 열 수 없어요.')}
+            />
           )}
         </View>
 
         {phone && (
           <Pressable
-            onPress={() => Linking.openURL(`tel:${phone}`)}
+            onPress={() => openUrl(`tel:${phone}`, '전화를 걸 수 없어요.')}
             className="mt-6 items-center justify-center rounded-card bg-primary py-4">
             <Text className="text-xl font-pretendard-semibold text-surface">전화 걸기</Text>
           </Pressable>

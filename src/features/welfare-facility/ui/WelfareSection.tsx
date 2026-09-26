@@ -20,7 +20,7 @@ interface WelfareSectionProps {
 // 보호자 홈의 "주변 공공 복지 시설" 섹션. 목록 화면과 같은 훅(스토어)을 써서, 홈에서 한 번 불러오면
 // 목록 화면에 들어갈 때 다시 조회하지 않음.
 export function WelfareSection({ wardId, onPressMore, onPressFacility }: WelfareSectionProps) {
-  const { facilities, isLoading, errorMessage } = useNearbyWelfareFacilities(wardId);
+  const { facilities, isLoading, errorMessage, refetch } = useNearbyWelfareFacilities(wardId);
 
   return (
     <SectionCard
@@ -32,7 +32,14 @@ export function WelfareSection({ wardId, onPressMore, onPressFacility }: Welfare
           목록이 있을 땐 최소 높이 없이 내용 높이 그대로 써서 아래 여백이 더 생기지 않게 함 */}
       <View className={`mt-3 gap-2 ${facilities && facilities.length > 0 && !errorMessage ? '' : 'min-h-[120px]'}`}>
         {errorMessage ? (
-          <SectionMessage text="시설 정보를 불러오지 못했어요." />
+          <View className="flex-1 items-center justify-center gap-2 px-2">
+            <Text className="text-center text-[12px] font-pretendard-medium text-text-muted">{errorMessage}</Text>
+            <Pressable onPress={refetch} hitSlop={8}>
+              <Text className="border-b border-border-link text-[12px] font-pretendard-semibold text-text-link">
+                다시 시도
+              </Text>
+            </Pressable>
+          </View>
         ) : isLoading || !facilities ? (
           <View className="flex-1 items-center justify-center">
             <ActivityIndicator size="small" color={colors.primary} />

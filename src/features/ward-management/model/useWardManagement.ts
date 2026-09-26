@@ -5,6 +5,9 @@ import { logApiError } from '@shared/api';
 // API(getConnectionDetailApi/updateConnectionApi)를 직접 써야 해서 의도적으로 참조함
 // (순환참조 없음, account-link는 ward-management를 참조하지 않음).
 import { getConnectionDetailApi, updateConnectionApi } from '@features/account-link/api';
+// 어르신 주소가 바뀌면 주변 복지 시설 결과(등록 주소 기준)도 다시 조회해야 해서 캐시 무효화용으로 참조함
+// (순환참조 없음, welfare-facility는 ward-management를 참조하지 않음).
+import { useWelfareFacilityStore } from '@features/welfare-facility/model';
 import { updateWardSettingApi } from '../api';
 import { optionToConnectionFontSize } from '../utils';
 import { FontSizeOption, WardInfoUpdate } from './types';
@@ -92,6 +95,9 @@ export function useWardManagement() {
       useSelectedWardStore
         .getState()
         .updateWard(wardId, { ...info, nickname: displayNickname, address: detail.address });
+      if (newAddress) {
+        useWelfareFacilityStore.getState().invalidate(wardIdNumber);
+      }
       return true;
     } catch (error) {
       logApiError('돌봄대상자 정보 수정 실패', error);

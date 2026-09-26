@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { axiosInstance } from '@shared/api/axiosInstance';
 import { WelfareFacilityResponse } from '../model/types';
 
@@ -13,3 +14,15 @@ export const getNearbyWelfareFacilitiesApi = async (
   });
   return data;
 };
+
+// 어르신 좌표가 없을 때(주소 미등록이거나 가입 시 주소→좌표 변환 실패) 백엔드가 주는 400 메시지.
+// 권한 없음 등 다른 400과 구분하려고 메시지까지 비교함(백엔드 WelfareFacilityService 참고)
+const WARD_COORDINATES_MISSING_MESSAGE = '대상자의 좌표 정보가 없어 근처 시설을 조회할 수 없습니다.';
+
+export function isWardCoordinatesMissingError(error: unknown): boolean {
+  return (
+    axios.isAxiosError(error) &&
+    error.response?.status === 400 &&
+    error.response.data?.message === WARD_COORDINATES_MISSING_MESSAGE
+  );
+}
