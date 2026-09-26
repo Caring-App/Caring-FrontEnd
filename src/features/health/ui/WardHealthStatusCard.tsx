@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, View } from 'react-native';
+import { getApiErrorMessage } from '@shared/api';
 import ClipboardPulseIcon from '@assets/icons/section/clipboard-pulse.svg';
 // FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, 어르신 글자 크기 배율은
 // ward-management가 유일한 소스라(useWardFontScaleStore) 이 화면에서도 WardText를 그대로 가져다 씀
 // (순환참조 없음, ward-management는 health를 참조하지 않음).
 import { WardText } from '@features/ward-management/ui';
-import { useHealthStatusStore } from '../model';
+import { HealthStatus, useHealthStatusStore } from '../model';
+import { HealthStatusCheckFailedModal } from './HealthStatusCheckFailedModal';
 import { HealthStatusEmojiButton } from './HealthStatusEmojiButton';
 
 interface WardHealthStatusCardProps {
@@ -21,6 +23,16 @@ export function WardHealthStatusCard({ wardId, onPressRecord }: WardHealthStatus
   // 오늘 상태 조회 API(GET /api/mood-check/{wardId})는 보호자 전용이라 어르신 토큰으로 부르면 항상 400 —
   // 어르신 본인용 조회 API가 생기기 전까지는 조회 없이 이 세션에서 누른 값만 보여줌(앱 재시작 시 선택 표시 사라짐).
   const status = useHealthStatusStore(state => state.statusByWard[wardIdNumber]);
+  const [failedMessage, setFailedMessage] = useState<string | null>(null);
+
+  const handlePressStatus = async (nextStatus: HealthStatus) => {
+    if (Number.isNaN(wardIdNumber)) return;
+    try {
+      await useHealthStatusStore.getState().checkStatus(wardIdNumber, nextStatus);
+    } catch (error) {
+      setFailedMessage(getApiErrorMessage(error) ?? '잠시 후 다시 시도해 주세요.');
+    }
+  };
 
   return (
     <View className="rounded-card border border-border bg-surface p-4">
@@ -36,17 +48,17 @@ export function WardHealthStatusCard({ wardId, onPressRecord }: WardHealthStatus
           <HealthStatusEmojiButton
             status="good"
             active={status === 'good'}
-            onPress={() => !Number.isNaN(wardIdNumber) && useHealthStatusStore.getState().checkStatus(wardIdNumber, 'good')}
+            onPress={() => handlePressStatus('good')}
           />
           <HealthStatusEmojiButton
             status="normal"
             active={status === 'normal'}
-            onPress={() => !Number.isNaN(wardIdNumber) && useHealthStatusStore.getState().checkStatus(wardIdNumber, 'normal')}
+            onPress={() => handlePressStatus('normal')}
           />
           <HealthStatusEmojiButton
             status="bad"
             active={status === 'bad'}
-            onPress={() => !Number.isNaN(wardIdNumber) && useHealthStatusStore.getState().checkStatus(wardIdNumber, 'bad')}
+            onPress={() => handlePressStatus('bad')}
           />
         </View>
       </View>
@@ -56,6 +68,8 @@ export function WardHealthStatusCard({ wardId, onPressRecord }: WardHealthStatus
           오늘의 건강 기록하기
         </WardText>
       </Pressable>
+
+      <HealthStatusCheckFailedModal message={failedMessage} onClose={() => setFailedMessage(null)} />
     </View>
   );
 }

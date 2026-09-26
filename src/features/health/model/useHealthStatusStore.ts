@@ -25,7 +25,7 @@ interface HealthStatusState {
   loadingWardIds: Set<number>;
   // 보호자 화면에서 특정 어르신의 오늘 상태를 조회
   fetchStatus: (wardId: number) => Promise<void>;
-  // 돌봄대상자가 직접 오늘의 상태를 기록
+  // 돌봄대상자가 직접 오늘의 상태를 기록. 실패하면 되돌린 뒤 에러를 다시 던짐(화면에서 사유 안내용)
   checkStatus: (wardId: number, status: HealthStatus) => Promise<void>;
 }
 
@@ -76,6 +76,7 @@ export const useHealthStatusStore = create<HealthStatusState>((set, get) => ({
         else delete next[wardId];
         return { statusByWard: next };
       });
+      throw error;
     }
   },
 }));
