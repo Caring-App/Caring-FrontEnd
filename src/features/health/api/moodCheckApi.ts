@@ -36,3 +36,10 @@ export const getMoodCheckApi = async (wardId: number): Promise<MoodCheckRecord |
     throw error;
   }
 };
+
+// [본인 오늘의 건강(기분) 상태 조회] — 돌봄대상자 전용. 토큰으로 본인을 식별, 기록이 없으면 null
+// TODO: 백엔드에 요청해서 추가 예정인 API — 반영 전 서버에서는 404가 남. 반영되면 스웨거에서 경로 확인할 것.
+export const getMyMoodCheckApi = async (): Promise<MoodCheckRecord | null> => {
+  const { data } = await axiosInstance.get<MoodCheckRecord | null | ''>('/api/mood-check/me');
+  return toMoodCheckRecordOrNull(data);
+};

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Pressable, View } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { getApiErrorMessage } from '@shared/api';
 import ClipboardPulseIcon from '@assets/icons/section/clipboard-pulse.svg';
 // FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, 어르신 글자 크기 배율은
@@ -22,10 +23,19 @@ interface WardHealthStatusCardProps {
 // "오늘의 건강 기록하기" 버튼도 같은 섹션에 속해 있어서 이 카드 안에 같이 둠(Figma 기준)
 export function WardHealthStatusCard({ wardId, onPressRecord }: WardHealthStatusCardProps) {
   const wardIdNumber = Number(wardId);
-  // 오늘 상태 조회 API(GET /api/mood-check/{wardId})는 보호자 전용이라 어르신 토큰으로 부르면 항상 400 —
-  // 어르신 본인용 조회 API가 생기기 전까지는 조회 없이 이 세션에서 누른 값만 보여줌(앱 재시작 시 선택 표시 사라짐).
   const status = useHealthStatusStore(state => state.statusByWard[wardIdNumber]);
+  const fetchMyStatus = useHealthStatusStore(state => state.fetchMyStatus);
   const [failedMessage, setFailedMessage] = useState<string | null>(null);
+
+  // 보호자용 조회(GET /api/mood-check/{wardId})는 어르신 토큰으로 부르면 400이라 본인용 API로 조회함.
+  // [DEV] 바로 진입처럼 실로그인 없이 들어오면 wardId가 mock id('mother' 등)라 조회하지 않음
+  useFocusEffect(
+    useCallback(() => {
+      if (!Number.isNaN(wardIdNumber)) {
+        fetchMyStatus(wardIdNumber);
+      }
+    }, [wardIdNumber, fetchMyStatus]),
+  );
 
   const handlePressStatus = async (nextStatus: HealthStatus) => {
     if (Number.isNaN(wardIdNumber)) return;
