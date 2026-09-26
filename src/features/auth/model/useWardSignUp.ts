@@ -6,7 +6,7 @@ import { useSignupFormBase } from './useSignupFormBase';
 
 export default function useWardSignUp(navigation: any) {
   const base = useSignupFormBase();
-  const { name, phone, authCode, password, passwordConfirm, address, isFormValid: isBaseFormValid } = base;
+  const { name, phone, authCode, password, passwordConfirm, baseAddress, detailAddress, isFormValid: isBaseFormValid } = base;
   const [selectedDiseases, setSelectedDiseases] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
@@ -33,7 +33,8 @@ export default function useWardSignUp(navigation: any) {
         authNumber: authCode,
         password,
         passwordCheck: passwordConfirm,
-        address,
+        baseAddress,
+        detailAddress,
         diseases: selectedDiseases,
       });
     } catch (error) {
@@ -56,7 +57,7 @@ export default function useWardSignUp(navigation: any) {
 
   return {
     ...base,
-    form: { name, phone, authCode, password, passwordConfirm, address, selectedDiseases },
+    form: { name, phone, authCode, password, passwordConfirm, baseAddress, detailAddress, selectedDiseases },
     toggleDisease,
     handleSubmit,
     isFormValid,

@@ -15,7 +15,8 @@ export const SignupScreen = ({ navigation }: { navigation: any }) => {
     setAuthCode,
     setPassword,
     setPasswordConfirm,
-    setAddress,
+    setBaseAddress,
+    setDetailAddress,
     handleSendAuthCode,
     handleVerifyAuthCode,
     isSendingCode,
@@ -48,7 +49,8 @@ export const SignupScreen = ({ navigation }: { navigation: any }) => {
             setAuthCode={setAuthCode}
             setPassword={setPassword}
             setPasswordConfirm={setPasswordConfirm}
-            setAddress={setAddress}
+            setBaseAddress={setBaseAddress}
+            setDetailAddress={setDetailAddress}
             handleSendAuthCode={handleSendAuthCode}
             handleVerifyAuthCode={handleVerifyAuthCode}
             isSendingCode={isSendingCode}
