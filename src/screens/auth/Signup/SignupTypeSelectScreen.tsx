@@ -4,10 +4,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { useSignupTypeSelect } from '@features/auth/model';
-import { CaringDogImage } from '@features/auth/ui';
-import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
+import { CaringLogoHorizontal } from '@shared/ui/AppHeader/CaringLogo';
 import { colors } from '@shared/theme/colors';
 
+const ROLE_OPTIONS = [
+  { role: 'PROTECTOR', label: '보호자' },
+  { role: 'WARD', label: '돌봄대상자' },
+] as const;
+
+// 역할 선택 (Figma 965:5380)
 export const SignupTypeSelectScreen = () => {
   const navigation = useNavigation();
   const route = useRoute<any>();
@@ -16,37 +21,25 @@ export const SignupTypeSelectScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
-      {/* 상단 케어링 로고 */}
-      <View className="px-6 py-4">
-        <CaringLogo size={44} />
+      <View className="px-5 pt-3">
+        <CaringLogoHorizontal />
       </View>
 
-      {/* 중앙 컨텐츠 영역 */}
-      <View className="flex-1 items-center px-6">
-        <CaringDogImage size={400} />
+      <View className="flex-1 justify-center px-[43px] pb-16">
+        <Text className="font-pretendard-bold text-[24px] leading-[36px] text-black">어떤 서비스를 이용하시나요?</Text>
 
-        <Text className="-mt-10 text-center font-pretendard-bold text-[32px] text-text-strong">안녕하세요!</Text>
-        <Text className="text-center font-pretendard-bold text-[32px] text-text-strong">어떤 서비스를 이용하시나요?</Text>
-
-        {/* 역할 선택 버튼 */}
-        <View className="mt-10 w-full flex-row gap-4">
-          <TouchableOpacity
-            className="h-[74px] flex-1 items-center justify-center rounded-card border-2 border-primary bg-surface"
-            onPress={() => handleRoleSelect('PROTECTOR')}
-            disabled={isCheckingSocial}
-            activeOpacity={0.7}
-          >
-            <Text className="font-pretendard-medium text-[28px] text-text-primary">보호자</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className="h-[74px] flex-1 items-center justify-center rounded-card border-2 border-primary bg-surface"
-            onPress={() => handleRoleSelect('WARD')}
-            disabled={isCheckingSocial}
-            activeOpacity={0.7}
-          >
-            <Text className="font-pretendard-medium text-[28px] text-text-primary">돌봄대상자</Text>
-          </TouchableOpacity>
+        <View className="mt-10 gap-[26px]">
+          {ROLE_OPTIONS.map(({ role, label }) => (
+            <TouchableOpacity
+              key={role}
+              className="h-[58px] items-center justify-center rounded-lg bg-primary"
+              onPress={() => handleRoleSelect(role)}
+              disabled={isCheckingSocial}
+              activeOpacity={0.8}
+            >
+              <Text className="font-pretendard-bold text-xl text-white">{label}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
 
         {isCheckingSocial && <ActivityIndicator className="mt-6" size="small" color={colors.primary} />}

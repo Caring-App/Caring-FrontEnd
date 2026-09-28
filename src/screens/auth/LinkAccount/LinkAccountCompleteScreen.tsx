@@ -8,7 +8,7 @@ export const LinkAccountCompleteScreen = ({ route }: { route?: any }) => {
   return (
     <SignupWelcomeStep
       currentStep={{
-        type: 'character',
+        type: 'message',
         title: `입력해주신 보호자\n${protectorName}님과\n연동이 완료되었습니다!`,
         showClose: false,
         buttonLabel: '홈으로 이동',

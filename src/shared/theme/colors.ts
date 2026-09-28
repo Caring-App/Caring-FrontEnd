@@ -11,4 +11,7 @@ export const colors = {
   textLoginPlaceholder: '#aeb5b5',
   textCalendarMuted: '#adb5bd',
   switchTrackOff: '#d9d9d9',
+  textSignupTitle: '#1a1614',
+  textSignupPlaceholder: '#bdbdbd',
+  textSignupDesc: '#9e9e9e',
 } as const;

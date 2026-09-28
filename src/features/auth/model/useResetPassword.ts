@@ -27,7 +27,7 @@ export default function useResetPassword(navigation: any) {
         newPasswordCheck: newPasswordConfirm,
       });
       Alert.alert('완료', '비밀번호가 변경되었습니다. 새 비밀번호로 다시 로그인해 주세요.', [
-        { text: '확인', onPress: () => navigation.navigate('Login') },
+        { text: '확인', onPress: () => navigation.navigate('PhoneLogin') },
       ]);
     } catch (error) {
       logApiError('비밀번호 재설정 실패:', error);

@@ -13,12 +13,12 @@ export const SignupWelcomeScreen = ({ route }: { route?: any }) => {
   // 피그마 시안(151:17151, 151:17215, 151:17248)과 동일한 3단계 스텝 데이터
   const steps: WelcomeStep[] = [
     {
-      type: 'character',
+      type: 'message',
       title: `안녕하세요 ${userName}님!\nCaring 가입이\n완료 되었습니다 !`,
       showClose: false,
     },
     {
-      type: 'character',
+      type: 'message',
       title: '서비스를 이용하기 전\nCaring의\n주요 기능 사용 방법을\n안내드릴게요!',
       showClose: true,
     },

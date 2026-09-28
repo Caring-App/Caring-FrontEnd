@@ -8,7 +8,7 @@ export const WardSignupWelcomeScreen = ({ route, navigation }: { route?: any; na
     <SignupWelcomeStep
       userName={userName}
       currentStep={{
-        type: 'character',
+        type: 'message',
         title: `안녕하세요 ${userName}님!\nCaring 가입이\n완료 되었습니다 !`,
         showClose: false,
       }}
