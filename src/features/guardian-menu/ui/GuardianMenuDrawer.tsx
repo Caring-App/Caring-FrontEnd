@@ -4,7 +4,6 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GuardianStackParamList } from '@app/navigation/types';
 import { useSessionStore } from '@shared/store/useSessionStore';
-import { MOCK_PROFILE } from '@features/mypage/model';
 import { useSelectedWardStore } from '@features/ward-management/model';
 import { useGuardianMenuStore } from '../model/useGuardianMenuStore';
 import GearIcon from '@assets/icons/menu/gear-white.svg';
@@ -18,6 +17,8 @@ export function GuardianMenuDrawer() {
   const close = useGuardianMenuStore(state => state.close);
   const navigation = useNavigation<GuardianStackNavigationProp>();
   const wards = useSelectedWardStore(state => state.wards);
+  // 로그인 응답의 회원 이름 — 프로필이 없는 경우(세션 복원 전 등)엔 이름 없이 인사만 보여줌
+  const userName = useSessionStore(state => state.profile?.name);
 
   if (!isOpen) {
     return null;
@@ -40,7 +41,7 @@ export function GuardianMenuDrawer() {
           </Pressable>
 
           <Text className="font-pretendard-semibold text-xl text-white">안녕하세요</Text>
-          <Text className="mt-1 font-pretendard-bold text-2xl text-white">{MOCK_PROFILE.name}</Text>
+          {!!userName && <Text className="mt-1 font-pretendard-bold text-2xl text-white">{userName}님</Text>}
 
           <View className="mb-4 mt-4 border-t border-white" />
 

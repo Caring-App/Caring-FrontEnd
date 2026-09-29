@@ -1,24 +1,28 @@
 import React, { useState } from 'react';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '@app/navigation/types';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import { useTourStore } from '@features/guardian-tour/model';
 import { SignupWelcomeStep, WelcomeStep } from '@features/auth/ui/SignupWelcomeStep';
 
-export const SignupWelcomeScreen = ({ route }: { route?: any }) => {
+type Props = NativeStackScreenProps<AuthStackParamList, 'SignupWelcome'>;
+
+export const SignupWelcomeScreen = ({ route }: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // 가입 시 넘겨받은 유저 이름 / 연동 코드 (없을 경우 기본값 지정)
-  const userName = route?.params?.userName || '---';
-  const protectorCode = route?.params?.protectorCode || '';
+  const userName = route.params?.userName || '---';
+  const protectorCode = route.params?.protectorCode || '';
 
   // 피그마 시안(151:17151, 151:17215, 151:17248)과 동일한 3단계 스텝 데이터
   const steps: WelcomeStep[] = [
     {
-      type: 'character',
+      type: 'message',
       title: `안녕하세요 ${userName}님!\nCaring 가입이\n완료 되었습니다 !`,
       showClose: false,
     },
     {
-      type: 'character',
+      type: 'message',
       title: '서비스를 이용하기 전\nCaring의\n주요 기능 사용 방법을\n안내드릴게요!',
       showClose: true,
     },

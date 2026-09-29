@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 새 로고 배지 오렌지 (Figma Logo 960:3, #F58B4B) -->
+    <color name="ic_launcher_background">#F58B4B</color>
+</resources>

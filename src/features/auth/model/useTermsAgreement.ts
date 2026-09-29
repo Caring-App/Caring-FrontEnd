@@ -6,21 +6,15 @@ export interface TermItem {
   required: boolean;
 }
 
+// 회원가입 약관 목록 (Figma 966:5711) — 보호자/돌봄대상자 공용
 export const TERM_LIST: TermItem[] = [
-  { id: 'service', title: '서비스 이용약관 동의', required: true },
+  { id: 'service', title: '케어링 이용자용 이용약관', required: true },
   { id: 'privacy', title: '개인정보 수집 및 이용 동의', required: true },
-  { id: 'location', title: '위치기반 서비스 이용약관 동의', required: true },
-  { id: 'thirdParty', title: '개인정보 제3자 제공 동의', required: true },
-  { id: 'marketing', title: '마케팅 정보 수신 동의', required: false },
-  { id: 'optionalPrivacy', title: '개인정보 선택 수집 동의', required: false },
-  { id: 'voice', title: '음성 데이터 수집 및 이용 동의', required: false },
+  { id: 'marketingPrivacy', title: '마케팅 개인정보 수집 및 이용 동의', required: false },
+  { id: 'marketing', title: '마케팅 정보 수신동의', required: false },
 ];
 
-// 돌봄대상자 약관 목록 — 보호자 목록과 동일하나 "음성 데이터 수집 및 이용 동의" 항목만 없음 (Figma 151:12313)
-export const WARD_TERM_LIST: TermItem[] = TERM_LIST.filter((term) => term.id !== 'voice');
-
-// termList는 호출부가 역할(보호자/돌봄대상자)에 맞는 목록을 명시적으로 넘기도록 필수 파라미터로 둠
-// — 기본값을 두면 실수로 안 넘겼을 때 조용히 보호자 목록이 적용되는 위험이 있음
+// termList는 호출부가 쓸 약관 목록을 명시적으로 넘기도록 필수 파라미터로 둠
 export const useTermsAgreement = (termList: TermItem[]) => {
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
 

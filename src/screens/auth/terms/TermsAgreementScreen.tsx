@@ -1,122 +1,59 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTermsAgreement, TERM_LIST, WARD_TERM_LIST } from '@features/auth/model';
-import { CheckIcon } from '@features/auth/ui';
-import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
-import ChevronRight from '@assets/icons/report/chevron-right.svg';
+import React, { useCallback } from 'react';
+import { View } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '@app/navigation/types';
+import { useSignupDraftStore, useSignupExit, useTermsAgreement, TERM_LIST } from '@features/auth/model';
+import { AuthStepLayout, TermAgreeAllButton, TermRow } from '@features/auth/ui';
 
-function TermCheckbox({ checked }: { checked: boolean }) {
-  return (
-    <View
-      className={`h-5 w-5 items-center justify-center rounded border-[1.6px] bg-surface ${
-        checked ? 'border-primary' : 'border-border-checkbox'
-      }`}
-    >
-      {checked && <CheckIcon size={12} />}
-    </View>
+type Props = NativeStackScreenProps<AuthStackParamList, 'TermsAgreement'>;
+
+// 약관 동의 (Figma 966:5613 미동의 / 966:5711 전체 동의) — 회원가입 단계의 첫 화면
+export default function TermsAgreementScreen({ navigation, route }: Props) {
+  const { role, social } = route.params;
+  const handleClose = useSignupExit();
+
+  // 약관 화면은 가입 단계의 시작점 — 여기로 돌아왔다는 건 X가 아니라 안드로이드 뒤로가기로 가입 단계를 빠져나온 것일
+  // 수 있으므로, 앞 단계에서 입력한 값(비밀번호 포함)이 메모리에 남지 않게 비움. "다음"을 누르면 start()로 새로 시작함
+  useFocusEffect(
+    useCallback(() => {
+      useSignupDraftStore.getState().reset();
+    }, []),
   );
-}
-
-export default function TermsAgreementScreen({ navigation, route }: any) {
-  const role = route?.params?.role;
-  const social = route?.params?.social;
-  const termList = role === 'WARD' ? WARD_TERM_LIST : TERM_LIST;
-  const { checkedItems, isAllChecked, isRequiredChecked, handleCheckItem, handleCheckAll } = useTermsAgreement(termList);
+  const { checkedItems, isAllChecked, isRequiredChecked, handleCheckItem, handleCheckAll } = useTermsAgreement(TERM_LIST);
 
   const handleNextPress = () => {
     if (!isRequiredChecked) return;
+    useSignupDraftStore.getState().start(role, social);
 
-    // 소셜 신규 회원가입이면 로컬 회원가입 폼이 아니라 추가 정보 입력 화면으로
-    if (social) {
-      navigation.navigate('SocialAdditionalInfo', { role, ...social });
-      return;
-    }
-    navigation.navigate(role === 'WARD' ? 'WardSignup' : 'Signup');
+    // 소셜 신규 회원가입은 이름/전화번호를 카카오·네이버 프로필에서 받으므로 본인인증·비밀번호 단계를 건너뜀
+    navigation.navigate(social ? 'SignupAddress' : 'SignupIdentity');
   };
 
-  const requiredTerms = termList.filter(term => term.required);
-  const optionalTerms = termList.filter(term => !term.required);
-
   return (
-    <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
-      <ScrollView className="flex-1" contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}>
-        {/* 상단 헤더 */}
-        <View className="relative flex-row items-center justify-center py-4">
-          <View className="absolute left-0">
-            <CaringLogo size={44} />
-          </View>
-          <Text className="font-pretendard-bold text-2xl text-text-primary">약관 동의</Text>
-        </View>
-
-        <Text className="mt-2 font-pretendard-medium text-base text-text-termsLabel">
-          서비스 이용을 위해 약관에 동의해 주세요
-        </Text>
-
-        {/* 전체 동의 */}
-        <TouchableOpacity
-          className="mt-6 flex-row items-center gap-3 rounded-card bg-surface-termsRow px-4 py-4"
-          onPress={handleCheckAll}
-          activeOpacity={0.8}
-        >
-          <TermCheckbox checked={isAllChecked} />
-          <Text className="font-pretendard-semibold text-lg text-text-primary">전체 동의</Text>
-        </TouchableOpacity>
-
-        {/* 필수 약관 */}
-        <Text className="mb-3 mt-6 font-pretendard-medium text-base text-text-termsLabel">필수 약관</Text>
-        <View className="gap-4">
-          {requiredTerms.map(term => (
-            <TouchableOpacity
-              key={term.id}
-              className="flex-row items-center justify-between"
-              onPress={() => handleCheckItem(term.id)}
-              activeOpacity={0.7}
-            >
-              <View className="flex-row items-center gap-3">
-                <TermCheckbox checked={!!checkedItems[term.id]} />
-                <Text className="font-pretendard-medium text-base text-text-primary">
-                  {term.title} <Text className="text-text-termsRequired">(필수)</Text>
-                </Text>
-              </View>
-              <ChevronRight width={16} height={16} />
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* 선택 약관 */}
-        <Text className="mb-3 mt-6 font-pretendard-medium text-base text-text-termsLabel">선택 약관</Text>
-        <View className="gap-4">
-          {optionalTerms.map(term => (
-            <TouchableOpacity
-              key={term.id}
-              className="flex-row items-center justify-between"
-              onPress={() => handleCheckItem(term.id)}
-              activeOpacity={0.7}
-            >
-              <View className="flex-row items-center gap-3">
-                <TermCheckbox checked={!!checkedItems[term.id]} />
-                <Text className="font-pretendard-medium text-base text-text-primary">{term.title}</Text>
-              </View>
-              <ChevronRight width={16} height={16} />
-            </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
-
-      {/* 다음 버튼 (하단 고정) */}
-      <View className="bg-surface px-6 pb-10 pt-2">
-        <TouchableOpacity
-          className={`h-[52px] items-center justify-center rounded-card ${
-            isRequiredChecked ? 'bg-primary' : 'bg-border-link'
-          }`}
-          onPress={handleNextPress}
-          disabled={!isRequiredChecked}
-          activeOpacity={0.8}
-        >
-          <Text className="font-pretendard-semibold text-lg text-white">다음</Text>
-        </TouchableOpacity>
+    <AuthStepLayout
+      title={'약관에 동의하고\n케어링을 시작하세요.'}
+      description={'고객님의 정보 보호를 위해 최선을 다하고 있습니다.\n아래 내용을 확인 후 동의해주세요.'}
+      onClose={handleClose}
+      buttonLabel="동의하고 계속 진행"
+      onPressButton={handleNextPress}
+      buttonDisabled={!isRequiredChecked}
+    >
+      <View className="mt-6">
+        <TermAgreeAllButton checked={isAllChecked} onPress={handleCheckAll} />
       </View>
-    </SafeAreaView>
+
+      <View className="mt-5 gap-2 px-4">
+        {TERM_LIST.map(term => (
+          <TermRow
+            key={term.id}
+            title={term.title}
+            required={term.required}
+            checked={!!checkedItems[term.id]}
+            onPress={() => handleCheckItem(term.id)}
+          />
+        ))}
+      </View>
+    </AuthStepLayout>
   );
 }

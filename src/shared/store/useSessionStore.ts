@@ -14,6 +14,9 @@ interface SessionState {
   profile: UserProfile | null;
   linkedCode: string | null;
   isLogoutConfirmVisible: boolean;
+  // 앱 실행 직후 스플래시를 이미 보여줬는지 — 로그아웃해서 인증 화면으로 돌아올 땐 스플래시 없이 시작 화면부터.
+  // 앱 실행 단위 값이라 logout()에서 초기화하지 않음
+  hasShownSplash: boolean;
   // profile을 넘기지 않으면 이미 setPendingProfile로 저장해둔 값을 그대로 씀
   // (회원가입 → 온보딩 화면 → 최종 "다음" 버튼에서 로그인을 확정짓는 흐름에서 사용)
   login: (role: UserRole, profile?: UserProfile) => void;
@@ -24,6 +27,7 @@ interface SessionState {
   setLinkedCode: (code: string) => void;
   requestLogout: () => void;
   cancelLogout: () => void;
+  markSplashShown: () => void;
 }
 
 export const useSessionStore = create<SessionState>(set => ({
@@ -32,6 +36,7 @@ export const useSessionStore = create<SessionState>(set => ({
   profile: null,
   linkedCode: null,
   isLogoutConfirmVisible: false,
+  hasShownSplash: false,
   login: (role, profile) => set(state => ({ isLoggedIn: true, role, profile: profile ?? state.profile })),
   setPendingProfile: (role, profile) => set({ role, profile }),
   logout: () => {
@@ -41,4 +46,5 @@ export const useSessionStore = create<SessionState>(set => ({
   setLinkedCode: linkedCode => set({ linkedCode }),
   requestLogout: () => set({ isLogoutConfirmVisible: true }),
   cancelLogout: () => set({ isLogoutConfirmVisible: false }),
+  markSplashShown: () => set({ hasShownSplash: true }),
 }));

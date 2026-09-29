@@ -1,4 +1,4 @@
-// 기저 질환 목록 (Figma 504:13234) — 중복 선택 가능. WardSignupScreen / SocialAdditionalInfoScreen 공용
+// 기저 질환 목록 (Figma 970:7757) — 중복 선택 가능. 회원가입 기저질환 단계(SignupDiseaseScreen)에서 사용
 export const DISEASE_LIST = [
   '고혈압',
   '당뇨병',

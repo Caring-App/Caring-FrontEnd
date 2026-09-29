@@ -1,14 +1,18 @@
 import React from 'react';
-import { ActivityIndicator, View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '@app/navigation/types';
 
 import { useLinkAccount } from '@features/account-link/model';
-import { CodeInputField } from '@features/auth/ui';
-import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
+import { CodeInputField, AuthPrimaryButton } from '@features/auth/ui';
+import { CaringLogoHorizontal } from '@shared/ui/AppHeader/CaringLogo';
 import { colors } from '@shared/theme/colors';
 import RssIcon from '@assets/icons/action/rss.svg';
 
-export default function LinkAccountScreen({ navigation }: { navigation: any }) {
+type Props = NativeStackScreenProps<AuthStackParamList, 'LinkAccount'>;
+
+export default function LinkAccountScreen({ navigation }: Props) {
   const { code, setCode, handlePaste, handleSubmit, isValidCode, isSubmitting, submitError } = useLinkAccount();
 
   const handleNext = async () => {
@@ -22,8 +26,8 @@ export default function LinkAccountScreen({ navigation }: { navigation: any }) {
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
       {/* 상단 헤더 */}
-      <View className="px-6 py-4">
-        <CaringLogo size={44} />
+      <View className="px-5 pt-3">
+        <CaringLogoHorizontal />
       </View>
 
       <View className="flex-1 justify-center px-6">
@@ -61,21 +65,13 @@ export default function LinkAccountScreen({ navigation }: { navigation: any }) {
         )}
       </View>
 
-      <View className="items-center px-6 pb-10 pt-2">
-        <TouchableOpacity
-          className={`h-[52px] w-full items-center justify-center rounded-card ${
-            isValidCode && !isSubmitting ? 'bg-primary' : 'bg-border-link'
-          }`}
+      <View className="px-6 pb-6 pt-2">
+        <AuthPrimaryButton
+          label="다음"
           onPress={handleNext}
-          disabled={!isValidCode || isSubmitting}
-          activeOpacity={0.8}
-        >
-          {isSubmitting ? (
-            <ActivityIndicator size="small" color={colors.surface} />
-          ) : (
-            <Text className="font-pretendard-semibold text-lg text-white">다음</Text>
-          )}
-        </TouchableOpacity>
+          disabled={!isValidCode}
+          isLoading={isSubmitting}
+        />
       </View>
     </SafeAreaView>
   );
