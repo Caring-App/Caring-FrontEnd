@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
-import { showNotice } from '@shared/model/useNoticeStore';
+import { showNotice } from '@shared/model';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 
 export interface AddressSearchResult {
