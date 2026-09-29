@@ -53,6 +53,16 @@ export function useVoiceRecording() {
     };
   }, [sound]);
 
+  // 모달이 닫힐 때 호출 — 모달은 숨겨질 뿐 언마운트되지 않아서 언마운트 정리(useEffect cleanup)만으로는
+  // 녹음 중에 닫으면 마이크 녹음이 백그라운드에서 계속됐음. 네이티브 쪽 정지는 이미 멈춰 있어도 안전함(idempotent)
+  const stop = () => {
+    sound.removePlaybackEndListener();
+    sound.stopRecorder().catch(() => {});
+    sound.stopPlayer().catch(() => {});
+    setIsRecording(false);
+    setIsPlaying(false);
+  };
+
   // 모달을 새로 열 때 호출 — 수정 모달이면 기존에 저장된 녹음 URL을 넘김
   const reset = (initialUrl?: string | null) => {
     if (isRecording) sound.stopRecorder().catch(() => {});
@@ -143,6 +153,7 @@ export function useVoiceRecording() {
     handlePlay,
     handleDeleteRecording,
     reset,
+    stop,
     getVoiceFileUrl,
   };
 }

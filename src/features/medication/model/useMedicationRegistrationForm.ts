@@ -55,6 +55,8 @@ export const useMedicationRegistrationForm = (
 
   useEffect(() => {
     if (!visible) {
+      // 녹음·재생 중에 모달을 닫으면 멈춤
+      voiceRecording.stop();
       return;
     }
     if (editingMedication) {
