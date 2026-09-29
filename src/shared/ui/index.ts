@@ -16,3 +16,4 @@ export { ConfirmModal } from './ConfirmModal';
 export { AddressSearchModal } from './AddressSearchModal';
 export { AddressInput } from './AddressInput';
 export type { AddressSearchResult } from './AddressSearchModal';
+export { NoticeModal } from './NoticeModal';
