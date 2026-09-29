@@ -10,7 +10,7 @@ interface NoticeModalProps {
   textScale?: number;
 }
 
-// 앱 공용 안내·에러 모달 (ConfirmModal·로그아웃 확인 모달과 같은 스타일).
+// 앱 공용 안내·에러·확인 모달 — 안내, 저장 실패, 삭제·로그아웃 확인 등 앱의 모든 팝업을 이 모달 하나로 그림.
 // 버튼이 하나면 꽉 찬 주황 버튼, 둘 이상이면 가로로 나란히(취소는 회색)
 export function NoticeModal({
   notice,
