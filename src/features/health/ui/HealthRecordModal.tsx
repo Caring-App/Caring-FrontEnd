@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -9,6 +9,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { showNotice } from '@shared/model';
 import { FormLabel } from '@shared/ui';
 import { colors } from '@shared/theme/colors';
 // FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, 어르신 글자 크기 배율은
@@ -17,7 +18,6 @@ import { colors } from '@shared/theme/colors';
 import { useWardFontScaleStore } from '@features/ward-management/model';
 import { WardText } from '@features/ward-management/ui';
 import { useHealthRecordForm } from '../model';
-import { WardNoticeModal } from './WardNoticeModal';
 
 interface HealthRecordModalProps {
   visible: boolean;
@@ -32,104 +32,96 @@ export function HealthRecordModal({
 }: HealthRecordModalProps) {
   const { state, actions } = useHealthRecordForm(visible);
   // 저장에 성공하면 기록 모달을 닫고 완료 안내를 띄움 — 그냥 닫히기만 하면 저장됐는지 알기 어려움
-  const [savedMessage, setSavedMessage] = useState<string | null>(null);
-
   const handleSaved = () => {
     onClose();
-    setSavedMessage('입력하신 수치는 오늘 저녁 보호자님 레포트에 반영돼요.');
+    showNotice(
+      '건강 수치를 저장했어요',
+      '입력하신 수치는 오늘 저녁 보호자님 레포트에 반영돼요.',
+    );
   };
 
   return (
-    <>
-      <Modal
-        visible={visible}
-        transparent
-        animationType="fade"
-        onRequestClose={onClose}
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <Pressable
+        className="flex-1 items-center justify-center bg-black/30 px-5"
+        onPress={onClose}
       >
-        <Pressable
-          className="flex-1 items-center justify-center bg-black/30 px-5"
-          onPress={onClose}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          className="w-full max-h-[85%]"
         >
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            className="w-full max-h-[85%]"
+          <Pressable
+            onPress={() => {}}
+            className="max-h-full rounded-card border border-border bg-surface p-4"
           >
-            <Pressable
-              onPress={() => {}}
-              className="max-h-full rounded-card border border-border bg-surface p-4"
+            <WardText
+              size="xl"
+              className="font-pretendard-bold text-text-primary"
             >
-              <WardText
-                size="xl"
-                className="font-pretendard-bold text-text-primary"
-              >
-                오늘의 건강 기록하기
-              </WardText>
-              <WardText
-                size="xs"
-                className="mt-1 font-pretendard-medium text-text-muted"
-              >
-                입력하신 수치는 오늘 저녁 보호자님 레포트에 반영됩니다.
-              </WardText>
+              오늘의 건강 기록하기
+            </WardText>
+            <WardText
+              size="xs"
+              className="mt-1 font-pretendard-medium text-text-muted"
+            >
+              입력하신 수치는 오늘 저녁 보호자님 레포트에 반영됩니다.
+            </WardText>
 
-              <ScrollView showsVerticalScrollIndicator={false} className="mt-4">
-                <View className="gap-4">
-                  <HealthRecordField
-                    label="혈당 (mg/dL)"
-                    placeholder="예: 120"
-                    value={state.values.bloodSugar}
-                    onChangeText={value =>
-                      actions.setValue('bloodSugar', value)
-                    }
-                  />
-                  <HealthRecordField
-                    label="혈압 (위 숫자, mmHg)"
-                    placeholder="예: 130"
-                    value={state.values.bloodPressure}
-                    onChangeText={value =>
-                      actions.setValue('bloodPressure', value)
-                    }
-                  />
-                </View>
+            <ScrollView showsVerticalScrollIndicator={false} className="mt-4">
+              <View className="gap-4">
+                <HealthRecordField
+                  label="혈당 (mg/dL)"
+                  placeholder="예: 120"
+                  value={state.values.bloodSugar}
+                  onChangeText={value => actions.setValue('bloodSugar', value)}
+                />
+                <HealthRecordField
+                  label="혈압 (위 숫자, mmHg)"
+                  placeholder="예: 130"
+                  value={state.values.bloodPressure}
+                  onChangeText={value =>
+                    actions.setValue('bloodPressure', value)
+                  }
+                />
+              </View>
 
-                {!!state.errorMessage && (
+              {!!state.errorMessage && (
+                <WardText
+                  size="sm"
+                  className="mt-3 font-pretendard-medium text-text-danger"
+                >
+                  {state.errorMessage}
+                </WardText>
+              )}
+
+              <Pressable
+                onPress={() => actions.handleSave(handleSaved)}
+                disabled={state.isSubmitting}
+                className={`mt-6 items-center justify-center rounded-card bg-primary py-4 ${
+                  state.isSubmitting ? 'opacity-60' : ''
+                }`}
+              >
+                {state.isSubmitting ? (
+                  <ActivityIndicator size="small" color={colors.surface} />
+                ) : (
                   <WardText
-                    size="sm"
-                    className="mt-3 font-pretendard-medium text-text-danger"
+                    size="xl"
+                    className="font-pretendard-semibold text-white"
                   >
-                    {state.errorMessage}
+                    저장하기
                   </WardText>
                 )}
-
-                <Pressable
-                  onPress={() => actions.handleSave(handleSaved)}
-                  disabled={state.isSubmitting}
-                  className={`mt-6 items-center justify-center rounded-card bg-primary py-4 ${
-                    state.isSubmitting ? 'opacity-60' : ''
-                  }`}
-                >
-                  {state.isSubmitting ? (
-                    <ActivityIndicator size="small" color={colors.surface} />
-                  ) : (
-                    <WardText
-                      size="xl"
-                      className="font-pretendard-semibold text-white"
-                    >
-                      저장하기
-                    </WardText>
-                  )}
-                </Pressable>
-              </ScrollView>
-            </Pressable>
-          </KeyboardAvoidingView>
-        </Pressable>
-      </Modal>
-      <WardNoticeModal
-        title="건강 수치를 저장했어요"
-        message={savedMessage}
-        onClose={() => setSavedMessage(null)}
-      />
-    </>
+              </Pressable>
+            </ScrollView>
+          </Pressable>
+        </KeyboardAvoidingView>
+      </Pressable>
+    </Modal>
   );
 }
 

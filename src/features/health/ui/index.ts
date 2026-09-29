@@ -4,7 +4,6 @@ export * from './HealthStatusEmojiButton';
 export * from './TimeDropdown';
 export * from './WardHealthStatusCard';
 export * from './HealthRecordModal';
-export * from './WardNoticeModal';
 export * from './StepSyncNotice';
 export * from './DailyReportSummary';
 export * from './HealthGraphSection';
