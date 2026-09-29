@@ -1,10 +1,13 @@
 import { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { Alert } from 'react-native';
+import { AuthStackNavigationProp } from '@app/navigation/types';
 import { resetPasswordApi } from '@features/auth/api';
 import { logApiError } from '@shared/api';
 import { usePhoneVerification } from './usePhoneVerification';
 
-export default function useResetPassword(navigation: any) {
+export default function useResetPassword() {
+  const navigation = useNavigation<AuthStackNavigationProp>();
   const phoneVerification = usePhoneVerification();
   const { phone, authCode, isPhoneVerified } = phoneVerification;
 

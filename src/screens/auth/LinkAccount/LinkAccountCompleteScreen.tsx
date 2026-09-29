@@ -1,9 +1,13 @@
 import React from 'react';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '@app/navigation/types';
 import { SignupWelcomeStep } from '@features/auth/ui/SignupWelcomeStep';
 import { useSessionStore } from '@shared/store/useSessionStore';
 
-export const LinkAccountCompleteScreen = ({ route }: { route?: any }) => {
-  const protectorName = route?.params?.protectorName || '---';
+type Props = NativeStackScreenProps<AuthStackParamList, 'LinkAccountComplete'>;
+
+export const LinkAccountCompleteScreen = ({ route }: Props) => {
+  const protectorName = route.params?.protectorName || '---';
 
   return (
     <SignupWelcomeStep

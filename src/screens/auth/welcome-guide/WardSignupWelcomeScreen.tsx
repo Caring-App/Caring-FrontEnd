@@ -1,8 +1,12 @@
 import React from 'react';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '@app/navigation/types';
 import { SignupWelcomeStep } from '@features/auth/ui/SignupWelcomeStep';
 
-export const WardSignupWelcomeScreen = ({ route, navigation }: { route?: any; navigation: any }) => {
-  const userName = route?.params?.userName || '---';
+type Props = NativeStackScreenProps<AuthStackParamList, 'WardSignupWelcome'>;
+
+export const WardSignupWelcomeScreen = ({ route, navigation }: Props) => {
+  const userName = route.params?.userName || '---';
 
   return (
     <SignupWelcomeStep

@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '@app/navigation/types';
 
 import { useLinkAccount } from '@features/account-link/model';
 import { CodeInputField, AuthPrimaryButton } from '@features/auth/ui';
@@ -8,7 +10,9 @@ import { CaringLogoHorizontal } from '@shared/ui/AppHeader/CaringLogo';
 import { colors } from '@shared/theme/colors';
 import RssIcon from '@assets/icons/action/rss.svg';
 
-export default function LinkAccountScreen({ navigation }: { navigation: any }) {
+type Props = NativeStackScreenProps<AuthStackParamList, 'LinkAccount'>;
+
+export default function LinkAccountScreen({ navigation }: Props) {
   const { code, setCode, handlePaste, handleSubmit, isValidCode, isSubmitting, submitError } = useLinkAccount();
 
   const handleNext = async () => {

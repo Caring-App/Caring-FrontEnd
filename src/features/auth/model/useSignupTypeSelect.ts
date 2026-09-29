@@ -1,10 +1,11 @@
 import { useState } from 'react';
+import { AuthStackNavigationProp } from '@app/navigation/types';
 import { checkSocialMember } from '@features/auth/api';
 import { logApiError } from '@shared/api';
 import { UserRole } from '@shared/types';
 import { SocialAccessToken } from './types';
 
-export function useSignupTypeSelect(navigation: any, social?: SocialAccessToken) {
+export function useSignupTypeSelect(navigation: AuthStackNavigationProp, social?: SocialAccessToken) {
   const [isCheckingSocial, setIsCheckingSocial] = useState(false);
   const [socialError, setSocialError] = useState('');
 

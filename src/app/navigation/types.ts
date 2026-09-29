@@ -1,4 +1,5 @@
 import { NavigatorScreenParams } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SocialAccessToken, SocialSignupProfile } from '@features/auth/model';
 import { PolicyType } from '@features/policy/model';
 import { WelfareFacility } from '@features/welfare-facility/model';
@@ -26,6 +27,9 @@ export type AuthStackParamList = {
   LinkAccount: undefined;
   LinkAccountComplete: { protectorName?: string } | undefined;
 };
+
+// 인증 스택 화면들이 공유하는 훅(useSignupSubmit 등)에서 navigation 타입으로 씀
+export type AuthStackNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
 export type GuardianTabParamList = {
   Home: undefined;

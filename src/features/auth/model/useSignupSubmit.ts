@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AuthStackNavigationProp } from '@app/navigation/types';
 import { registerProtectorApi, registerSocialApi, registerWardApi } from '@features/auth/api';
 import { loginAfterRegister } from '@features/auth/utils';
 import { logApiError, setTokens } from '@shared/api';
@@ -10,7 +11,7 @@ const REGISTER_FAILED_MESSAGE = '회원가입에 실패했습니다. 입력하�
 
 // 회원가입 마지막 단계(보호자: 주소, 돌봄대상자: 기저질환)에서 호출 — 단계별로 모아둔 입력값으로
 // 로컬/소셜 가입 API를 골라 호출하고, 성공하면 역할별 환영 화면으로 이동함
-export function useSignupSubmit(navigation: any) {
+export function useSignupSubmit(navigation: AuthStackNavigationProp) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 

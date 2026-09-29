@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { AuthStackParamList } from '@app/navigation/types';
+import { AuthStackNavigationProp } from '@app/navigation/types';
 import { AddressSearchResult } from '@shared/ui';
 import { useSignupDraftStore } from './useSignupDraftStore';
 import { useSignupSubmit } from './useSignupSubmit';
@@ -9,7 +8,7 @@ import { useSignupSubmit } from './useSignupSubmit';
 // 회원가입 주소 단계 (Figma 970:7630) — 기본 주소는 다음(카카오) 우편번호 검색으로만 고르고 상세 주소만 직접 입력.
 // 백엔드가 기본 주소를 지오코딩해 좌표로 저장하므로 자유 입력은 받지 않음(AddressInput 참고)
 export function useSignupAddress() {
-  const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
+  const navigation = useNavigation<AuthStackNavigationProp>();
   const role = useSignupDraftStore(state => state.role);
   const [baseAddress, setBaseAddress] = useState(() => useSignupDraftStore.getState().baseAddress);
   const [detailAddress, setDetailAddress] = useState(() => useSignupDraftStore.getState().detailAddress);

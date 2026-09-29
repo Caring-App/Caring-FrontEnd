@@ -1,7 +1,8 @@
 import React from 'react';
 import { ActivityIndicator, View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { AuthStackNavigationProp, AuthStackParamList } from '@app/navigation/types';
 
 import { useSignupTypeSelect } from '@features/auth/model';
 import { CaringLogoHorizontal } from '@shared/ui/AppHeader/CaringLogo';
@@ -14,8 +15,8 @@ const ROLE_OPTIONS = [
 
 // 역할 선택 (Figma 965:5380)
 export const SignupTypeSelectScreen = () => {
-  const navigation = useNavigation();
-  const route = useRoute<any>();
+  const navigation = useNavigation<AuthStackNavigationProp>();
+  const route = useRoute<RouteProp<AuthStackParamList, 'SignupTypeSelect'>>();
   const social = route.params?.social;
   const { handleRoleSelect, isCheckingSocial, socialError } = useSignupTypeSelect(navigation, social);
 

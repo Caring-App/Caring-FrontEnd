@@ -33,7 +33,7 @@ export default function ResetPasswordScreen({ navigation }: Props) {
     isSubmitting,
     submitError,
     handleSubmit,
-  } = useResetPassword(navigation);
+  } = useResetPassword();
 
   const isPhoneComplete = isValidPhoneNumber(phone);
   const isConfirmMismatched = !!newPasswordConfirm && newPassword !== newPasswordConfirm;
