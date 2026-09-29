@@ -6,7 +6,7 @@ import { useNotificationStore } from '@features/notification/model';
 import { findTakenMealTypesFromNotifications, getLocalDateKey, getTodayWeekday } from '../utils';
 import { MealType } from './medicationTypes';
 import { useMedicationListStore } from './useMedicationListStore';
-import { MealSlot, useMedicationStore } from './useMedicationStore';
+import { useMedicationStore } from './useMedicationStore';
 
 export type TodayMedicationStatus = 'taken' | 'notTaken' | 'notScheduled';
 
@@ -18,7 +18,7 @@ const toServerWardId = (wardId: string) => (/^\d+$/.test(wardId) ? Number(wardId
 // - 오늘 먹을 시간대: 복약 스케줄 중 켜져 있고 오늘 요일이 포함된 것(어르신 쪽 /api/pill/today와 같은 기준)
 // 날짜 기준으로 계산하므로 다음 날이 되면 자동으로 전부 "안 먹음"부터 다시 시작함.
 // 연동 전 목업 어르신은 서버 데이터가 없어서 기존 로컬 스토어 값을 그대로 보여줌(사용가이드 투어용).
-export function useWardTodayMedication(wardId: string, wardName: string): Record<MealSlot, TodayMedicationStatus> {
+export function useWardTodayMedication(wardId: string, wardName: string): Record<MealType, TodayMedicationStatus> {
   const serverWardId = toServerWardId(wardId);
   const notifications = useNotificationStore(state => state.notifications);
   const schedules = useMedicationListStore(state =>
@@ -40,7 +40,7 @@ export function useWardTodayMedication(wardId: string, wardName: string): Record
   );
   const taken = findTakenMealTypesFromNotifications(notifications, wardName, getLocalDateKey());
 
-  const statusOf = (slot: MealSlot): TodayMedicationStatus => {
+  const statusOf = (slot: MealType): TodayMedicationStatus => {
     if (taken.has(slot)) return 'taken';
     // 스케줄을 아직 못 불러왔으면 "없음"으로 흐리게 하지 않고 "안 먹음"으로 둠
     if (schedules && !scheduledToday.has(slot)) return 'notScheduled';

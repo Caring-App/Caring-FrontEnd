@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { MealSlot, TodayMedicationStatus, useSyncWardTodayMedication, useWardTodayMedication } from '@features/medication/model';
+import { MealType, TodayMedicationStatus, useSyncWardTodayMedication, useWardTodayMedication } from '@features/medication/model';
 import { SectionCard, AddButton } from '@shared/ui';
 import PrescriptionIcon from '@assets/icons/section/prescription2.svg';
 import CapsuleOnIcon from '@assets/icons/medication/capsule-on.svg';
@@ -34,7 +34,7 @@ export function MedicationSection({
   );
 }
 
-const MEAL_SLOTS: { slot: MealSlot; label: string }[] = [
+const MEAL_SLOTS: { slot: MealType; label: string }[] = [
   { slot: 'morning', label: '아침' },
   { slot: 'lunch', label: '점심' },
   { slot: 'dinner', label: '저녁' },

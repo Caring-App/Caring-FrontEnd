@@ -2,15 +2,15 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { MOCK_WARDS } from '@features/ward-management/model';
+import { MealType } from './medicationTypes';
 
-export type MealSlot = 'morning' | 'lunch' | 'dinner';
-export type MedicationTaken = Record<MealSlot, boolean>;
+export type MedicationTaken = Record<MealType, boolean>;
 
 interface MedicationState {
   // 연동 전 목업 어르신(사용가이드 투어 등) 전용 로컬 값. 실제 어르신의 복용 기록은 서버가 원본 —
   // 어르신 화면은 useTodayPills(/api/pill/today, /api/pill/confirm), 보호자 화면은 useWardTodayMedication(알림 기록) 참고.
   takenByWard: Record<string, MedicationTaken>;
-  setTaken: (wardId: string, slot: MealSlot, value: boolean) => void;
+  setTaken: (wardId: string, slot: MealType, value: boolean) => void;
 }
 
 // TODO: 백엔드 연동 전 mock 데이터, 어르신별로 다른 값임을 보여주기 위한 임시 시드
