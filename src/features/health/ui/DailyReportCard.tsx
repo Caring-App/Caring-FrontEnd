@@ -1,42 +1,16 @@
 import React, { useRef, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
-import { useWardMoodStatus, HealthStatus, MOCK_HEALTH_METRICS } from '@features/health/model';
-import { MealType, TodayMedicationStatus, useWardTodayMedication } from '@features/medication/model';
-import { MEAL_TYPE_LABELS, MEAL_TYPES } from '@features/medication/utils';
+import { Alert, Pressable, Text, View } from 'react-native';
+import { useWardDailyReport, useWardMoodStatus } from '@features/health/model';
+import { buildDailySummary, formatReportTimeLabel, isTimePassedToday } from '@features/health/utils';
+import { useWardTodayMedication } from '@features/medication/model';
 import EnvelopeFillIcon from '@assets/icons/report/envelope-fill.svg';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 import ChevronDownIcon from '@assets/icons/action/chevron-down.svg';
-import { HealthMetricsChart } from './HealthMetricsChart';
+import { DailyReportSummary } from './DailyReportSummary';
+import { HealthGraphSection } from './HealthGraphSection';
 import { HealthStatusEmojiButton } from './HealthStatusEmojiButton';
 import { DropdownAnchor, TimeDropdown } from './TimeDropdown';
 import { TourTarget } from '@features/guardian-tour/ui';
-
-const HEALTH_STATUS_LABELS: Record<HealthStatus, string> = {
-  good: '좋음',
-  normal: '보통',
-  bad: '안좋음',
-};
-
-function buildDailySummary(
-  wardName: string,
-  status: HealthStatus | null,
-  medication: Record<MealType, TodayMedicationStatus>,
-) {
-  if (!status) {
-    return '아직 오늘의 요약 정보가 없어요.';
-  }
-
-  // 오늘 먹을 약이 없는 시간대(notScheduled)는 "안 먹음"으로 치지 않음
-  const missedSlot = MEAL_TYPES.find(slot => medication[slot] === 'notTaken');
-  const hasMedicationToday = MEAL_TYPES.some(slot => medication[slot] !== 'notScheduled');
-  const medicationClause = missedSlot
-    ? `${wardName}님은 오늘 ${MEAL_TYPE_LABELS[missedSlot]}약을 복용하지 않았어요`
-    : hasMedicationToday
-      ? `${wardName}님은 오늘 약을 모두 잘 복용했어요`
-      : `${wardName}님은 오늘 복용할 약이 없어요`;
-
-  return `${wardName}님의 오늘 건강 상태는 '${HEALTH_STATUS_LABELS[status]}' 이에요! ${medicationClause}`;
-}
 
 export function DailyReportCard({
   wardId,
@@ -50,11 +24,34 @@ export function DailyReportCard({
 }) {
   const [showDetail, setShowDetail] = useState(false);
   const isDetailVisible = showDetail || !!forceShowDetail;
-  const [reportTime, setReportTime] = useState('21 : 00');
   const [timeDropdownAnchor, setTimeDropdownAnchor] = useState<DropdownAnchor | null>(null);
   const timeButtonRef = useRef<React.ComponentRef<typeof Pressable>>(null);
   const status = useWardMoodStatus(wardId) ?? null;
   const medication = useWardTodayMedication(wardId, wardName);
+  const dailyReport = useWardDailyReport(wardId);
+
+  const applyReportTime = async (timeKey: string) => {
+    if (!(await dailyReport.updateReportTime(timeKey)) && !dailyReport.isMockWard) {
+      Alert.alert('', '레포트 시간을 바꾸지 못했어요. 잠시 후 다시 시도해 주세요.');
+    }
+  };
+
+  const handleSelectReportTime = (timeKey: string) => {
+    if (timeKey === dailyReport.reportTime) return;
+    // 오늘 레포트가 아직 없는데 이미 지난 시각으로 바꾸면 오늘 레포트가 안 만들어지고 어르신 기록도 바로 마감돼서 확인받음
+    if (!dailyReport.isMockWard && !dailyReport.report && isTimePassedToday(timeKey)) {
+      Alert.alert(
+        '레포트 시간을 바꿀까요?',
+        `오늘은 이미 ${formatReportTimeLabel(timeKey)}이 지나서 오늘의 레포트는 만들어지지 않고, 어르신의 오늘 기록도 바로 마감돼요. 내일부터 ${formatReportTimeLabel(timeKey)}에 레포트를 받아요.`,
+        [
+          { text: '취소', style: 'cancel' },
+          { text: '바꾸기', onPress: () => applyReportTime(timeKey) },
+        ],
+      );
+      return;
+    }
+    applyReportTime(timeKey);
+  };
 
   return (
     <TourTarget id="dailyReport.card" className="mt-4 rounded-card border border-border bg-surface p-4">
@@ -78,7 +75,9 @@ export function DailyReportCard({
               setTimeDropdownAnchor({ x, y, width, height });
             });
           }}>
-          <Text className="text-xs font-pretendard-semibold text-text-primary">{reportTime}</Text>
+          <Text className="text-xs font-pretendard-semibold text-text-primary">
+            {formatReportTimeLabel(dailyReport.reportTime)}
+          </Text>
           <ChevronDownIcon width={10} height={7} />
         </Pressable>
         <Text className="text-xs text-text-muted"> 시에 받아요</Text>
@@ -86,13 +85,13 @@ export function DailyReportCard({
 
       <TimeDropdown
         visible={timeDropdownAnchor !== null}
-        value={reportTime}
+        value={dailyReport.reportTime}
         anchor={timeDropdownAnchor}
         onClose={() => setTimeDropdownAnchor(null)}
-        onSelect={setReportTime}
+        onSelect={handleSelectReportTime}
       />
       <Text className="mt-1 text-xs text-text-muted">
-        하루 요약 레포트는 설정한 시간을 기준으로 반영됩니다
+        설정한 시간까지 어르신이 기록한 내용으로 레포트가 만들어져요
       </Text>
 
       <TourTarget id="dailyReport.healthStatus" className="mt-4 rounded-card border border-border bg-surface p-4">
@@ -104,30 +103,13 @@ export function DailyReportCard({
         </View>
       </TourTarget>
 
-      <TourTarget id="dailyReport.summary" className="mt-3 rounded-card border border-border bg-surface p-4">
-        <Text className="text-md font-semibold text-text-primary">오늘 하루 요약</Text>
-        <Text className="mt-2 text-sm text-text-primary">{buildDailySummary(wardName, status, medication)}</Text>
-        <View className="mt-3 gap-1">
-          {MOCK_HEALTH_METRICS.map(metric => (
-            <Text key={metric.key} className="text-sm text-text-primary">
-              {metric.todayLabel}: {metric.todayValue}
-            </Text>
-          ))}
-        </View>
-      </TourTarget>
+      <DailyReportSummary
+        data={dailyReport}
+        liveSummary={buildDailySummary(wardName, status, medication)}
+        expanded={isDetailVisible}
+      />
 
-      {isDetailVisible && <CompoundHealthDataSection />}
-    </TourTarget>
-  );
-}
-
-function CompoundHealthDataSection() {
-  return (
-    <TourTarget id="dailyReport.chart" className="mt-3 rounded-card border border-border bg-surface p-4">
-      <Text className="text-md font-semibold text-text-primary">건강 수치 그래프</Text>
-      <View className="mt-3">
-        <HealthMetricsChart />
-      </View>
+      {isDetailVisible && <HealthGraphSection series={dailyReport.graph} isLoading={dailyReport.isLoading} />}
     </TourTarget>
   );
 }
