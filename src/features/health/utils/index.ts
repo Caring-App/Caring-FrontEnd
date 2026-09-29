@@ -23,3 +23,4 @@ export function healthStatusToMoodStatus(status: HealthStatus): MoodStatus {
 
 export * from './reportUtils';
 export * from './healthConnect';
+export * from './dailySummary';
