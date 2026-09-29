@@ -4,7 +4,7 @@ import { create } from 'zustand';
 // (순환참조 없음, account-link는 ward-management를 참조하지 않음).
 import { getConnectionsApi } from '@features/account-link/api';
 import { logApiError } from '@shared/api';
-import { useSessionStore } from '@shared/store/useSessionStore';
+import { resetOnLogout } from '@shared/store/resetOnLogout';
 import { connectionFontSizeToOption } from '../utils';
 import { MOCK_WARDS } from './mockWards';
 import { Ward } from './types';
@@ -69,11 +69,6 @@ export const useSelectedWardStore = create<SelectedWardState>((set, get) => ({
     set(state => ({ wards: state.wards.map(ward => (ward.id === id ? { ...ward, ...patch } : ward)) })),
 }));
 
-// wards는 로그인 세션과 무관하게 살아있는 전역 싱글턴이라, 로그아웃해도 저절로 안 비워짐 —
-// 리셋 안 하면 로그아웃 전 계정에서 불러온 목록이 다음 로그인(다른 계정일 수도 있음) 때도 그대로 남아있어서
-// 매번 새로 fetchWards()를 안 부르고(isLoaded가 이미 true라서) 오래된 데이터를 계속 보여주는 버그가 있었음.
-useSessionStore.subscribe((state, prevState) => {
-  if (prevState.isLoggedIn && !state.isLoggedIn) {
-    useSelectedWardStore.setState({ wards: MOCK_WARDS, isLoaded: false, selectedWardId: MOCK_WARDS[0].id });
-  }
-});
+// 로그아웃 전 계정의 wards가 남아있으면 isLoaded가 true라 다음 로그인 때 fetchWards()를 안 부르고
+// 오래된 목록을 계속 보여주는 버그가 있었음 — 초기값(MOCK_WARDS, isLoaded=false)으로 되돌림.
+resetOnLogout(useSelectedWardStore);

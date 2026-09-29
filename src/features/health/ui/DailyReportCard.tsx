@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import { useHealthStatusStore, HealthStatus, MOCK_HEALTH_METRICS } from '@features/health/model';
+import { useWardMoodStatus, HealthStatus, MOCK_HEALTH_METRICS } from '@features/health/model';
 import { useMedicationStore, MealSlot, MedicationTaken } from '@features/medication/model';
 import EnvelopeFillIcon from '@assets/icons/report/envelope-fill.svg';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
@@ -50,7 +50,7 @@ export function DailyReportCard({
   const [reportTime, setReportTime] = useState('21 : 00');
   const [timeDropdownAnchor, setTimeDropdownAnchor] = useState<DropdownAnchor | null>(null);
   const timeButtonRef = useRef<React.ComponentRef<typeof Pressable>>(null);
-  const status = useHealthStatusStore(state => state.statusByWard[wardId] ?? null);
+  const status = useWardMoodStatus(wardId) ?? null;
   const taken = useMedicationStore(state => state.takenByWard[wardId]);
 
   return (

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { resetOnLogout } from '@shared/store/resetOnLogout';
 import { logApiError } from '@shared/api';
 import { getWardLatestLocationApi } from '../api';
 import { WardLocation } from './types';
@@ -30,3 +31,5 @@ export const useWardLocationStore = create<WardLocationState>((set, get) => ({
     }
   },
 }));
+
+resetOnLogout(useWardLocationStore);

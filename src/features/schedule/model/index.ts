@@ -4,4 +4,5 @@ export * from './calendarUtils';
 export * from './useScheduleRegistrationForm';
 export * from './useScheduleStore';
 export * from './useWardSchedules';
+export * from './useMyTodaySchedules';
 export * from './scheduleFormat';

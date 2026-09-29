@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { resetOnLogout } from '@shared/store/resetOnLogout';
 import { logApiError } from '@shared/api';
 import {
   createPillScheduleApi,
@@ -180,3 +181,5 @@ export const useMedicationListStore = create<MedicationListState>((set, get) => 
     }
   },
 }));
+
+resetOnLogout(useMedicationListStore);

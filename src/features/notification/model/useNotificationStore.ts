@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { resetOnLogout } from '@shared/store/resetOnLogout';
 import { logApiError } from '@shared/api';
 import { getNotificationsApi, markNotificationReadApi } from '../api';
 import { NotificationItem } from './types';
@@ -73,3 +74,5 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     }
   },
 }));
+
+resetOnLogout(useNotificationStore);

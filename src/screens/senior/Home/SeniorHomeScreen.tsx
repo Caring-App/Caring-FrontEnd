@@ -41,7 +41,7 @@ export function SeniorHomeScreen() {
       <ScrollView className="flex-1 px-4" contentContainerClassName="gap-4 pb-8" showsVerticalScrollIndicator={false}>
         <WardHealthStatusCard wardId={wardId} onPressRecord={() => setIsHealthRecordVisible(true)} />
 
-        <WardScheduleCard wardId={wardId} />
+        <WardScheduleCard />
 
         <WardMedicationCard wardId={wardId} />
       </ScrollView>
