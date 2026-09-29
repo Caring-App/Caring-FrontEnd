@@ -10,14 +10,7 @@ import { colors } from '@shared/theme/colors';
 // (순환참조 없음, ward-management는 medication을 참조하지 않음).
 import { WardText } from '@features/ward-management/ui';
 import { MealType, useTodayPills } from '../model';
-
-const MEAL_SLOTS: { slot: MealType; label: string }[] = [
-  { slot: 'morning', label: '아침' },
-  { slot: 'lunch', label: '점심' },
-  { slot: 'dinner', label: '저녁' },
-];
-
-const SLOT_LABELS: Record<MealType, string> = { morning: '아침', lunch: '점심', dinner: '저녁' };
+import { MEAL_TYPE_LABELS, MEAL_TYPES } from '../utils';
 
 // 돌봄대상자 메인 화면의 "복약 관리" 카드. 오늘 복약 기록은 서버(/api/pill/today) 기준이라 매일 새로 시작하고,
 // 보호자가 꺼둔 시간대·오늘 복용 요일이 아닌 시간대는 흐리게 표시되며 누를 수 없음.
@@ -45,7 +38,7 @@ export function WardMedicationCard() {
           <ActivityIndicator size="small" color={colors.primary} />
         ) : (
           <View className="flex-row justify-around">
-            {MEAL_SLOTS.map(({ slot, label }) => {
+            {MEAL_TYPES.map(slot => {
               const pill = pillsBySlot[slot];
               const isScheduled = !!pill;
               const isTaken = !!pill?.taken;
@@ -57,7 +50,7 @@ export function WardMedicationCard() {
                   className={`items-center gap-1 ${isScheduled ? '' : 'opacity-30'}`}
                   accessibilityState={{ disabled: !isScheduled || isTaken, checked: isTaken }}>
                   <WardText size="md" className="font-pretendard-semibold text-text-primary">
-                    {label}
+                    {MEAL_TYPE_LABELS[slot]}
                   </WardText>
                   <View className="h-[60px] w-[60px] items-center justify-center">
                     {confirmingSlot === slot ? (
@@ -82,7 +75,7 @@ export function WardMedicationCard() {
 
       <ConfirmModal
         visible={pendingSlot !== null}
-        title={pendingSlot ? `${SLOT_LABELS[pendingSlot]} 약을 드셨나요?` : ''}
+        title={pendingSlot ? `${MEAL_TYPE_LABELS[pendingSlot]} 약을 드셨나요?` : ''}
         subtitle="확인을 누르면 보호자에게 복용 완료 알림이 가요. 확인 후에는 되돌릴 수 없어요."
         cancelLabel="아니요"
         confirmLabel="먹었어요"

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { MealType, TodayMedicationStatus, useSyncWardTodayMedication, useWardTodayMedication } from '@features/medication/model';
+import { TodayMedicationStatus, useSyncWardTodayMedication, useWardTodayMedication } from '@features/medication/model';
+import { MEAL_TYPE_LABELS, MEAL_TYPES } from '@features/medication/utils';
 import { SectionCard, AddButton } from '@shared/ui';
 import PrescriptionIcon from '@assets/icons/section/prescription2.svg';
 import CapsuleOnIcon from '@assets/icons/medication/capsule-on.svg';
@@ -26,19 +27,13 @@ export function MedicationSection({
       action={<AddButton label="복약 관리" onPress={onPressMore} />}
       className="">
       <View className="mt-3 flex-row justify-around">
-        {MEAL_SLOTS.map(({ slot, label }) => (
-          <MedicationSlot key={slot} label={label} status={statusBySlot[slot]} />
+        {MEAL_TYPES.map(slot => (
+          <MedicationSlot key={slot} label={MEAL_TYPE_LABELS[slot]} status={statusBySlot[slot]} />
         ))}
       </View>
     </SectionCard>
   );
 }
-
-const MEAL_SLOTS: { slot: MealType; label: string }[] = [
-  { slot: 'morning', label: '아침' },
-  { slot: 'lunch', label: '점심' },
-  { slot: 'dinner', label: '저녁' },
-];
 
 function MedicationSlot({ label, status }: { label: string; status: TodayMedicationStatus }) {
   const taken = status === 'taken';

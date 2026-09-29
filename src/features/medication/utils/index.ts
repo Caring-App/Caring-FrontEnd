@@ -54,6 +54,8 @@ export function formatDays(days: Weekday[]) {
     .join(', ');
 }
 
+// 시간대 표시 순서와 라벨 — 복약 관련 화면(어르신 카드, 보호자 홈, 하루 요약, 등록 모달)이 모두 이 값을 씀
+export const MEAL_TYPES: MealType[] = ['morning', 'lunch', 'dinner'];
 export const MEAL_TYPE_LABELS: Record<MealType, string> = { morning: '아침', lunch: '점심', dinner: '저녁' };
 
 const MEAL_TYPE_TO_PILL_NAME: Record<MealType, PillName> = { morning: 'MORNING', lunch: 'LUNCH', dinner: 'DINNER' };

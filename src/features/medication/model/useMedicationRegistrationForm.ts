@@ -3,17 +3,16 @@ import { Alert } from 'react-native';
 import type { TimeState } from '@shared/types';
 import { useVoiceRecording } from '@shared/model';
 import { logApiError } from '@shared/api';
-import { isSameDaySet } from '../utils';
+import { isSameDaySet, MEAL_TYPE_LABELS, MEAL_TYPES } from '../utils';
 import { MedicationEntry, MedicationRegistrationData, MedicationSoundType, MealType, Weekday } from './medicationTypes';
 import { useMedicationListStore } from './useMedicationListStore';
 
 const INITIAL_TIME: TimeState = { hour: '01', minute: '00', second: '00', amPm: 'AM' };
 
-export const MEAL_TYPE_OPTIONS: { value: MealType; label: string }[] = [
-  { value: 'morning', label: '아침' },
-  { value: 'lunch', label: '점심' },
-  { value: 'dinner', label: '저녁' },
-];
+export const MEAL_TYPE_OPTIONS: { value: MealType; label: string }[] = MEAL_TYPES.map(value => ({
+  value,
+  label: MEAL_TYPE_LABELS[value],
+}));
 
 export const WEEKDAY_OPTIONS: { value: Weekday; label: string }[] = [
   { value: 'mon', label: '월' },

@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useWardMoodStatus, HealthStatus, MOCK_HEALTH_METRICS } from '@features/health/model';
 import { MealType, TodayMedicationStatus, useWardTodayMedication } from '@features/medication/model';
+import { MEAL_TYPE_LABELS, MEAL_TYPES } from '@features/medication/utils';
 import EnvelopeFillIcon from '@assets/icons/report/envelope-fill.svg';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 import ChevronDownIcon from '@assets/icons/action/chevron-down.svg';
@@ -16,12 +17,6 @@ const HEALTH_STATUS_LABELS: Record<HealthStatus, string> = {
   bad: '안좋음',
 };
 
-const MEAL_SLOT_LABELS: Record<MealType, string> = {
-  morning: '아침',
-  lunch: '점심',
-  dinner: '저녁',
-};
-
 function buildDailySummary(
   wardName: string,
   status: HealthStatus | null,
@@ -32,9 +27,9 @@ function buildDailySummary(
   }
 
   // 오늘 먹을 약이 없는 시간대(notScheduled)는 "안 먹음"으로 치지 않음
-  const missedSlot = (['morning', 'lunch', 'dinner'] as MealType[]).find(slot => medication[slot] === 'notTaken');
+  const missedSlot = MEAL_TYPES.find(slot => medication[slot] === 'notTaken');
   const medicationClause = missedSlot
-    ? `${wardName}님은 오늘 ${MEAL_SLOT_LABELS[missedSlot]}약을 복용하지 않았어요`
+    ? `${wardName}님은 오늘 ${MEAL_TYPE_LABELS[missedSlot]}약을 복용하지 않았어요`
     : `${wardName}님은 오늘 약을 모두 잘 복용했어요`;
 
   return `${wardName}님의 오늘 건강 상태는 '${HEALTH_STATUS_LABELS[status]}' 이에요! ${medicationClause}`;
