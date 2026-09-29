@@ -8,3 +8,4 @@ export * from './healthRecordDiseases';
 export * from './useStepSync';
 export * from './useDailyReportStore';
 export * from './useWardDailyReport';
+export * from './syncTodaySteps';

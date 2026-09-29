@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { AppState } from 'react-native';
-import { recordStepsApi } from '../api/stepRecordApi';
-import { prepareStepsAccess, readTodaySteps } from '../utils/healthConnect';
+import { prepareStepsAccess } from '../utils/healthConnect';
+import { syncTodaySteps } from './syncTodaySteps';
 
 // 앱이 켜져 있는 동안 걸음 수를 다시 보내는 간격 — 서버는 "오늘 누적 걸음 수"를 덮어써서 여러 번 보내도 안전함
 const SYNC_INTERVAL_MS = 10 * 60 * 1000;
@@ -21,10 +21,9 @@ export function useStepSync() {
         const status = await prepareStepsAccess(!permissionAskedRef.current);
         permissionAskedRef.current = true;
         if (status !== 'granted') return;
-        await recordStepsApi(await readTodaySteps());
+        await syncTodaySteps();
       } catch (error) {
-        // 레포트 시각(마감) 이후엔 서버가 400을 주는 게 정상이라 경고로만 남김
-        console.warn('[useStepSync] 걸음 수 동기화 실패', error instanceof Error ? error.message : error);
+        console.warn('[useStepSync] Health Connect 확인 실패', error instanceof Error ? error.message : error);
       } finally {
         isSyncingRef.current = false;
       }
