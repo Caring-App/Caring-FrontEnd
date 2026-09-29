@@ -36,25 +36,19 @@ export function buildDailySummary(
 }
 
 const HEALTH_VALUE_LABELS: Record<HealthRecordKind, { label: string; unit: string }> = {
-  bloodSugar: { label: '혈당', unit: 'mg/dL' },
-  bloodPressure: { label: '혈압(수축기)', unit: 'mmHg' },
+  bloodSugar: { label: '혈당 수치', unit: 'mg/dL' },
+  bloodPressure: { label: '혈압 수치', unit: 'mmHg' },
 };
 
 const formatSteps = (steps: number | null) => (steps === null ? '기록 없음' : `${steps.toLocaleString('ko-KR')}보`);
 
-// 혈당·혈압은 어르신이 해당 기저질환을 등록한 경우(그래프에 항목이 있음)나 기록이 있을 때만 보여줌
-function visibleHealthKinds(data: WardDailyReportData, values: Partial<Record<HealthRecordKind, number>>) {
-  return (Object.keys(HEALTH_VALUE_LABELS) as HealthRecordKind[]).filter(
-    kind => values[kind] !== undefined || !!data.graph?.some(series => series.key === kind),
-  );
-}
-
-// "오늘 하루 요약" 아래 수치 줄 — 레포트가 만들어졌으면 레포트 값(질병별 하루 평균, 복약률), 아니면 지금까지의 실시간 값
+// "오늘 하루 요약" 아래 수치 줄(카드를 펼쳤을 때) — 걸음 수·혈당·혈압은 기록이 없어도 항상 보여줌.
+// 레포트가 만들어졌으면 레포트 값(질병별 하루 평균, 복약률), 아니면 지금까지의 실시간 값
 export function buildSummaryStatLines(data: WardDailyReportData): string[] {
   const { report } = data;
   const healthValues = report ? reportHealthAverages(report.healthDetails) : data.todayHealth;
   const lines = [`${report ? '걸음 수' : '오늘의 걸음 수'}: ${formatSteps(report ? report.steps : data.todaySteps)}`];
-  visibleHealthKinds(data, healthValues).forEach(kind => {
+  (Object.keys(HEALTH_VALUE_LABELS) as HealthRecordKind[]).forEach(kind => {
     const { label, unit } = HEALTH_VALUE_LABELS[kind];
     const value = healthValues[kind];
     lines.push(`${report ? `${label} 평균` : `오늘의 ${label}`}: ${value === undefined ? '기록 없음' : `${value} ${unit}`}`);

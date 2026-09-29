@@ -103,7 +103,11 @@ export function DailyReportCard({
         </View>
       </TourTarget>
 
-      <DailyReportSummary data={dailyReport} liveSummary={buildDailySummary(wardName, status, medication)} />
+      <DailyReportSummary
+        data={dailyReport}
+        liveSummary={buildDailySummary(wardName, status, medication)}
+        expanded={isDetailVisible}
+      />
 
       {isDetailVisible && <HealthGraphSection series={dailyReport.graph} isLoading={dailyReport.isLoading} />}
     </TourTarget>
