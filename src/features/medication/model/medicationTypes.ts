@@ -61,3 +61,26 @@ export interface MedicationEntry {
   voiceFileUrl: string;
   enabled: boolean;
 }
+
+// GET /api/pill/today 응답 1건 — 로그인한 어르신의 "오늘 먹어야 할" 복약(켜져 있고 오늘 요일에 해당하는 스케줄만).
+// 서버가 날짜별로 pillLog를 새로 만들어서 taken이 매일 false로 시작함.
+export interface PillToday {
+  pillScheduleId: number;
+  pillLogId: number;
+  pillName: PillName;
+  pillNameKr: string;
+  takeTime: string;
+  recordDate: string;
+  confirmedAt: string | null;
+  taken: boolean;
+}
+
+// POST /api/pill/confirm 응답
+export interface PillLog {
+  pillLogId: number;
+  pillScheduleId: number;
+  recordDate: string;
+  confirmedAt: string | null;
+  currentRetryCount: number;
+  taken: boolean;
+}

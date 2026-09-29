@@ -7,9 +7,9 @@ export type MealSlot = 'morning' | 'lunch' | 'dinner';
 export type MedicationTaken = Record<MealSlot, boolean>;
 
 interface MedicationState {
-  // TODO: "오늘 복용했는지" 여부를 서버에 기록하는 API가 아직 없어서(복약 스케줄 자체를 정의하는
-  // /api/pill/schedule과는 별개 개념) 기기 로컬 저장까지만 함 — 보호자/어르신이 서로 다른 기기를
-  // 쓰는 실서비스에서는 이것만으론 동기화가 안 되고, 해당 API가 생기면 그쪽으로 교체 필요.
+  // 어르신 쪽 복용 기록은 이제 서버(/api/pill/today, /api/pill/confirm — useTodayPills)가 원본이고,
+  // 이 값은 같은 기기의 보호자 화면(MedicationSection, DailyReportCard)에 보여주려고 useTodayPills가 맞춰 넣어주는 사본.
+  // TODO: 보호자용 "어르신 오늘 복약 상태" 조회 API가 없어서 보호자가 다른 기기를 쓰면 반영 안 됨 — 생기면 교체 필요.
   takenByWard: Record<string, MedicationTaken>;
   setTaken: (wardId: string, slot: MealSlot, value: boolean) => void;
 }
