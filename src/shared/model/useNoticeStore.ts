@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { resetOnLogout } from '@shared/store/resetOnLogout';
 
 // 안내 모달 버튼 — Alert.alert의 버튼과 같은 모양이라 그대로 옮겨 쓸 수 있음.
 // 'cancel'은 회색(취소), 그 외는 주황(확인/실행) 버튼으로 그림
@@ -48,6 +49,9 @@ export const useNoticeStore = create<NoticeState>((set, get) => ({
     button?.onPress?.();
   },
 }));
+
+// 로그아웃하면 이전 계정 화면에서 쌓인 안내(조회 실패 등)가 로그인 화면에 남지 않게 비움
+resetOnLogout(useNoticeStore);
 
 const DEFAULT_BUTTONS: NoticeButton[] = [{ text: '확인' }];
 
