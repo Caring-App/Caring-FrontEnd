@@ -8,7 +8,7 @@ import ClipboardPulseIcon from '@assets/icons/section/clipboard-pulse.svg';
 // (순환참조 없음, ward-management는 health를 참조하지 않음).
 import { WardText } from '@features/ward-management/ui';
 import { HealthStatus, useHealthStatusStore } from '../model';
-import { HealthStatusCheckFailedModal } from './HealthStatusCheckFailedModal';
+import { WardNoticeModal } from './WardNoticeModal';
 import { HealthStatusEmojiButton } from './HealthStatusEmojiButton';
 
 const HEALTH_STATUS_OPTIONS: HealthStatus[] = ['good', 'normal', 'bad'];
@@ -74,7 +74,11 @@ export function WardHealthStatusCard({ wardId, onPressRecord }: WardHealthStatus
         </WardText>
       </Pressable>
 
-      <HealthStatusCheckFailedModal message={failedMessage} onClose={() => setFailedMessage(null)} />
+      <WardNoticeModal
+        title="건강 상태를 기록하지 못했어요"
+        message={failedMessage}
+        onClose={() => setFailedMessage(null)}
+      />
     </View>
   );
 }
