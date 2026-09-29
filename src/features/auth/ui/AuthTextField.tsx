@@ -3,11 +3,11 @@ import { ActivityIndicator, Text, TextInput, TextInputProps, TouchableOpacity, V
 import { colors } from '@shared/theme/colors';
 
 // 회원가입 리뉴얼 회색 입력창 (Figma 967:6586 Text Input — #F5F5F5 / radius 12 / 높이 54.5)
-const SIGNUP_INPUT_CLASSNAME =
-  'h-[55px] rounded-card bg-surface-signupInput px-4 font-pretendard text-md text-black';
+const AUTH_INPUT_CLASSNAME =
+  'h-[55px] rounded-card bg-surface-authInput px-4 font-pretendard text-md text-black';
 
-export function SignupFieldLabel({ children }: { children: string }) {
-  return <Text className="mb-2 font-pretendard-bold text-base leading-[21px] text-text-signupTitle">{children}</Text>;
+export function AuthFieldLabel({ children }: { children: string }) {
+  return <Text className="mb-2 font-pretendard-bold text-base leading-[21px] text-text-authTitle">{children}</Text>;
 }
 
 interface SideButton {
@@ -17,7 +17,7 @@ interface SideButton {
   isLoading?: boolean;
 }
 
-interface SignupTextFieldProps extends TextInputProps {
+interface AuthTextFieldProps extends TextInputProps {
   label: string;
   // 입력창 오른쪽 안쪽에 겹쳐 띄울 요소(인증번호 타이머 등)
   rightElement?: React.ReactNode;
@@ -28,16 +28,16 @@ interface SignupTextFieldProps extends TextInputProps {
   helperMessage?: string;
 }
 
-export const SignupTextField = forwardRef<TextInput, SignupTextFieldProps>(
+export const AuthTextField = forwardRef<TextInput, AuthTextFieldProps>(
   ({ label, rightElement, sideButton, errorMessage, helperMessage, ...inputProps }, ref) => (
     <View>
-      <SignupFieldLabel>{label}</SignupFieldLabel>
+      <AuthFieldLabel>{label}</AuthFieldLabel>
       <View className="flex-row gap-2">
         <View className="flex-1 justify-center">
           <TextInput
             ref={ref}
-            className={`${SIGNUP_INPUT_CLASSNAME} ${rightElement ? 'pr-16' : ''}`}
-            placeholderTextColor={colors.textSignupPlaceholder}
+            className={`${AUTH_INPUT_CLASSNAME} ${rightElement ? 'pr-16' : ''}`}
+            placeholderTextColor={colors.textAuthPlaceholder}
             {...inputProps}
           />
           {rightElement && <View className="absolute right-4">{rightElement}</View>}
@@ -45,7 +45,7 @@ export const SignupTextField = forwardRef<TextInput, SignupTextFieldProps>(
         {sideButton && (
           <TouchableOpacity
             className={`min-w-[100px] items-center justify-center rounded-card px-5 ${
-              sideButton.disabled ? 'bg-signupButtonDisabled' : 'bg-primary'
+              sideButton.disabled ? 'bg-authButtonDisabled' : 'bg-primary'
             }`}
             onPress={sideButton.onPress}
             disabled={sideButton.disabled || sideButton.isLoading}
@@ -55,7 +55,7 @@ export const SignupTextField = forwardRef<TextInput, SignupTextFieldProps>(
               <ActivityIndicator size="small" color={colors.surface} />
             ) : (
               <Text
-                className={`font-pretendard-bold text-base ${sideButton.disabled ? 'text-text-signupDesc' : 'text-white'}`}
+                className={`font-pretendard-bold text-base ${sideButton.disabled ? 'text-text-authDesc' : 'text-white'}`}
               >
                 {sideButton.label}
               </Text>
@@ -72,4 +72,4 @@ export const SignupTextField = forwardRef<TextInput, SignupTextFieldProps>(
   ),
 );
 
-SignupTextField.displayName = 'SignupTextField';
+AuthTextField.displayName = 'AuthTextField';

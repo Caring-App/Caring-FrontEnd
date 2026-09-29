@@ -2,7 +2,7 @@ import React from 'react';
 import { ActivityIndicator, Text, TouchableOpacity } from 'react-native';
 import { colors } from '@shared/theme/colors';
 
-interface SignupPrimaryButtonProps {
+interface AuthPrimaryButtonProps {
   label: string;
   onPress: () => void;
   disabled?: boolean;
@@ -10,13 +10,13 @@ interface SignupPrimaryButtonProps {
 }
 
 // 회원가입 리뉴얼 하단 주황 버튼 (Figma 966:5764 PrimaryButton, 60px / radius 12)
-export function SignupPrimaryButton({ label, onPress, disabled = false, isLoading = false }: SignupPrimaryButtonProps) {
+export function AuthPrimaryButton({ label, onPress, disabled = false, isLoading = false }: AuthPrimaryButtonProps) {
   const isInactive = disabled || isLoading;
 
   return (
     <TouchableOpacity
       className={`h-[60px] w-full items-center justify-center rounded-card ${
-        disabled ? 'bg-signupButtonDisabled' : 'bg-primary'
+        disabled ? 'bg-authButtonDisabled' : 'bg-primary'
       }`}
       onPress={onPress}
       disabled={isInactive}
@@ -25,7 +25,7 @@ export function SignupPrimaryButton({ label, onPress, disabled = false, isLoadin
       {isLoading ? (
         <ActivityIndicator size="small" color={colors.surface} />
       ) : (
-        <Text className={`font-pretendard-bold text-lg ${disabled ? 'text-text-signupDesc' : 'text-white'}`}>
+        <Text className={`font-pretendard-bold text-lg ${disabled ? 'text-text-authDesc' : 'text-white'}`}>
           {label}
         </Text>
       )}

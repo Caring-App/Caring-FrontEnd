@@ -5,7 +5,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import { CaringLogoHorizontal } from '@shared/ui/AppHeader/CaringLogo';
 import { colors } from '@shared/theme/colors';
 import { CodeInputField } from './CodeInputField';
-import { SignupPrimaryButton } from './SignupPrimaryButton';
+import { AuthPrimaryButton } from './AuthPrimaryButton';
 import RssIcon from '@assets/icons/action/rss.svg';
 import CloseIcon from '@assets/icons/action/close-x.svg';
 
@@ -81,7 +81,7 @@ export const SignupWelcomeStep = ({ userName = '---', userCode = '', currentStep
       )}
 
       <View className="px-6 pb-6 pt-2">
-        <SignupPrimaryButton label={currentStep.buttonLabel || '다음'} onPress={onNext} />
+        <AuthPrimaryButton label={currentStep.buttonLabel || '다음'} onPress={onNext} />
       </View>
     </SafeAreaView>
   );

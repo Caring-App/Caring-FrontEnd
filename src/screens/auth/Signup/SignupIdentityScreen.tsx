@@ -4,7 +4,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
 import { useSignupDraftStore, useSignupIdentity } from '@features/auth/model';
 import { FORMATTED_PHONE_MAX_LENGTH, formatPhoneNumber } from '@features/auth/utils';
-import { SignupStepLayout, SignupTextField } from '@features/auth/ui';
+import { AuthStepLayout, AuthTextField } from '@features/auth/ui';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'SignupIdentity'>;
 
@@ -27,7 +27,7 @@ export default function SignupIdentityScreen({ navigation }: Props) {
   };
 
   return (
-    <SignupStepLayout
+    <AuthStepLayout
       title={'본인인증을 위한\n정보를 입력해주세요.'}
       description={'원활한 서비스를 이용을 위해 한번 인증하는\n과정이 필요합니다.'}
       onClose={handleClose}
@@ -39,7 +39,7 @@ export default function SignupIdentityScreen({ navigation }: Props) {
     >
       <View className="mt-6 gap-6">
         {isVisible('phone') && (
-          <SignupTextField
+          <AuthTextField
             ref={phoneRef}
             label="휴대폰번호"
             placeholder="010-0000-0000"
@@ -51,7 +51,7 @@ export default function SignupIdentityScreen({ navigation }: Props) {
           />
         )}
 
-        <SignupTextField
+        <AuthTextField
           label="이름"
           placeholder="이름"
           value={name}
@@ -61,6 +61,6 @@ export default function SignupIdentityScreen({ navigation }: Props) {
           onSubmitEditing={handleNext}
         />
       </View>
-    </SignupStepLayout>
+    </AuthStepLayout>
   );
 }

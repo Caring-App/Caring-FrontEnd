@@ -3,12 +3,12 @@ import { Text, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
 import useResetPassword from '@features/auth/model/useResetPassword';
-import { SignupStepLayout, SignupTextField } from '@features/auth/ui';
+import { AuthStepLayout, AuthTextField } from '@features/auth/ui';
 import { FORMATTED_PHONE_MAX_LENGTH, formatPhoneNumber, isValidPhoneNumber } from '@features/auth/utils';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'ResetPassword'>;
 
-// 비밀번호 찾기 — 별도 시안이 없어 회원가입 단계 화면(SignupStepLayout, 회색 입력창)과 같은 스타일로 구성.
+// 비밀번호 찾기 — 별도 시안이 없어 회원가입 단계 화면(AuthStepLayout, 회색 입력창)과 같은 스타일로 구성.
 // 휴대폰 인증을 마쳐야 새 비밀번호 입력칸이 열림
 export default function ResetPasswordScreen({ navigation }: Props) {
   const {
@@ -39,7 +39,7 @@ export default function ResetPasswordScreen({ navigation }: Props) {
   const isConfirmMismatched = !!newPasswordConfirm && newPassword !== newPasswordConfirm;
 
   return (
-    <SignupStepLayout
+    <AuthStepLayout
       title="비밀번호를 재설정해주세요"
       description={'가입하신 휴대폰번호로 인증한 뒤\n새 비밀번호를 설정해 주세요.'}
       onClose={() => navigation.goBack()}
@@ -51,7 +51,7 @@ export default function ResetPasswordScreen({ navigation }: Props) {
       errorMessage={submitError}
     >
       <View className="mt-6 gap-6">
-        <SignupTextField
+        <AuthTextField
           label="휴대폰번호"
           placeholder="휴대폰번호를 입력하세요"
           keyboardType="number-pad"
@@ -68,7 +68,7 @@ export default function ResetPasswordScreen({ navigation }: Props) {
         />
 
         {isCodeSent && (
-          <SignupTextField
+          <AuthTextField
             label="인증번호"
             placeholder="인증번호"
             keyboardType="number-pad"
@@ -81,7 +81,7 @@ export default function ResetPasswordScreen({ navigation }: Props) {
             helperMessage={isPhoneVerified ? '휴대폰 인증이 완료되었습니다.' : undefined}
             rightElement={
               !isPhoneVerified && (
-                <Text className="font-pretendard-medium text-base text-text-signupDesc">{remainingTime}</Text>
+                <Text className="font-pretendard-medium text-base text-text-authDesc">{remainingTime}</Text>
               )
             }
             sideButton={{
@@ -98,14 +98,14 @@ export default function ResetPasswordScreen({ navigation }: Props) {
 
         {isPhoneVerified && (
           <>
-            <SignupTextField
+            <AuthTextField
               label="새 비밀번호"
               placeholder="새 비밀번호를 입력하세요"
               secureTextEntry
               value={newPassword}
               onChangeText={setNewPassword}
             />
-            <SignupTextField
+            <AuthTextField
               label="새 비밀번호 확인"
               placeholder="새 비밀번호를 다시 한번 입력하세요"
               secureTextEntry
@@ -117,6 +117,6 @@ export default function ResetPasswordScreen({ navigation }: Props) {
           </>
         )}
       </View>
-    </SignupStepLayout>
+    </AuthStepLayout>
   );
 }

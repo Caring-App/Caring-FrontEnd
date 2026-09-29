@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useLinkAccount } from '@features/account-link/model';
-import { CodeInputField, SignupPrimaryButton } from '@features/auth/ui';
+import { CodeInputField, AuthPrimaryButton } from '@features/auth/ui';
 import { CaringLogoHorizontal } from '@shared/ui/AppHeader/CaringLogo';
 import { colors } from '@shared/theme/colors';
 import RssIcon from '@assets/icons/action/rss.svg';
@@ -62,7 +62,7 @@ export default function LinkAccountScreen({ navigation }: { navigation: any }) {
       </View>
 
       <View className="px-6 pb-6 pt-2">
-        <SignupPrimaryButton
+        <AuthPrimaryButton
           label="다음"
           onPress={handleNext}
           disabled={!isValidCode}

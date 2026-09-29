@@ -19,14 +19,14 @@ export function DiseaseSelector({ selectedDiseases, onToggle }: DiseaseSelectorP
           <View key={disease} className="w-1/3 p-1.5">
             <TouchableOpacity
               className={`min-h-[50px] flex-row items-center gap-2 rounded-card border-[0.8px] px-3 py-3.5 ${
-                selected ? 'border-primary bg-surface-signupSelected' : 'border-border-signupCard bg-surface'
+                selected ? 'border-primary bg-surface-authSelected' : 'border-border-authCard bg-surface'
               }`}
               onPress={() => onToggle(disease)}
               activeOpacity={0.7}
             >
               <View
                 className={`h-5 w-5 items-center justify-center rounded border-[0.8px] ${
-                  selected ? 'border-primary bg-primary' : 'border-border-signupCheckbox bg-surface'
+                  selected ? 'border-primary bg-primary' : 'border-border-authCheckbox bg-surface'
                 }`}
               >
                 {selected && <CheckSmallWhiteIcon width={12} height={9} />}

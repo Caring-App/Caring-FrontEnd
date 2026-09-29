@@ -43,11 +43,11 @@ module.exports = {
           // 약관 동의 화면 "(필수)" 배지 텍스트(Figma 151:17585, #155DFC)
           termsRequired: '#155dfc',
           // 회원가입 리뉴얼(Figma 970:13198) 단계별 화면 제목/입력 라벨/시작 화면 버튼 텍스트(#1A1614, 시작 화면 #1A1A1A는 사실상 같은 값이라 통합)
-          signupTitle: '#1a1614',
+          authTitle: '#1a1614',
           // 회원가입 단계 화면 제목 아래 설명 문구(Figma 966:5724 등, #9E9E9E) — 인증 타이머 숫자도 같은 값
-          signupDesc: '#9e9e9e',
+          authDesc: '#9e9e9e',
           // 회원가입 회색 입력창 placeholder(Figma 967:6594 등, #BDBDBD)
-          signupPlaceholder: '#bdbdbd',
+          authPlaceholder: '#bdbdbd',
           // 약관 동의 항목 텍스트 / "인증번호 재요청" 링크(Figma 966:5736, 970:7278, #616161)
           termItem: '#616161',
           // 기저질환 선택 카드 텍스트(Figma 970:7806, #424242)
@@ -80,9 +80,9 @@ module.exports = {
           // 복약 수정 모달의 "복약 정보 삭제하기" 링크 밑줄(Figma 391:12078, #E40004). text.danger와 사실상 동일 색이라 그 값 재사용
           danger: '#e10004',
           // 회원가입 리뉴얼 카드형 버튼(전체 동의, 기저질환 카드) 테두리(Figma 966:5777 등, #E0E0E0)
-          signupCard: '#e0e0e0',
+          authCard: '#e0e0e0',
           // 기저질환 카드 체크박스 미선택 테두리(Figma 970:7804, #BDBDBD)
-          signupCheckbox: '#bdbdbd',
+          authCheckbox: '#bdbdbd',
           // 전화번호 로그인 화면 입력창 테두리(Figma 965:42, #E8E9EB)
           loginField: '#e8e9eb',
         },
@@ -95,12 +95,12 @@ module.exports = {
           // 약관 동의 화면 "전체 동의" 행 배경(Figma 151:17581, #F9FAFB)
           termsRow: '#f9fafb',
           // 회원가입 리뉴얼 회색 입력창 배경(Figma 967:6586 등, #F5F5F5)
-          signupInput: '#f5f5f5',
+          authInput: '#f5f5f5',
           // 선택된 카드 배경(Figma 970:7163 본인인증 약관 선택 상태, #FFF5EE) — 기저질환 카드 선택 상태에 사용
-          signupSelected: '#fff5ee',
+          authSelected: '#fff5ee',
         },
         // 회원가입 리뉴얼 비활성 버튼(Figma 966:5613 "동의하고 계속 진행" 비활성, #E0E0E0 배경 + #9E9E9E 텍스트)
-        signupButtonDisabled: '#e0e0e0',
+        authButtonDisabled: '#e0e0e0',
         // 전화번호 로그인 화면 비활성 "로그인" 버튼(Figma 965:80, #D2D5D6)
         loginButtonDisabled: '#d2d5d6',
         // 마이페이지 프로필 아바타 배경(Figma 60:6329 User 03C, #FFC9B3~#FFD2C2 그라디언트를 단색으로 근사)

@@ -66,7 +66,7 @@ export default function PhoneLoginScreen({ navigation }: Props) {
             <TextInput
               className={LOGIN_INPUT_CLASSNAME}
               placeholder="전화번호를 입력하세요"
-              placeholderTextColor={colors.textSignupDesc}
+              placeholderTextColor={colors.textAuthDesc}
               keyboardType="number-pad"
               value={formatPhoneNumber(phone)}
               onChangeText={value => setPhone(normalizePhoneDigits(value))}
@@ -78,7 +78,7 @@ export default function PhoneLoginScreen({ navigation }: Props) {
             <TextInput
               className={LOGIN_INPUT_CLASSNAME}
               placeholder="비밀번호를 입력하세요"
-              placeholderTextColor={colors.textSignupDesc}
+              placeholderTextColor={colors.textAuthDesc}
               secureTextEntry
               value={password}
               onChangeText={setPassword}

@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
 import { useSignupDraftStore } from '@features/auth/model';
-import { SignupStepLayout, SignupTextField } from '@features/auth/ui';
+import { AuthStepLayout, AuthTextField } from '@features/auth/ui';
 import { isValidPassword, PASSWORD_RULE_MESSAGE } from '@features/auth/utils';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'SignupPassword'>;
@@ -29,7 +29,7 @@ export default function SignupPasswordScreen({ navigation }: Props) {
   };
 
   return (
-    <SignupStepLayout
+    <AuthStepLayout
       title="비밀번호를 입력해주세요"
       description={PASSWORD_RULE_MESSAGE}
       onClose={handleClose}
@@ -38,7 +38,7 @@ export default function SignupPasswordScreen({ navigation }: Props) {
       buttonDisabled={!canProceed}
     >
       <View className="mt-6 gap-4">
-        <SignupTextField
+        <AuthTextField
           label="비밀번호"
           placeholder="비밀번호를 입력하세요"
           secureTextEntry
@@ -47,7 +47,7 @@ export default function SignupPasswordScreen({ navigation }: Props) {
           autoFocus
           errorMessage={password && !isPasswordValid ? `${PASSWORD_RULE_MESSAGE}으로 입력해 주세요.` : undefined}
         />
-        <SignupTextField
+        <AuthTextField
           label="비밀번호 확인"
           placeholder="비밀번호를 다시 한번 입력하세요"
           secureTextEntry
@@ -57,6 +57,6 @@ export default function SignupPasswordScreen({ navigation }: Props) {
           errorMessage={passwordConfirm && !isConfirmMatched ? '비밀번호가 일치하지 않습니다.' : undefined}
         />
       </View>
-    </SignupStepLayout>
+    </AuthStepLayout>
   );
 }

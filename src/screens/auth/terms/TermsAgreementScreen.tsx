@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
 import { useSignupDraftStore, useTermsAgreement, TERM_LIST } from '@features/auth/model';
-import { SignupStepLayout, TermAgreeAllButton, TermRow } from '@features/auth/ui';
+import { AuthStepLayout, TermAgreeAllButton, TermRow } from '@features/auth/ui';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'TermsAgreement'>;
 
@@ -21,7 +21,7 @@ export default function TermsAgreementScreen({ navigation, route }: Props) {
   };
 
   return (
-    <SignupStepLayout
+    <AuthStepLayout
       title={'약관에 동의하고\n케어링을 시작하세요.'}
       description={'고객님의 정보 보호를 위해 최선을 다하고 있습니다.\n아래 내용을 확인 후 동의해주세요.'}
       onClose={() => navigation.popToTop()}
@@ -44,6 +44,6 @@ export default function TermsAgreementScreen({ navigation, route }: Props) {
           />
         ))}
       </View>
-    </SignupStepLayout>
+    </AuthStepLayout>
   );
 }

@@ -18,7 +18,7 @@ export function StartScreenButton({ label, onPress, icon, disabled }: StartScree
       activeOpacity={0.8}
     >
       {icon}
-      <Text className="font-pretendard-bold text-lg leading-[24px] text-text-signupTitle">{label}</Text>
+      <Text className="font-pretendard-bold text-lg leading-[24px] text-text-authTitle">{label}</Text>
     </TouchableOpacity>
   );
 }

@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
 import { useSignupDraftStore, useSignupSubmit } from '@features/auth/model';
-import { DiseaseSelector, SignupStepLayout } from '@features/auth/ui';
+import { DiseaseSelector, AuthStepLayout } from '@features/auth/ui';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'SignupDisease'>;
 
@@ -28,7 +28,7 @@ export default function SignupDiseaseScreen({ navigation }: Props) {
   };
 
   return (
-    <SignupStepLayout
+    <AuthStepLayout
       title="기저질환을 선택해주세요"
       description="해당되는 기저질환을 모두 선택해 주세요. (복수 선택 가능)"
       onClose={handleClose}
@@ -42,6 +42,6 @@ export default function SignupDiseaseScreen({ navigation }: Props) {
       <View className="mt-4">
         <DiseaseSelector selectedDiseases={selectedDiseases} onToggle={toggleDisease} />
       </View>
-    </SignupStepLayout>
+    </AuthStepLayout>
   );
 }

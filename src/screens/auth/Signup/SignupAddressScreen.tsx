@@ -3,7 +3,7 @@ import { Pressable, Text, TouchableOpacity, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
 import { useSignupDraftStore, useSignupSubmit } from '@features/auth/model';
-import { SignupFieldLabel, SignupStepLayout, SignupTextField } from '@features/auth/ui';
+import { AuthFieldLabel, AuthStepLayout, AuthTextField } from '@features/auth/ui';
 import { AddressSearchModal, AddressSearchResult } from '@shared/ui';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'SignupAddress'>;
@@ -42,7 +42,7 @@ export default function SignupAddressScreen({ navigation }: Props) {
   };
 
   return (
-    <SignupStepLayout
+    <AuthStepLayout
       title="주소를 입력해주세요"
       description="서비스 제공을 위해 정확한 주소를 입력해 주세요."
       onClose={handleClose}
@@ -54,14 +54,14 @@ export default function SignupAddressScreen({ navigation }: Props) {
     >
       <View className="mt-6 gap-4">
         <View>
-          <SignupFieldLabel>주소</SignupFieldLabel>
+          <AuthFieldLabel>주소</AuthFieldLabel>
           <View className="flex-row gap-2">
             <Pressable
-              className="min-h-[55px] flex-1 justify-center rounded-card bg-surface-signupInput px-4 py-3"
+              className="min-h-[55px] flex-1 justify-center rounded-card bg-surface-authInput px-4 py-3"
               onPress={() => setIsSearchVisible(true)}
             >
               <Text
-                className={`font-pretendard text-md ${baseAddress ? 'text-black' : 'text-text-signupPlaceholder'}`}
+                className={`font-pretendard text-md ${baseAddress ? 'text-black' : 'text-text-authPlaceholder'}`}
                 numberOfLines={2}
               >
                 {baseAddress || '주소를 입력하세요'}
@@ -77,7 +77,7 @@ export default function SignupAddressScreen({ navigation }: Props) {
           </View>
         </View>
 
-        <SignupTextField
+        <AuthTextField
           label="상세 주소"
           placeholder="상세 주소를 입력하세요"
           value={detailAddress}
@@ -91,6 +91,6 @@ export default function SignupAddressScreen({ navigation }: Props) {
         onClose={() => setIsSearchVisible(false)}
         onSelect={handleSelectAddress}
       />
-    </SignupStepLayout>
+    </AuthStepLayout>
   );
 }
