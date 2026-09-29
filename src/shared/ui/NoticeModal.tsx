@@ -19,8 +19,17 @@ export function NoticeModal({
 }: NoticeModalProps) {
   const fontSize = (token: keyof typeof FONT_SIZES) =>
     FONT_SIZES[token].size * textScale;
-  // 확인 버튼 하나짜리는 바깥을 눌러도 닫히게, 선택이 필요한 안내(버튼 둘 이상)는 버튼으로만 닫히게 함
-  const canDismissOutside = !!notice && notice.buttons.length === 1;
+  // 바깥 터치·뒤로가기로 닫을 때 누른 것으로 볼 버튼 — 버튼이 하나면 그 버튼, 여럿이면 취소 버튼.
+  // 그 버튼의 동작(onPress)도 그대로 실행해야 함 — 건너뛰면 "확인을 눌러야 로그인 화면으로 이동" 같은 안내에서
+  // 제자리에 갇힘. 취소 버튼 없이 선택이 필요한 안내는 버튼으로만 닫힘
+  const outsideButton = notice
+    ? notice.buttons.length === 1
+      ? notice.buttons[0]
+      : notice.buttons.find(button => button.style === 'cancel')
+    : undefined;
+  const handleOutsideDismiss = () => {
+    if (outsideButton) onDismiss(outsideButton);
+  };
 
   return (
     <Modal
@@ -28,11 +37,11 @@ export function NoticeModal({
       transparent
       animationType="fade"
       statusBarTranslucent
-      onRequestClose={() => canDismissOutside && onDismiss()}
+      onRequestClose={handleOutsideDismiss}
     >
       <Pressable
         className="flex-1 items-center justify-center bg-black/30 px-5"
-        onPress={() => canDismissOutside && onDismiss()}
+        onPress={handleOutsideDismiss}
       >
         <Pressable
           className="w-full max-w-[375px] rounded-card border border-border bg-surface px-4 pb-6 pt-6"
