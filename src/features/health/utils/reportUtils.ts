@@ -88,3 +88,10 @@ export function reportHealthAverages(details: DailyReportHealthDetail[]): Partia
   });
   return averages;
 }
+
+// 'HH:mm'이 오늘 이미 지났는지 — 백엔드 스케줄러는 설정 시각과 현재 시각(분)이 같을 때만 레포트를 만들어서,
+// 이미 지난 시각으로 바꾸면 오늘 레포트는 만들어지지 않고 어르신 기록도 바로 마감됨
+export function isTimePassedToday(timeKey: string, now = new Date()): boolean {
+  const [hour, minute] = timeKey.split(':').map(Number);
+  return hour * 60 + minute <= now.getHours() * 60 + now.getMinutes();
+}
