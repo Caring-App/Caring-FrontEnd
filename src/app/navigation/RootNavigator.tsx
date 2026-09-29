@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { useSessionStore } from '@shared/store/useSessionStore';
@@ -26,11 +26,8 @@ const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 export const RootNavigator = () => {
   const isLoggedIn = useSessionStore(state => state.isLoggedIn);
   const role = useSessionStore(state => state.role);
-  // 스플래시는 앱 실행 직후 한 번만 — 로그인했다가 로그아웃해서 인증 스택이 다시 마운트될 땐 시작 화면부터
-  const hasLoggedInRef = useRef(false);
-  if (isLoggedIn) {
-    hasLoggedInRef.current = true;
-  }
+  // 스플래시는 앱 실행 직후 한 번만 — 로그아웃해서 인증 스택이 다시 마운트될 땐 시작 화면부터
+  const hasShownSplash = useSessionStore(state => state.hasShownSplash);
 
   // 1. 보호자(PROTECTOR)로 로그인된 경우
   if (isLoggedIn && role === 'PROTECTOR') {
@@ -45,7 +42,7 @@ export const RootNavigator = () => {
   // 3. 비로그인 상태 (인증 및 회원가입 관련 스크린 제공)
   return (
     <AuthStack.Navigator
-      initialRouteName={hasLoggedInRef.current ? 'Login' : 'Splash'}
+      initialRouteName={hasShownSplash ? 'Login' : 'Splash'}
       screenOptions={{ headerShown: false }}
     >
       <AuthStack.Screen name="Splash" component={SplashScreen} options={{ animation: 'fade' }} />
