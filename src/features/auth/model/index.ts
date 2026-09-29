@@ -13,3 +13,6 @@ export * from './types';
 export { useSignupExit } from './useSignupExit';
 export { usePhoneLogin } from './usePhoneLogin';
 export { useSocialLoginStart } from './useSocialLoginStart';
+export { useSignupPassword } from './useSignupPassword';
+export { useSignupAddress } from './useSignupAddress';
+export { useSignupDisease } from './useSignupDisease';

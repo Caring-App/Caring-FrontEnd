@@ -1,27 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Text, View } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { AuthStackParamList } from '@app/navigation/types';
-import { useSignupDraftStore, useSignupExit, useSignupSubmit } from '@features/auth/model';
-import { DiseaseSelector, AuthStepLayout } from '@features/auth/ui';
+import { useSignupDisease, useSignupExit } from '@features/auth/model';
+import { AuthStepLayout, DiseaseSelector } from '@features/auth/ui';
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'SignupDisease'>;
-
-// 기저질환 선택 (Figma 970:7757) — 돌봄대상자 회원가입의 마지막 단계. 최소 1개 이상 선택해야 가입 가능
-export default function SignupDiseaseScreen({ navigation }: Props) {
-  const [selectedDiseases, setSelectedDiseases] = useState<string[]>(() => useSignupDraftStore.getState().diseases);
-  const { submit, isSubmitting, submitError } = useSignupSubmit(navigation);
-
-  const toggleDisease = (disease: string) => {
-    setSelectedDiseases(prev => (prev.includes(disease) ? prev.filter(item => item !== disease) : [...prev, disease]));
-  };
-
-  const handleNext = () => {
-    if (selectedDiseases.length === 0) return;
-    useSignupDraftStore.getState().setDiseases(selectedDiseases);
-    submit();
-  };
-
+// 기저질환 선택 (Figma 970:7757) — 돌봄대상자 회원가입의 마지막 단계
+export default function SignupDiseaseScreen() {
+  const { selectedDiseases, toggleDisease, canProceed, handleNext, isSubmitting, submitError } = useSignupDisease();
   const handleClose = useSignupExit();
 
   return (
@@ -31,7 +15,7 @@ export default function SignupDiseaseScreen({ navigation }: Props) {
       onClose={handleClose}
       buttonLabel="다음"
       onPressButton={handleNext}
-      buttonDisabled={selectedDiseases.length === 0}
+      buttonDisabled={!canProceed}
       isLoading={isSubmitting}
       errorMessage={submitError}
     >
