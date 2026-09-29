@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 import { logApiError } from '@shared/api';
 import { WEEKDAY_LABELS_KO, addMonths, getCalendarWeeks, isSameDay } from '../model/calendarUtils';
@@ -10,6 +10,7 @@ import { useWardSchedules } from '../model/useWardSchedules';
 import { MonthYearPickerModal } from './MonthYearPickerModal';
 import { ScheduleDetailModal } from './ScheduleDetailModal';
 import { DeleteScheduleConfirmModal } from './DeleteScheduleConfirmModal';
+import { showNotice } from '@shared/model';
 
 // tailwind.config.js의 text.calendarScheduleDot과 동일한 값 (borderRadius 이슈로 인라인 필요)
 const SCHEDULE_DOT_COLOR = '#8E8E93';
@@ -150,7 +151,7 @@ export function HomeScheduleCalendar({ wardId, wardName, onRequestEdit }: HomeSc
             await useScheduleStore.getState().deleteSchedule(wardId, target.id);
           } catch (error) {
             logApiError('일정 삭제 실패', error);
-            Alert.alert('', '삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
+            showNotice('', '삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
           }
         }}
       />

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useWardDailyReport, useWardMoodStatus } from '@features/health/model';
 import { buildDailySummary, formatReportTimeLabel, isTimePassedToday } from '@features/health/utils';
 import { useWardTodayMedication } from '@features/medication/model';
@@ -11,6 +11,7 @@ import { HealthGraphSection } from './HealthGraphSection';
 import { HealthStatusEmojiButton } from './HealthStatusEmojiButton';
 import { DropdownAnchor, TimeDropdown } from './TimeDropdown';
 import { TourTarget } from '@features/guardian-tour/ui';
+import { showNotice } from '@shared/model';
 
 export function DailyReportCard({
   wardId,
@@ -32,7 +33,7 @@ export function DailyReportCard({
 
   const applyReportTime = async (timeKey: string) => {
     if (!(await dailyReport.updateReportTime(timeKey)) && !dailyReport.isMockWard) {
-      Alert.alert('', '레포트 시간을 바꾸지 못했어요. 잠시 후 다시 시도해 주세요.');
+      showNotice('', '레포트 시간을 바꾸지 못했어요. 잠시 후 다시 시도해 주세요.');
     }
   };
 
@@ -40,7 +41,7 @@ export function DailyReportCard({
     if (timeKey === dailyReport.reportTime) return;
     // 오늘 레포트가 아직 없는데 이미 지난 시각으로 바꾸면 오늘 레포트가 안 만들어지고 어르신 기록도 바로 마감돼서 확인받음
     if (!dailyReport.isMockWard && !dailyReport.report && isTimePassedToday(timeKey)) {
-      Alert.alert(
+      showNotice(
         '레포트 시간을 바꿀까요?',
         `오늘은 이미 ${formatReportTimeLabel(timeKey)}이 지나서 오늘의 레포트는 만들어지지 않고, 어르신의 오늘 기록도 바로 마감돼요. 내일부터 ${formatReportTimeLabel(timeKey)}에 레포트를 받아요.`,
         [

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Alert } from 'react-native';
 import { AuthStackNavigationProp } from '@app/navigation/types';
 import { registerProtectorApi, registerSocialApi, registerWardApi } from '@features/auth/api';
 import { loginAfterRegister } from '@features/auth/utils';
@@ -8,6 +7,7 @@ import { useSessionStore } from '@shared/store/useSessionStore';
 import { UserRole } from '@shared/types';
 import { SocialProviderCode } from './types';
 import { useSignupDraftStore } from './useSignupDraftStore';
+import { showNotice } from '@shared/model';
 
 const REGISTER_FAILED_MESSAGE = '회원가입에 실패했습니다. 입력하신 정보를 다시 확인해 주세요.';
 
@@ -99,7 +99,7 @@ export function useSignupSubmit(navigation: AuthStackNavigationProp) {
       // 입력값을 비우고 전화번호 로그인 화면으로 보내서 방금 만든 계정으로 직접 로그인하게 함
       logApiError('회원가입 후 자동 로그인 실패:', error);
       useSignupDraftStore.getState().reset();
-      Alert.alert('', '가입은 완료됐지만 자동 로그인에 실패했어요. 가입하신 전화번호로 로그인해 주세요.', [
+      showNotice('', '가입은 완료됐지만 자동 로그인에 실패했어요. 가입하신 전화번호로 로그인해 주세요.', [
         {
           text: '확인',
           onPress: () => navigation.reset({ index: 1, routes: [{ name: 'Login' }, { name: 'PhoneLogin' }] }),

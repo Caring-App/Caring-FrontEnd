@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { Alert } from 'react-native';
 import { logApiError } from '@shared/api';
 // FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, 돌봄대상자 관리 화면이 연동 상세/수정
 // API(getConnectionDetailApi/updateConnectionApi)를 직접 써야 해서 의도적으로 참조함
@@ -12,6 +11,7 @@ import { updateWardSettingApi } from '../api';
 import { optionToConnectionFontSize } from '../utils';
 import { FontSizeOption, WardInfoUpdate } from './types';
 import { useSelectedWardStore } from './useSelectedWardStore';
+import { showNotice } from '@shared/model';
 
 // WardManagementScreen(돌봄대상자 관리 탭)의 데이터 로딩/저장 로직 전부.
 // wards 목록 자체는 useSelectedWardStore(getConnectionsApi 기반, 연동 없으면 MOCK_WARDS 폴백) —
@@ -101,7 +101,7 @@ export function useWardManagement() {
       return true;
     } catch (error) {
       logApiError('돌봄대상자 정보 수정 실패', error);
-      Alert.alert('', '정보 수정에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      showNotice('', '정보 수정에 실패했습니다. 잠시 후 다시 시도해주세요.');
       return false;
     }
   }
@@ -128,7 +128,7 @@ export function useWardManagement() {
       // TODO: 백엔드가 400 "해당 돌봄대상자의 설정 정보가 존재하지 않습니다"를 반환함 — 이 어르신의
       // ward-setting 레코드가 아직 DB에 없어서 PATCH가 실패하는 것으로 확인됨(2026-08-26). 생성용
       // POST 엔드포인트가 없어 프론트에서 처리 불가 — 백엔드에서 기본 레코드 생성 또는 POST 추가 필요.
-      Alert.alert('', '설정 저장에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      showNotice('', '설정 저장에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
   }
 

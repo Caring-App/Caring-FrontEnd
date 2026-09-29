@@ -1,15 +1,5 @@
 import React, { useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { ConfirmModal, FormLabel, SoundSettingsCard, TimeTriggerInput, WheelTimePicker, formatTime } from '@shared/ui';
 import { logApiError } from '@shared/api';
 import { colors } from '@shared/theme/colors';
@@ -30,6 +20,7 @@ import {
 } from '../model/useMedicationRegistrationForm';
 import { MedicationEntry } from '../model/medicationTypes';
 import { useMedicationListStore } from '../model/useMedicationListStore';
+import { showNotice } from '@shared/model';
 
 interface MedicationRegistrationModalProps {
   visible: boolean;
@@ -78,7 +69,7 @@ export function MedicationRegistrationModal({
       onClose();
     } catch (error) {
       logApiError('복약 스케줄 삭제 실패', error);
-      Alert.alert('', '삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      showNotice('', '삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
       setIsDeleting(false);
     }

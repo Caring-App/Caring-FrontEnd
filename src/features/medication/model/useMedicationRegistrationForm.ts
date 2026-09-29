@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Alert } from 'react-native';
 import type { TimeState } from '@shared/types';
 import { useVoiceRecording } from '@shared/model';
 import { logApiError } from '@shared/api';
 import { isSameDaySet, MEAL_TYPE_LABELS, MEAL_TYPES } from '../utils';
 import { MedicationEntry, MedicationRegistrationData, MedicationSoundType, MealType, Weekday } from './medicationTypes';
 import { useMedicationListStore } from './useMedicationListStore';
+import { showNotice } from '@shared/model';
 
 const INITIAL_TIME: TimeState = { hour: '01', minute: '00', second: '00', amPm: 'AM' };
 
@@ -109,19 +109,19 @@ export const useMedicationRegistrationForm = (
       return;
     }
     if (Number.isNaN(wardId)) {
-      Alert.alert('', '연동된 어르신 정보를 확인할 수 없습니다. 잠시 후 다시 시도해주세요.');
+      showNotice('', '연동된 어르신 정보를 확인할 수 없습니다. 잠시 후 다시 시도해주세요.');
       return;
     }
     if (mealTypes.length === 0) {
-      Alert.alert('', '식사 시간을 선택해주세요.');
+      showNotice('', '식사 시간을 선택해주세요.');
       return;
     }
     if (days.length === 0) {
-      Alert.alert('', '요일을 선택해주세요.');
+      showNotice('', '요일을 선택해주세요.');
       return;
     }
     if (!hasTime) {
-      Alert.alert('', '복용 시간을 선택해주세요.');
+      showNotice('', '복용 시간을 선택해주세요.');
       return;
     }
     if (!voiceRecording.validateBeforeSave(soundType)) {
@@ -140,7 +140,7 @@ export const useMedicationRegistrationForm = (
       onClose();
     } catch (error) {
       logApiError('복약 스케줄 저장 실패', error);
-      Alert.alert('', '저장에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      showNotice('', '저장에 실패했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
       setIsSubmitting(false);
     }

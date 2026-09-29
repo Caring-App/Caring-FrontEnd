@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Alert } from 'react-native';
 import { useVoiceRecording } from '@shared/model';
 import { logApiError } from '@shared/api';
 // FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, "장소" 선택이 곧 @features/place가 관리하는
@@ -8,6 +7,7 @@ import { Place, usePlaceStore } from '@features/place/model';
 import { addMonths } from './calendarUtils';
 import { ScheduleEntry, ScheduleRegistrationData, ScheduleSoundType, TimeState } from './scheduleRegistrationTypes';
 import { useScheduleStore } from './useScheduleStore';
+import { showNotice } from '@shared/model';
 
 const INITIAL_TIME: TimeState = { hour: '1', minute: '00', second: '00', amPm: 'AM' };
 
@@ -112,7 +112,7 @@ export const useScheduleRegistrationForm = (
     setIsPlacePickerVisible(false);
   };
   const deletePlaceOption = (place: Place) => {
-    Alert.alert('', `'${place.placeName}'을(를) 삭제하시겠어요?`, [
+    showNotice('', `'${place.placeName}'을(를) 삭제하시겠어요?`, [
       { text: '취소', style: 'cancel' },
       {
         text: '삭제',
@@ -126,7 +126,7 @@ export const useScheduleRegistrationForm = (
             }
           } catch (error) {
             logApiError('장소 삭제 실패', error);
-            Alert.alert('', '삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
+            showNotice('', '삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
           }
         },
       },
@@ -155,23 +155,23 @@ export const useScheduleRegistrationForm = (
     }
     const wardIdNumber = Number(wardId);
     if (Number.isNaN(wardIdNumber)) {
-      Alert.alert('', '연동된 어르신 정보를 확인할 수 없습니다. 잠시 후 다시 시도해주세요.');
+      showNotice('', '연동된 어르신 정보를 확인할 수 없습니다. 잠시 후 다시 시도해주세요.');
       return;
     }
     if (!title.trim()) {
-      Alert.alert('', '일정 이름을 입력해주세요.');
+      showNotice('', '일정 이름을 입력해주세요.');
       return;
     }
     if (placeId == null) {
-      Alert.alert('', '장소를 선택해주세요.');
+      showNotice('', '장소를 선택해주세요.');
       return;
     }
     if (!hasScheduleTime) {
-      Alert.alert('', '일정 시간을 선택해주세요.');
+      showNotice('', '일정 시간을 선택해주세요.');
       return;
     }
     if (!hasAlarmTime) {
-      Alert.alert('', '음성 알림 시간을 선택해주세요.');
+      showNotice('', '음성 알림 시간을 선택해주세요.');
       return;
     }
     if (!voiceRecording.validateBeforeSave(soundType)) {
@@ -199,7 +199,7 @@ export const useScheduleRegistrationForm = (
       onClose();
     } catch (error) {
       logApiError('일정 저장 실패', error);
-      Alert.alert('', '저장에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      showNotice('', '저장에 실패했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
       setIsSubmitting(false);
     }

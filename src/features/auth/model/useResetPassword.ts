@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Alert } from 'react-native';
 import { AuthStackNavigationProp } from '@app/navigation/types';
 import { resetPasswordApi } from '@features/auth/api';
 import { logApiError } from '@shared/api';
 import { usePhoneVerification } from './usePhoneVerification';
+import { showNotice } from '@shared/model';
 
 export default function useResetPassword() {
   const navigation = useNavigation<AuthStackNavigationProp>();
@@ -29,7 +29,7 @@ export default function useResetPassword() {
         newPassword,
         newPasswordCheck: newPasswordConfirm,
       });
-      Alert.alert('완료', '비밀번호가 변경되었습니다. 새 비밀번호로 다시 로그인해 주세요.', [
+      showNotice('완료', '비밀번호가 변경되었습니다. 새 비밀번호로 다시 로그인해 주세요.', [
         { text: '확인', onPress: () => navigation.navigate('PhoneLogin') },
       ]);
     } catch (error) {
