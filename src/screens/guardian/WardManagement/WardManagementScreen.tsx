@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -18,6 +18,8 @@ export function WardManagementScreen() {
   const stackNavigation = navigation.getParent<GuardianStackNavigationProp>();
   const { wards, saveWardInfo, saveWardSetting } = useWardManagement();
   const [editingWardId, setEditingWardId] = useState<string | null>(null);
+  // TTS 속도 슬라이더를 움직이기 시작할 때의 값 — 움직이는 동안 화면 값이 계속 바뀌어서, 저장 실패 시 되돌릴 값을 따로 기억함
+  const ttsRateBeforeSlideRef = useRef<Record<string, number>>({});
   const tourScroll = useTourScrollTracking('wardManagement');
 
   const editingWard = wards.find(ward => ward.id === editingWardId) ?? null;
@@ -50,11 +52,20 @@ export function WardManagementScreen() {
                 <WardCard
                   key={ward.id}
                   ward={ward}
-                  onChangeTtsRate={rate => useSelectedWardStore.getState().updateWard(ward.id, { ttsRate: rate })}
-                  onCommitTtsRate={rate => saveWardSetting(ward.id, { ttsRate: rate })}
+                  onChangeTtsRate={rate => {
+                    if (!(ward.id in ttsRateBeforeSlideRef.current)) {
+                      ttsRateBeforeSlideRef.current[ward.id] = ward.ttsRate;
+                    }
+                    useSelectedWardStore.getState().updateWard(ward.id, { ttsRate: rate });
+                  }}
+                  onCommitTtsRate={rate => {
+                    const before = ttsRateBeforeSlideRef.current[ward.id] ?? ward.ttsRate;
+                    delete ttsRateBeforeSlideRef.current[ward.id];
+                    saveWardSetting(ward.id, { ttsRate: rate }, { ttsRate: before });
+                  }}
                   onChangeFontSize={size => {
                     useSelectedWardStore.getState().updateWard(ward.id, { fontSize: size });
-                    saveWardSetting(ward.id, { fontSize: size });
+                    saveWardSetting(ward.id, { fontSize: size }, { fontSize: ward.fontSize });
                   }}
                   onPressEdit={() => setEditingWardId(ward.id)}
                 />
