@@ -23,7 +23,7 @@ export function useStepSync() {
       setStatus(nextStatus);
       if (nextStatus === 'granted') await syncTodaySteps();
     } catch (error) {
-      console.warn('[useStepSync] Health Connect 확인 실패', error instanceof Error ? error.message : error);
+      console.log('[useStepSync] Health Connect 확인 실패', error instanceof Error ? error.message : error);
     } finally {
       isSyncingRef.current = false;
     }

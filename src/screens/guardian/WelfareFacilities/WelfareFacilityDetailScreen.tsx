@@ -1,15 +1,16 @@
 import React from 'react';
-import { Alert, Linking, Pressable, ScrollView, Text, View } from 'react-native';
+import { Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { GuardianStackParamList } from '@app/navigation/types';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 import { FacilityInfoRow } from '@features/welfare-facility/ui';
 import { formatDistance, toHomepageUrl } from '@features/welfare-facility/utils';
+import { showNotice } from '@shared/model';
 
 // 전화 앱이 없는 기기(태블릿 등)나 형식이 이상한 홈페이지 주소면 openURL이 실패함 — 눌러도 아무 반응이 없지 않게 알림
 function openUrl(url: string, failMessage: string) {
-  Linking.openURL(url).catch(() => Alert.alert('', failMessage));
+  Linking.openURL(url).catch(() => showNotice('', failMessage));
 }
 
 type WelfareFacilityDetailRouteProp = RouteProp<GuardianStackParamList, 'WelfareFacilityDetail'>;

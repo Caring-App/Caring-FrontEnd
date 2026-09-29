@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { logApiError } from '@shared/api';
+import { notifyLoadFailed } from '@shared/model';
 import { resetOnLogout } from '@shared/store/resetOnLogout';
 import { getHealthGraphApi, getTodayHealthRecordsApi } from '../api/healthRecordApi';
 import { getTodayDailyReportApi } from '../api/dailyReportApi';
@@ -68,6 +69,10 @@ export const useDailyReportStore = create<DailyReportState>((set, get) => ({
     if (graph.status === 'fulfilled') patch.graph = buildHealthMetricSeries(graph.value, dateKeys);
     else logApiError('건강 수치 그래프 조회 실패', graph.reason);
 
+    // 5개 중 하나라도 실패하면 안내는 한 번만(조회 실패 안내는 중복 없이 한 번만 뜸)
+    if ([reportTime, report, todaySteps, todayRecords, graph].some(result => result.status === 'rejected')) {
+      notifyLoadFailed();
+    }
     patchWard(wardId, patch);
     set(state => {
       const next = new Set(state.loadingWardIds);

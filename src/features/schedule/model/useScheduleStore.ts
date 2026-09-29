@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { resetOnLogout } from '@shared/store/resetOnLogout';
 import { logApiError } from '@shared/api';
+import { notifyLoadFailed } from '@shared/model';
 import {
   createTaskScheduleApi,
   deleteTaskScheduleApi,
@@ -47,6 +48,7 @@ export const useScheduleStore = create<ScheduleState>((set) => ({
       }));
     } catch (error) {
       logApiError('일정 목록 조회 실패', error);
+      notifyLoadFailed();
     } finally {
       set({ isLoading: false });
     }
@@ -58,6 +60,7 @@ export const useScheduleStore = create<ScheduleState>((set) => ({
       set({ myTodaySchedules: schedules.map(taskScheduleToEntry) });
     } catch (error) {
       logApiError('오늘 일정 조회 실패', error);
+      notifyLoadFailed();
     }
   },
 

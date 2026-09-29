@@ -12,7 +12,7 @@ export { SoundSettingsCard } from './SoundSettingsCard';
 export { FormLabel } from './FormLabel';
 export { FormField } from './FormField';
 export { TimeTriggerInput } from './TimeTriggerInput';
-export { ConfirmModal } from './ConfirmModal';
 export { AddressSearchModal } from './AddressSearchModal';
 export { AddressInput } from './AddressInput';
 export type { AddressSearchResult } from './AddressSearchModal';
+export { NoticeModal } from './NoticeModal';

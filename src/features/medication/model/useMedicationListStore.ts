@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { resetOnLogout } from '@shared/store/resetOnLogout';
 import { logApiError } from '@shared/api';
+import { notifyLoadFailed } from '@shared/model';
 import { soundTypeToAlarmType } from '@shared/utils/alarmType';
 import {
   createPillScheduleApi,
@@ -81,6 +82,7 @@ export const useMedicationListStore = create<MedicationListState>((set, get) => 
       }));
     } catch (error) {
       logApiError('복약 스케줄 조회 실패', error);
+      notifyLoadFailed();
     } finally {
       set({ isLoading: false });
     }

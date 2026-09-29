@@ -13,7 +13,6 @@ interface SessionState {
   role: UserRole | null;
   profile: UserProfile | null;
   linkedCode: string | null;
-  isLogoutConfirmVisible: boolean;
   // 앱 실행 직후 스플래시를 이미 보여줬는지 — 로그아웃해서 인증 화면으로 돌아올 땐 스플래시 없이 시작 화면부터.
   // 앱 실행 단위 값이라 logout()에서 초기화하지 않음
   hasShownSplash: boolean;
@@ -25,8 +24,6 @@ interface SessionState {
   setPendingProfile: (role: UserRole, profile: UserProfile) => void;
   logout: () => void;
   setLinkedCode: (code: string) => void;
-  requestLogout: () => void;
-  cancelLogout: () => void;
   markSplashShown: () => void;
 }
 
@@ -35,16 +32,13 @@ export const useSessionStore = create<SessionState>(set => ({
   role: null,
   profile: null,
   linkedCode: null,
-  isLogoutConfirmVisible: false,
   hasShownSplash: false,
   login: (role, profile) => set(state => ({ isLoggedIn: true, role, profile: profile ?? state.profile })),
   setPendingProfile: (role, profile) => set({ role, profile }),
   logout: () => {
-    clearTokens().catch(error => console.error('토큰 삭제 실패:', error));
-    set({ isLoggedIn: false, role: null, profile: null, linkedCode: null, isLogoutConfirmVisible: false });
+    clearTokens().catch(error => console.log('토큰 삭제 실패:', error));
+    set({ isLoggedIn: false, role: null, profile: null, linkedCode: null });
   },
   setLinkedCode: linkedCode => set({ linkedCode }),
-  requestLogout: () => set({ isLogoutConfirmVisible: true }),
-  cancelLogout: () => set({ isLogoutConfirmVisible: false }),
   markSplashShown: () => set({ hasShownSplash: true }),
 }));

@@ -38,6 +38,11 @@ src/
 - 아직 존재하지 않는 화면(어르신 홈, 마이페이지 등)에서 같은 개념의 상태가 필요하면 새 store를 만들지 말고 기존 store 확장부터 검토
 - 화면 구현 시 컴포넌트/훅/타입/mock 데이터는 파일로 분리해서 `features/{domain}/{ui,model}/`에 넣을 것 (`ward-management`, `welfare-facility`, `notification`이 이 패턴의 예시). `GuardianHomeScreen.tsx`는 아직 리팩터 전이라 섹션 컴포넌트들이 한 파일에 다 들어있는 예전 방식임 — 새로 참고할 때는 저 파일이 아니라 `ward-management`/`welfare-facility` 쪽 구조를 따라갈 것
 
+## 에러·안내 표시 컨벤션
+- 사용자에게 보여줄 안내·에러·확인 창은 **`showNotice(title, message?, buttons?)`**(`@shared/model`) 사용 — `Alert.alert`는 쓰지 말 것. 앱 최상단 `NoticeHost`가 공용 `NoticeModal`로 그리고, 어르신 계정이면 글자 크기 배율이 자동 적용됨
+- 화면 진입 시 조회가 실패하면 **`notifyLoadFailed()`** — 여러 조회가 동시에 실패해도 안내는 한 번만 뜸(30초 안에는 다시 안 뜸)
+- `logApiError` 등 개발용 로그는 `console.log`로만 남김(`console.error`/`console.warn`은 개발 빌드에서 화면에 LogBox로 떠서 사용하지 않음). 로그만 남기고 끝내지 말고, 사용자가 알아야 하는 실패면 위 안내를 함께 띄울 것
+
 ## 화면/네비게이션 헤더 컨벤션
 - 하단 탭 화면(홈, 돌봄대상자 관리, 마이페이지)만 공용 `AppHeader`(`@shared/ui`, 로고+종+메뉴)를 화면 본문에 렌더링함
 - Stack으로 push되는 상세성 화면(위치 GPS, 알림, 복지시설 리스트/상세, 복약·일정 관리 등)은 `AppHeader`를 쓰지 않고 뒤로가기 아이콘(`chevron-right.svg` 180도 회전) + 제목만 있는 자체 헤더를 씀

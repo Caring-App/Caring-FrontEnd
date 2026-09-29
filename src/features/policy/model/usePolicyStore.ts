@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { logApiError } from '@shared/api';
+import { notifyLoadFailed } from '@shared/model';
 import { getPoliciesApi, getPolicyDetailApi } from '../api';
 import { PolicyDetail, PolicySummary, PolicyType } from './types';
 
@@ -35,6 +36,7 @@ export const usePolicyStore = create<PolicyState>((set, get) => ({
       set({ policies });
     } catch (error) {
       logApiError('정책 목록 조회 실패', error);
+      notifyLoadFailed();
       set({ hasListError: true });
     } finally {
       set({ isLoadingList: false });
@@ -53,6 +55,7 @@ export const usePolicyStore = create<PolicyState>((set, get) => ({
       set(state => ({ detailsByType: { ...state.detailsByType, [type]: detail } }));
     } catch (error) {
       logApiError('정책 상세 조회 실패', error);
+      notifyLoadFailed();
       set(state => ({ errorTypes: new Set(state.errorTypes).add(type) }));
     } finally {
       set(state => {

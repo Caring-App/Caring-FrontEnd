@@ -19,7 +19,7 @@ axiosInstance.interceptors.request.use(
         config.headers.Authorization = `Bearer ${token}`;
       }
     } catch (error) {
-      console.error('토큰 가져오기 실패:', error);
+      console.log('토큰 가져오기 실패:', error);
     }
     return config;
   },

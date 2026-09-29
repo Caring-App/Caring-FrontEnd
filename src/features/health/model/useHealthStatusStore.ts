@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { resetOnLogout } from '@shared/store/resetOnLogout';
 import { logApiError } from '@shared/api';
+import { notifyLoadFailed } from '@shared/model';
 import { checkMoodApi, getMoodCheckApi, getMyMoodCheckApi } from '../api';
 import { healthStatusToMoodStatus, moodStatusToHealthStatus } from '../utils';
 import type { MoodCheckRecord } from './moodTypes';
@@ -39,6 +40,7 @@ export const useHealthStatusStore = create<HealthStatusState>((set, get) => ({
       set(state => ({ statusByWard: withRecord(state.statusByWard, wardId, record) }));
     } catch (error) {
       logApiError('오늘의 건강 상태 조회 실패', error);
+      notifyLoadFailed();
     } finally {
       set(state => {
         const next = new Set(state.loadingWardIds);
@@ -54,6 +56,7 @@ export const useHealthStatusStore = create<HealthStatusState>((set, get) => ({
       set(state => ({ statusByWard: withRecord(state.statusByWard, wardId, record) }));
     } catch (error) {
       logApiError('본인 오늘의 건강 상태 조회 실패', error);
+      notifyLoadFailed();
     }
   },
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 import { logApiError } from '@shared/api';
 import { WEEKDAY_LABELS_KO, addMonths, getCalendarWeeks, isSameDay } from '../model/calendarUtils';
@@ -9,7 +9,8 @@ import { useScheduleStore } from '../model/useScheduleStore';
 import { useWardSchedules } from '../model/useWardSchedules';
 import { MonthYearPickerModal } from './MonthYearPickerModal';
 import { ScheduleDetailModal } from './ScheduleDetailModal';
-import { DeleteScheduleConfirmModal } from './DeleteScheduleConfirmModal';
+import { formatScheduleDateTimeShort } from '../model/scheduleFormat';
+import { showNotice } from '@shared/model';
 
 // tailwind.config.js의 text.calendarScheduleDot과 동일한 값 (borderRadius 이슈로 인라인 필요)
 const SCHEDULE_DOT_COLOR = '#8E8E93';
@@ -29,7 +30,6 @@ export function HomeScheduleCalendar({ wardId, wardName, onRequestEdit }: HomeSc
   const [month, setMonth] = useState(() => new Date());
   const [isPickerVisible, setIsPickerVisible] = useState(false);
   const [selectedSchedules, setSelectedSchedules] = useState<ScheduleEntry[]>([]);
-  const [scheduleToDelete, setScheduleToDelete] = useState<ScheduleEntry | null>(null);
 
   const schedules = useWardSchedules(wardId, month);
 
@@ -39,6 +39,22 @@ export function HomeScheduleCalendar({ wardId, wardName, onRequestEdit }: HomeSc
     schedules
       .filter((entry) => isSameDay(entry.date, date))
       .sort((a, b) => toMinutes(a.scheduleTime) - toMinutes(b.scheduleTime));
+
+  const deleteSchedule = async (target: ScheduleEntry) => {
+    try {
+      await useScheduleStore.getState().deleteSchedule(wardId, target.id);
+    } catch (error) {
+      logApiError('일정 삭제 실패', error);
+      showNotice('', '삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
+    }
+  };
+
+  const askDelete = (target: ScheduleEntry) => {
+    showNotice('일정을 삭제 하시겠어요?', `${formatScheduleDateTimeShort(target)} - ${target.location}`, [
+      { text: '취소', style: 'cancel' },
+      { text: '삭제', style: 'destructive', onPress: () => deleteSchedule(target) },
+    ]);
+  };
 
   return (
     <View
@@ -131,27 +147,8 @@ export function HomeScheduleCalendar({ wardId, wardName, onRequestEdit }: HomeSc
           setSelectedSchedules([]);
         }}
         onDelete={(schedule) => {
-          setScheduleToDelete(schedule);
           setSelectedSchedules([]);
-        }}
-      />
-
-      <DeleteScheduleConfirmModal
-        visible={!!scheduleToDelete}
-        schedule={scheduleToDelete}
-        onCancel={() => setScheduleToDelete(null)}
-        onConfirm={async () => {
-          const target = scheduleToDelete;
-          setScheduleToDelete(null);
-          if (!target) {
-            return;
-          }
-          try {
-            await useScheduleStore.getState().deleteSchedule(wardId, target.id);
-          } catch (error) {
-            logApiError('일정 삭제 실패', error);
-            Alert.alert('', '삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
-          }
+          askDelete(schedule);
         }}
       />
     </View>

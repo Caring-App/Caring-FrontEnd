@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { CaringLogoHorizontal } from '@shared/ui/AppHeader/CaringLogo';
@@ -8,6 +8,7 @@ import { CodeInputField } from './CodeInputField';
 import { AuthPrimaryButton } from './AuthPrimaryButton';
 import RssIcon from '@assets/icons/action/rss.svg';
 import CloseIcon from '@assets/icons/action/close-x.svg';
+import { showNotice } from '@shared/model';
 
 export interface WelcomeStep {
   type: 'message' | 'code';
@@ -30,7 +31,7 @@ interface Props {
 export const SignupWelcomeStep = ({ userName = '---', userCode = '', currentStep, onNext, onClose }: Props) => {
   const handleCopyCode = () => {
     Clipboard.setString(userCode);
-    Alert.alert('복사 완료', '연동 코드가 복사되었습니다.');
+    showNotice('복사 완료', '연동 코드가 복사되었습니다.');
   };
 
   return (

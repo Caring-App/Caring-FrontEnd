@@ -1,16 +1,6 @@
 import React, { useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
-import { ConfirmModal, FormLabel, SoundSettingsCard, TimeTriggerInput, WheelTimePicker, formatTime } from '@shared/ui';
+import { ActivityIndicator, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { FormLabel, SoundSettingsCard, TimeTriggerInput, WheelTimePicker, formatTime } from '@shared/ui';
 import { logApiError } from '@shared/api';
 import { colors } from '@shared/theme/colors';
 import CapsuleIcon from '@assets/icons/medication/capsule-on.svg';
@@ -30,6 +20,7 @@ import {
 } from '../model/useMedicationRegistrationForm';
 import { MedicationEntry } from '../model/medicationTypes';
 import { useMedicationListStore } from '../model/useMedicationListStore';
+import { showNotice } from '@shared/model';
 
 interface MedicationRegistrationModalProps {
   visible: boolean;
@@ -50,7 +41,6 @@ export function MedicationRegistrationModal({
   editingMedication,
   onClose,
 }: MedicationRegistrationModalProps) {
-  const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   // 이 모달은 사용가이드가 "복약 등록" 단계에 도달했을 때 처음으로(!) 마운트되는 경우가 있음
@@ -66,19 +56,24 @@ export function MedicationRegistrationModal({
   // 남아있던 값이 아니라 항상 깨끗한 상태로 초기화됨(훅 내부는 visible이 켜질 때만 리셋함)
   const { state, actions } = useMedicationRegistrationForm(wardId, visible || isTourStep, editingMedication, onClose);
 
+  const askDelete = () => {
+    showNotice('복약 정보를 삭제 하시겠어요?', undefined, [
+      { text: '취소', style: 'cancel' },
+      { text: '삭제', style: 'destructive', onPress: handleDelete },
+    ]);
+  };
+
   const handleDelete = async () => {
     if (!editingMedication || isDeleting) {
       return;
     }
-    // 삭제 중엔 확인 모달을 바로 닫아서 연타로 다시 뜬 삭제 버튼을 못 누르게 함 + isDeleting으로도 이중 방어
-    setIsDeleteConfirmVisible(false);
     setIsDeleting(true);
     try {
       await useMedicationListStore.getState().deleteMedication(wardId, editingMedication.id);
       onClose();
     } catch (error) {
       logApiError('복약 스케줄 삭제 실패', error);
-      Alert.alert('', '삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      showNotice('', '삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
       setIsDeleting(false);
     }
@@ -212,7 +207,7 @@ export function MedicationRegistrationModal({
 
               {editingMedication && (
                 <Pressable
-                  onPress={() => setIsDeleteConfirmVisible(true)}
+                  onPress={askDelete}
                   disabled={isDeleting}
                   className="mt-4 items-center self-center">
                   <Text className="border-b border-border-danger font-pretendard-light text-lg text-text-danger">
@@ -224,13 +219,6 @@ export function MedicationRegistrationModal({
           </View>
         </KeyboardAvoidingView>
       </View>
-
-      <ConfirmModal
-        visible={isDeleteConfirmVisible}
-        title="복약 정보를 삭제 하시겠어요?"
-        onCancel={() => setIsDeleteConfirmVisible(false)}
-        onConfirm={handleDelete}
-      />
 
       <TourHostOverlay isTourStep={isTourStep} tourStep={tourStep} tourStepIndex={tourStepIndex} ready={ready} box={box} />
     </Modal>

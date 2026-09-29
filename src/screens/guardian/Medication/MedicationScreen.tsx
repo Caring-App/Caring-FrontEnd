@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
@@ -10,6 +10,7 @@ import { MedicationEntry, useMedicationListStore } from '@features/medication/mo
 import { MedicationListItem, MedicationRegistrationModal } from '@features/medication/ui';
 import { sortMedicationsByTime } from '@features/medication/utils';
 import { MEDICATION_MODAL_STEP_INDEX, useTourStore } from '@features/guardian-tour/model';
+import { showNotice } from '@shared/model';
 
 export function MedicationScreen() {
   const navigation = useNavigation();
@@ -86,7 +87,7 @@ export function MedicationScreen() {
             onToggleEnabled={() => {
               toggleEnabled(wardIdNumber, entry.id).catch(error => {
                 logApiError('복약 스케줄 상태 변경 실패', error);
-                Alert.alert('', '상태 변경에 실패했습니다. 잠시 후 다시 시도해주세요.');
+                showNotice('', '상태 변경에 실패했습니다. 잠시 후 다시 시도해주세요.');
               });
             }}
           />

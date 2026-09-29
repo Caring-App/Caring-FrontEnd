@@ -47,7 +47,7 @@ async function syncStepsInBackground() {
   } catch (error) {
     if (hasLoggedBackgroundStepsFailure) return;
     hasLoggedBackgroundStepsFailure = true;
-    console.warn('[locationReportingTask] 백그라운드 걸음 수 읽기 실패', error instanceof Error ? error.message : error);
+    console.log('[locationReportingTask] 백그라운드 걸음 수 읽기 실패', error instanceof Error ? error.message : error);
   }
 }
 

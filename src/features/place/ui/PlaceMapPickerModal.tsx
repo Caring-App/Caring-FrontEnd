@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Modal, Platform, Pressable, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Modal, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { NaverMapView, NaverMapMarkerOverlay, NaverMapViewRef } from '@mj-studio/react-native-naver-map';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 import SearchIcon from '@assets/icons/action/search.svg';
@@ -9,6 +9,7 @@ import { logApiError } from '@shared/api';
 import { searchAddressApi } from '../api/geocodeApi';
 import { usePlaceStore } from '../model/usePlaceStore';
 import { Place } from '../model/placeTypes';
+import { showNotice } from '@shared/model';
 
 // 위치 정보가 없을 때(어르신 기기가 아직 위치를 보고한 적 없음 등) 기본으로 보여줄 좌표.
 // @features/location의 mock 좌표(서울시청)와 동일한 값을 사용.
@@ -61,7 +62,7 @@ export function PlaceMapPickerModal({ visible, wardId, initialCenter, onClose, o
         return;
       }
       if (!geocoded) {
-        Alert.alert('', '이 주소의 좌표를 찾지 못했어요. 지도를 눌러 직접 위치를 선택해주세요.');
+        showNotice('', '이 주소의 좌표를 찾지 못했어요. 지도를 눌러 직접 위치를 선택해주세요.');
         return;
       }
       setSelectedCoord({ latitude: geocoded.latitude, longitude: geocoded.longitude });
@@ -74,7 +75,7 @@ export function PlaceMapPickerModal({ visible, wardId, initialCenter, onClose, o
         return;
       }
       logApiError('주소 지오코딩 실패', error);
-      Alert.alert('', '좌표를 찾는 데 실패했습니다. 잠시 후 다시 시도해주세요.');
+      showNotice('', '좌표를 찾는 데 실패했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
       if (requestId === requestIdRef.current) {
         setIsGeocoding(false);
@@ -87,11 +88,11 @@ export function PlaceMapPickerModal({ visible, wardId, initialCenter, onClose, o
       return;
     }
     if (!placeName.trim()) {
-      Alert.alert('', '장소 이름을 입력해주세요.');
+      showNotice('', '장소 이름을 입력해주세요.');
       return;
     }
     if (!selectedCoord) {
-      Alert.alert('', '주소를 검색하거나 지도를 눌러 위치를 선택해주세요.');
+      showNotice('', '주소를 검색하거나 지도를 눌러 위치를 선택해주세요.');
       return;
     }
 
@@ -105,7 +106,7 @@ export function PlaceMapPickerModal({ visible, wardId, initialCenter, onClose, o
       onClose();
     } catch (error) {
       logApiError('장소 등록 실패', error);
-      Alert.alert('', '장소 등록에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      showNotice('', '장소 등록에 실패했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
       setIsSubmitting(false);
     }

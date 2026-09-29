@@ -70,7 +70,7 @@ export function pillNameToMealType(pillName: PillName): MealType {
   if (!mealType) {
     // pillName이 추정한 3개 값(MORNING/LUNCH/DINNER) 밖이면 'morning'으로 임시 표시하는데, 이 상태로
     // 다시 저장하면 실제 시간대가 아침으로 덮어써질 위험이 있음 — 조용히 넘기지 말고 눈에 띄게 남겨둠.
-    console.error(`[medication] 알 수 없는 pillName 값: ${pillName}`);
+    console.log(`[medication] 알 수 없는 pillName 값: ${pillName}`);
     return 'morning';
   }
   return mealType;

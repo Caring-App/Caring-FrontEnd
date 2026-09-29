@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Alert, Linking, PermissionsAndroid, Platform } from 'react-native';
+import { Linking, PermissionsAndroid, Platform } from 'react-native';
 import { createSound } from 'react-native-nitro-sound';
 import { uploadVoiceFileApi } from '@shared/api/voiceApi';
 import type { SoundType } from '@shared/types';
+import { showNotice } from './useNoticeStore';
 
 // useVoiceRecording().controls — 녹음 UI(SoundSettingsCard/VoiceRecordingControls)가 필요로 하는 상태·동작을 한 묶음으로 전달
 export interface VoiceRecordingState {
@@ -19,7 +20,7 @@ export interface VoiceRecordingState {
 const MICROPHONE_SETTINGS_MESSAGE = '마이크 권한이 꺼져 있어요. 설정에서 마이크 권한을 허용해 주세요.';
 
 function alertOpenSettings(message: string) {
-  Alert.alert('', message, [
+  showNotice('', message, [
     { text: '취소', style: 'cancel' },
     { text: '설정 열기', onPress: () => Linking.openSettings() },
   ]);
@@ -39,7 +40,7 @@ async function requestMicrophonePermission() {
     alertOpenSettings(MICROPHONE_SETTINGS_MESSAGE);
   } else if (result === PermissionsAndroid.RESULTS.DENIED) {
     // 이번에만 거부한 경우 — 아무 반응 없이 끝나면 버튼이 고장 난 것처럼 보여서 이유를 알려줌
-    Alert.alert('', '마이크 권한을 허용해야 음성을 녹음할 수 있어요.');
+    showNotice('', '마이크 권한을 허용해야 음성을 녹음할 수 있어요.');
   }
   return result === PermissionsAndroid.RESULTS.GRANTED;
 }
@@ -112,13 +113,13 @@ export function useVoiceRecording() {
       await sound.startRecorder();
       setIsRecording(true);
     } catch (error) {
-      console.error('[useVoiceRecording] 녹음 실패', error);
+      console.log('[useVoiceRecording] 녹음 실패', error);
       setIsRecording(false);
       if (Platform.OS === 'ios') {
         // iOS는 권한 상태를 미리 알 방법이 없어서(별도 권한 라이브러리 없음) 실패 시 권한 가능성을 함께 안내
         alertOpenSettings('녹음을 시작하지 못했어요. 마이크 권한이 꺼져 있다면 설정에서 허용해 주세요.');
       } else {
-        Alert.alert('', '녹음을 시작하지 못했어요. 잠시 후 다시 시도해 주세요.');
+        showNotice('', '녹음을 시작하지 못했어요. 잠시 후 다시 시도해 주세요.');
       }
     } finally {
       setIsBusy(false);
@@ -134,7 +135,7 @@ export function useVoiceRecording() {
     }
     const source = localPath ?? savedUrl;
     if (!source) {
-      Alert.alert('', '재생할 녹음이 없습니다.');
+      showNotice('', '재생할 녹음이 없습니다.');
       return;
     }
     try {
@@ -145,9 +146,9 @@ export function useVoiceRecording() {
       await sound.startPlayer(source);
       setIsPlaying(true);
     } catch (error) {
-      console.error('[useVoiceRecording] 재생 실패', error);
+      console.log('[useVoiceRecording] 재생 실패', error);
       setIsPlaying(false);
-      Alert.alert('', '녹음을 재생하지 못했어요.');
+      showNotice('', '녹음을 재생하지 못했어요.');
     }
   };
 
@@ -165,11 +166,11 @@ export function useVoiceRecording() {
   // 복약·일정 폼 공통 저장 전 검사 — 통과하지 못하면 안내를 띄우고 false
   const validateBeforeSave = (soundType: SoundType) => {
     if (soundType === 'voice' && !hasRecorded) {
-      Alert.alert('', '보호자 음성을 녹음해주세요.');
+      showNotice('', '보호자 음성을 녹음해주세요.');
       return false;
     }
     if (isRecording) {
-      Alert.alert('', '녹음을 정지한 뒤 저장해주세요.');
+      showNotice('', '녹음을 정지한 뒤 저장해주세요.');
       return false;
     }
     return true;
