@@ -69,9 +69,6 @@ src/
 - **UI 작업 후 Claude가 직접 기기를 켜서 스크린샷으로 검증하지 말 것** — adb 스크린샷/콜드 리스타트 왕복이 토큰을 과도하게 소모함. `tsc --noEmit`, ESLint 통과 여부까지만 확인하고 코드를 전달할 것. 실제 화면 확인은 사용자가 직접 기기에서 하고 피드백을 줌.
 - 사용자가 명시적으로 "네가 직접 확인해봐" 등으로 요청한 경우에만 예외적으로 기기 실행/스크린샷 검증을 수행할 것
 
-## 로그인 없이 화면 테스트하기
-`src/screens/auth/Login/LoginScreen.tsx`에 `__DEV__` 전용 버튼("[DEV] 보호자로 바로 진입" / "[DEV] 어르신으로 바로 진입")이 있음 — `useSessionStore`의 `login()`을 바로 호출해서 소셜 로그인 없이 역할별 화면 확인 가능. 릴리즈 빌드에는 포함 안 됨.
-
 ## Git 컨벤션
 - 브랜치명: `type/kebab-description` (`feature/`, `fix/`, `chore/`, `refactor/`)
 - 커밋 메시지: `type: 설명` (Conventional Commits 스타일, 기존 로그 참고)

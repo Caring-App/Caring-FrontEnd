@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, View, Text, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
@@ -7,7 +7,6 @@ import { getSocialAccessToken } from '@features/auth/api';
 import { SocialProvider } from '@features/auth/model';
 import { StartScreenButton } from '@features/auth/ui';
 import { logApiError } from '@shared/api';
-import { useSessionStore } from '@shared/store/useSessionStore';
 import { CaringLogoOnBrand } from '@shared/ui/AppHeader/CaringLogo';
 import { colors } from '@shared/theme/colors';
 import KakaoIcon from '@assets/icons/auth/kakao.svg';
@@ -37,37 +36,8 @@ export default function LoginScreen({ navigation }: Props) {
     }
   };
 
-  // [DEV] 보호자 진입 핸들러
-  const handleDevProtector = () => {
-    useSessionStore.getState().login('PROTECTOR');
-  };
-
-  // [DEV] 어르신 진입 핸들러
-  const handleDevSenior = () => {
-    useSessionStore.getState().login('WARD');
-  };
-
   return (
     <SafeAreaView className="flex-1 bg-primary" edges={['top', 'bottom']}>
-      {__DEV__ && (
-        <View className="mx-6 mt-4 gap-2">
-          <TouchableOpacity
-            className="items-center rounded-card border border-white py-2.5"
-            activeOpacity={0.8}
-            onPress={handleDevProtector}
-          >
-            <Text className="font-pretendard-semibold text-sm text-white">[DEV] 보호자로 바로 진입</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="items-center rounded-card border border-white py-2.5"
-            activeOpacity={0.8}
-            onPress={handleDevSenior}
-          >
-            <Text className="font-pretendard-semibold text-sm text-white">[DEV] 어르신으로 바로 진입</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
       <View className="flex-1 items-center justify-center">
         <CaringLogoOnBrand />
       </View>
