@@ -11,6 +11,8 @@ import {
 // 기기의 Health Connect(삼성 헬스·구글 핏 등이 기록한 건강 데이터)에서 걸음 수를 읽는 부분 — 서버 API가 아니라 기기 데이터라 utils에 둠
 
 const STEPS_READ_PERMISSION = { accessType: 'read', recordType: 'Steps' } as const;
+// 앱이 화면에 없을 때(위치 공유 백그라운드 서비스)도 걸음 수를 읽기 위한 권한 — 이 기능을 지원하지 않는 기기에서는 무시됨
+const BACKGROUND_READ_PERMISSION = { accessType: 'read', recordType: 'BackgroundAccessPermission' } as const;
 
 // 'unavailable': Android가 아니거나 Health Connect가 없음(Android 13 이하 미설치) / 'denied': 걸음 수 권한 없음
 export type StepsAccessStatus = 'granted' | 'denied' | 'unavailable';
@@ -30,7 +32,7 @@ export async function prepareStepsAccess(askIfMissing: boolean): Promise<StepsAc
   if (await hasStepsPermission()) return 'granted';
   if (!askIfMissing) return 'denied';
 
-  await requestPermission([STEPS_READ_PERMISSION]);
+  await requestPermission([STEPS_READ_PERMISSION, BACKGROUND_READ_PERMISSION]);
   return (await hasStepsPermission()) ? 'granted' : 'denied';
 }
 
