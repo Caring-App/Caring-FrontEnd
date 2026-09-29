@@ -1,9 +1,10 @@
-import { Platform } from 'react-native';
+import { Linking, Platform } from 'react-native';
 import {
   aggregateRecord,
   getGrantedPermissions,
   getSdkStatus,
   initialize,
+  openHealthConnectSettings,
   requestPermission,
   SdkAvailabilityStatus,
 } from 'react-native-health-connect';
@@ -45,4 +46,16 @@ export async function readTodaySteps(): Promise<number> {
     timeRangeFilter: { operator: 'between', startTime: startOfToday.toISOString(), endTime: now.toISOString() },
   });
   return result.COUNT_TOTAL ?? 0;
+}
+
+const HEALTH_CONNECT_STORE_URL = 'market://details?id=com.google.android.apps.healthdata';
+
+// 걸음 수를 못 읽는 상태에서 어르신이 직접 해결할 수 있게 여는 화면 —
+// 권한이 없으면 Health Connect 권한 설정, Health Connect가 없거나 업데이트가 필요하면 Play 스토어
+export function openStepsAccessFix(status: StepsAccessStatus) {
+  if (status === 'denied') {
+    openHealthConnectSettings();
+  } else {
+    Linking.openURL(HEALTH_CONNECT_STORE_URL).catch(() => {});
+  }
 }
