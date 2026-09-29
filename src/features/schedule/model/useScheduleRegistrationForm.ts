@@ -172,19 +172,13 @@ export const useScheduleRegistrationForm = (
       Alert.alert('', '음성 알림 시간을 선택해주세요.');
       return;
     }
-    if (soundType === 'voice' && !voiceRecording.hasRecorded) {
-      Alert.alert('', '보호자 음성을 녹음해주세요.');
-      return;
-    }
-    if (voiceRecording.isRecording) {
-      Alert.alert('', '녹음을 정지한 뒤 저장해주세요.');
+    if (!voiceRecording.validateBeforeSave(soundType)) {
       return;
     }
 
     setIsSubmitting(true);
     try {
-      // 새로 녹음한 음성은 저장 시점에 업로드해서 URL로 바꿈(useVoiceRecording.getVoiceFileUrl)
-      const voiceFileUrl = soundType === 'voice' ? await voiceRecording.getVoiceFileUrl() : '';
+      const voiceFileUrl = await voiceRecording.resolveVoiceFileUrl(soundType);
       const data: ScheduleRegistrationData = {
         title,
         location,

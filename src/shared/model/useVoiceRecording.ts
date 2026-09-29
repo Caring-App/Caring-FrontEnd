@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Alert, Linking, PermissionsAndroid, Platform } from 'react-native';
 import { createSound } from 'react-native-nitro-sound';
 import { uploadVoiceFileApi } from '@shared/api/voiceApi';
+import type { SoundType } from '@shared/types';
 
 const MICROPHONE_SETTINGS_MESSAGE = '마이크 권한이 꺼져 있어요. 설정에서 마이크 권한을 허용해 주세요.';
 
@@ -147,9 +148,23 @@ export function useVoiceRecording() {
     setSavedUrl(null);
   };
 
-  // 저장 직전에 호출 — 새로 녹음한 게 있으면 업로드해서 URL을, 없으면 기존 URL(없으면 빈 문자열)을 돌려줌.
-  // 업로드 실패는 그대로 던져서 저장 자체를 실패 처리하게 함
-  const getVoiceFileUrl = async (): Promise<string> => {
+  // 복약·일정 폼 공통 저장 전 검사 — 통과하지 못하면 안내를 띄우고 false
+  const validateBeforeSave = (soundType: SoundType) => {
+    if (soundType === 'voice' && !hasRecorded) {
+      Alert.alert('', '보호자 음성을 녹음해주세요.');
+      return false;
+    }
+    if (isRecording) {
+      Alert.alert('', '녹음을 정지한 뒤 저장해주세요.');
+      return false;
+    }
+    return true;
+  };
+
+  // 저장 직전에 호출 — 기본 알림음(TTS)이면 빈 문자열, 보호자 음성이면 새로 녹음한 걸 업로드해서 URL을
+  // (새 녹음이 없으면 기존 URL을) 돌려줌. 업로드 실패는 그대로 던져서 저장 자체를 실패 처리하게 함
+  const resolveVoiceFileUrl = async (soundType: SoundType): Promise<string> => {
+    if (soundType !== 'voice') return '';
     if (localPath) {
       const url = await uploadVoiceFileApi(localPath);
       setSavedUrl(url);
@@ -169,6 +184,7 @@ export function useVoiceRecording() {
     handleDeleteRecording,
     reset,
     stop,
-    getVoiceFileUrl,
+    validateBeforeSave,
+    resolveVoiceFileUrl,
   };
 }
