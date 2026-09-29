@@ -18,6 +18,11 @@ import { showNotice } from '@shared/model';
 // 레코드는 회원가입 때만 만들어져서 그 전에 가입한 어르신은 없을 수 있음 — 생성 API가 없어 앱에서는 만들 수 없음
 const WARD_SETTING_MISSING_MESSAGE = '해당 돌봄대상자의 설정 정보가 존재하지 않습니다.';
 
+// 어르신별 가장 최근 설정 저장 요청 번호 — 빠르게 연달아 바꿨을 때 앞선 요청이 늦게 실패해도,
+// 그 뒤 요청이 이미 화면 값을 새로 정했으므로 되돌리지 않기 위함
+let settingRequestSeq = 0;
+const latestSettingRequestByWard: Record<string, number> = {};
+
 function settingSaveFailedMessage(error: unknown) {
   if (getApiErrorMessage(error) === WARD_SETTING_MISSING_MESSAGE) {
     return '이 어르신의 화면 설정 정보가 서버에 없어 저장할 수 없어요. 관리자에게 문의해 주세요.';
@@ -139,11 +144,15 @@ export function useWardManagement() {
       fontSize: optionToConnectionFontSize(patch.fontSize ?? current.fontSize),
       ttsRate: patch.ttsRate ?? current.ttsRate,
     };
+    const requestId = ++settingRequestSeq;
+    latestSettingRequestByWard[wardId] = requestId;
     try {
       await updateWardSettingApi(wardIdNumber, body);
     } catch (error) {
       logApiError('어르신 화면 설정 저장 실패', error);
-      if (previous) useSelectedWardStore.getState().updateWard(wardId, previous);
+      if (previous && latestSettingRequestByWard[wardId] === requestId) {
+        useSelectedWardStore.getState().updateWard(wardId, previous);
+      }
       showNotice('설정을 저장하지 못했어요', settingSaveFailedMessage(error));
     }
   }
