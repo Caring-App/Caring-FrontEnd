@@ -3,7 +3,8 @@ import { AppState } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 // 보호자 알림 목록은 notification feature가 유일한 소스라 그대로 가져다 씀(순환참조 없음 — notification은 medication을 참조하지 않음)
 import { useNotificationStore } from '@features/notification/model';
-import { findTakenMealTypesFromNotifications, getLocalDateKey, getTodayWeekday } from '../utils';
+import { getLocalDateKey } from '@shared/utils/date';
+import { findTakenMealTypesFromNotifications, getTodayWeekday } from '../utils';
 import { MealType } from './medicationTypes';
 import { useMedicationListStore } from './useMedicationListStore';
 import { useMedicationStore } from './useMedicationStore';

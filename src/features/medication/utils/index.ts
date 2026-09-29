@@ -151,17 +151,11 @@ export function pillScheduleToEntry(schedule: PillSchedule): MedicationEntry {
   };
 }
 
+// Date.getDay()(0=일요일) → 복약 스케줄의 요일 값. Weekday가 복약 도메인 타입이라 shared가 아닌 여기에 둠
 const JS_DAY_TO_WEEKDAY: Weekday[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
 export function getTodayWeekday(now = new Date()): Weekday {
   return JS_DAY_TO_WEEKDAY[now.getDay()];
-}
-
-// 기기 로컬 날짜 'YYYY-MM-DD' — 서버 LocalDateTime 문자열의 날짜 부분과 비교하는 용도
-export function getLocalDateKey(now = new Date()): string {
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  return `${now.getFullYear()}-${month}-${day}`;
 }
 
 // 어르신이 복용 확인(POST /api/pill/confirm)하면 백엔드(PillLogService.notifyProtectorOfCompletion)가 보호자에게
