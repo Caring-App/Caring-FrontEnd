@@ -1,7 +1,9 @@
 import React from 'react';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { formatReportTimeLabel } from '../utils/reportUtils';
 
-const HOUR_OPTIONS = Array.from({ length: 24 }, (_, hour) => `${String(hour).padStart(2, '0')} : 00`);
+// 값은 'HH:mm'(레포트 시각 API 형식), 화면에는 'HH : mm'으로 표시. 백엔드 스케줄러가 분 단위로 돌아서 정시만 고르게 함
+const HOUR_OPTIONS = Array.from({ length: 24 }, (_, hour) => `${String(hour).padStart(2, '0')}:00`);
 
 export interface DropdownAnchor {
   x: number;
@@ -46,7 +48,7 @@ export function TimeDropdown({
                   className={`text-xs ${
                     time === value ? 'font-pretendard-semibold text-primary' : 'text-text-primary'
                   }`}>
-                  {time}
+                  {formatReportTimeLabel(time)}
                 </Text>
               </Pressable>
             ))}

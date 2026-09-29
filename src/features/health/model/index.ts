@@ -6,3 +6,5 @@ export * from './mockHealthMetrics';
 export * from './reportTypes';
 export * from './healthRecordDiseases';
 export * from './useStepSync';
+export * from './useDailyReportStore';
+export * from './useWardDailyReport';

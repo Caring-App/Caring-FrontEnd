@@ -1,6 +1,13 @@
 import React, { useRef, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
-import { useWardMoodStatus, HealthStatus, MOCK_HEALTH_METRICS } from '@features/health/model';
+import { Alert, Pressable, Text, View } from 'react-native';
+import {
+  HealthRecordKind,
+  HealthStatus,
+  useWardDailyReport,
+  useWardMoodStatus,
+  WardDailyReportData,
+} from '@features/health/model';
+import { formatReportTimeLabel, reportHealthAverages } from '@features/health/utils';
 import { MealType, TodayMedicationStatus, useWardTodayMedication } from '@features/medication/model';
 import { MEAL_TYPE_LABELS, MEAL_TYPES } from '@features/medication/utils';
 import EnvelopeFillIcon from '@assets/icons/report/envelope-fill.svg';
@@ -38,6 +45,47 @@ function buildDailySummary(
   return `${wardName}님의 오늘 건강 상태는 '${HEALTH_STATUS_LABELS[status]}' 이에요! ${medicationClause}`;
 }
 
+const HEALTH_VALUE_LABELS: Record<HealthRecordKind, { label: string; unit: string }> = {
+  bloodSugar: { label: '혈당', unit: 'mg/dL' },
+  bloodPressure: { label: '혈압(수축기)', unit: 'mmHg' },
+};
+
+const formatSteps = (steps: number | null) => (steps === null ? '기록 없음' : `${steps.toLocaleString('ko-KR')}보`);
+
+// 혈당·혈압은 어르신이 해당 기저질환을 등록한 경우(그래프에 항목이 있음)나 기록이 있을 때만 보여줌
+function visibleHealthKinds(data: WardDailyReportData, values: Partial<Record<HealthRecordKind, number>>) {
+  return (Object.keys(HEALTH_VALUE_LABELS) as HealthRecordKind[]).filter(
+    kind => values[kind] !== undefined || !!data.graph?.some(series => series.key === kind),
+  );
+}
+
+// 오늘 하루 요약 수치 줄 — 레포트가 만들어졌으면 레포트 값(질병별 하루 평균, 복약률), 아니면 지금까지의 실시간 값
+function SummaryStats({ data }: { data: WardDailyReportData }) {
+  const { report } = data;
+  const healthValues = report ? reportHealthAverages(report.healthDetails) : data.todayHealth;
+  const lines = [`${report ? '걸음 수' : '오늘의 걸음 수'}: ${formatSteps(report ? report.steps : data.todaySteps)}`];
+  visibleHealthKinds(data, healthValues).forEach(kind => {
+    const { label, unit } = HEALTH_VALUE_LABELS[kind];
+    const value = healthValues[kind];
+    lines.push(`${report ? `${label} 평균` : `오늘의 ${label}`}: ${value === undefined ? '기록 없음' : `${value} ${unit}`}`);
+  });
+  if (report) {
+    lines.push(
+      `복약률: ${report.medicationRate === null ? '오늘 복용할 약 없음' : `${Math.round(report.medicationRate)}%`}`,
+    );
+  }
+
+  return (
+    <View className="mt-3 gap-1">
+      {lines.map(line => (
+        <Text key={line} className="text-sm text-text-primary">
+          {line}
+        </Text>
+      ))}
+    </View>
+  );
+}
+
 export function DailyReportCard({
   wardId,
   wardName,
@@ -50,11 +98,18 @@ export function DailyReportCard({
 }) {
   const [showDetail, setShowDetail] = useState(false);
   const isDetailVisible = showDetail || !!forceShowDetail;
-  const [reportTime, setReportTime] = useState('21 : 00');
   const [timeDropdownAnchor, setTimeDropdownAnchor] = useState<DropdownAnchor | null>(null);
   const timeButtonRef = useRef<React.ComponentRef<typeof Pressable>>(null);
   const status = useWardMoodStatus(wardId) ?? null;
   const medication = useWardTodayMedication(wardId, wardName);
+  const dailyReport = useWardDailyReport(wardId);
+
+  const handleSelectReportTime = async (timeKey: string) => {
+    if (timeKey === dailyReport.reportTime) return;
+    if (!(await dailyReport.updateReportTime(timeKey)) && !dailyReport.isMockWard) {
+      Alert.alert('', '레포트 시간을 바꾸지 못했어요. 잠시 후 다시 시도해 주세요.');
+    }
+  };
 
   return (
     <TourTarget id="dailyReport.card" className="mt-4 rounded-card border border-border bg-surface p-4">
@@ -78,7 +133,9 @@ export function DailyReportCard({
               setTimeDropdownAnchor({ x, y, width, height });
             });
           }}>
-          <Text className="text-xs font-pretendard-semibold text-text-primary">{reportTime}</Text>
+          <Text className="text-xs font-pretendard-semibold text-text-primary">
+            {formatReportTimeLabel(dailyReport.reportTime)}
+          </Text>
           <ChevronDownIcon width={10} height={7} />
         </Pressable>
         <Text className="text-xs text-text-muted"> 시에 받아요</Text>
@@ -86,13 +143,13 @@ export function DailyReportCard({
 
       <TimeDropdown
         visible={timeDropdownAnchor !== null}
-        value={reportTime}
+        value={dailyReport.reportTime}
         anchor={timeDropdownAnchor}
         onClose={() => setTimeDropdownAnchor(null)}
-        onSelect={setReportTime}
+        onSelect={handleSelectReportTime}
       />
       <Text className="mt-1 text-xs text-text-muted">
-        하루 요약 레포트는 설정한 시간을 기준으로 반영됩니다
+        설정한 시간까지 어르신이 기록한 내용으로 레포트가 만들어져요
       </Text>
 
       <TourTarget id="dailyReport.healthStatus" className="mt-4 rounded-card border border-border bg-surface p-4">
@@ -106,27 +163,41 @@ export function DailyReportCard({
 
       <TourTarget id="dailyReport.summary" className="mt-3 rounded-card border border-border bg-surface p-4">
         <Text className="text-md font-semibold text-text-primary">오늘 하루 요약</Text>
-        <Text className="mt-2 text-sm text-text-primary">{buildDailySummary(wardName, status, medication)}</Text>
-        <View className="mt-3 gap-1">
-          {MOCK_HEALTH_METRICS.map(metric => (
-            <Text key={metric.key} className="text-sm text-text-primary">
-              {metric.todayLabel}: {metric.todayValue}
-            </Text>
-          ))}
-        </View>
+        {/* 레포트 시각이 지나면 서버가 만든 AI 요약을, 그 전에는 지금까지의 기록으로 만든 요약을 보여줌 */}
+        <Text className="mt-2 text-sm text-text-primary">
+          {dailyReport.report?.healthSummary || buildDailySummary(wardName, status, medication)}
+        </Text>
+        {!dailyReport.report && (
+          <Text className="mt-1 text-xs text-text-muted">
+            {formatReportTimeLabel(dailyReport.reportTime)}에 오늘의 레포트가 만들어져요
+          </Text>
+        )}
+        <SummaryStats data={dailyReport} />
       </TourTarget>
 
-      {isDetailVisible && <CompoundHealthDataSection />}
+      {isDetailVisible && <CompoundHealthDataSection series={dailyReport.graph} isLoading={dailyReport.isLoading} />}
     </TourTarget>
   );
 }
 
-function CompoundHealthDataSection() {
+function CompoundHealthDataSection({
+  series,
+  isLoading,
+}: {
+  series: WardDailyReportData['graph'];
+  isLoading: boolean;
+}) {
   return (
     <TourTarget id="dailyReport.chart" className="mt-3 rounded-card border border-border bg-surface p-4">
       <Text className="text-md font-semibold text-text-primary">건강 수치 그래프</Text>
       <View className="mt-3">
-        <HealthMetricsChart />
+        {series ? (
+          <HealthMetricsChart series={series} />
+        ) : (
+          <Text className="text-center text-2xs text-text-muted">
+            {isLoading ? '그래프를 불러오는 중이에요' : '그래프를 불러오지 못했어요'}
+          </Text>
+        )}
       </View>
     </TourTarget>
   );

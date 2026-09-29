@@ -23,3 +23,15 @@ export function useTodayDateKey() {
 
   return dateKey;
 }
+
+// 화면을 켜둔 채 자정이 지나면 refresh를 한 번 호출 — 첫 렌더에서는 호출하지 않음(보통 포커스 시점 조회가 이미 함)
+export function useRefreshOnDateChange(refresh: () => void) {
+  const dateKey = useTodayDateKey();
+  const [loadedDateKey, setLoadedDateKey] = useState(dateKey);
+
+  useEffect(() => {
+    if (dateKey === loadedDateKey) return;
+    setLoadedDateKey(dateKey);
+    refresh();
+  }, [dateKey, loadedDateKey, refresh]);
+}

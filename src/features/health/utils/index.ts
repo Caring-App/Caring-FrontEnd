@@ -21,3 +21,4 @@ export function healthStatusToMoodStatus(status: HealthStatus): MoodStatus {
   return HEALTH_STATUS_TO_MOOD_STATUS[status];
 }
 
+export * from './reportUtils';
