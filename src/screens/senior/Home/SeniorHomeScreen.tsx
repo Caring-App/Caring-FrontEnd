@@ -48,7 +48,6 @@ export function SeniorHomeScreen() {
 
       <HealthRecordModal
         visible={isHealthRecordVisible}
-        wardId={wardId}
         onClose={() => setIsHealthRecordVisible(false)}
       />
     </SafeAreaView>
