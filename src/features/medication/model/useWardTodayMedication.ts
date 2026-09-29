@@ -52,7 +52,7 @@ export function useWardTodayMedication(wardId: string, wardName: string): Record
 }
 
 // useWardTodayMedication이 쓰는 데이터(알림 목록, 복약 스케줄)를 불러옴 — 홈 화면 포커스 / 앱 복귀 시마다 갱신.
-// 같은 데이터를 여러 카드가 읽어서, 불러오기는 한 곳(MedicationSection)에서만 호출
+// 같은 데이터를 여러 카드(복약 카드, 하루 요약 레포트)가 읽어서, 불러오기는 화면(GuardianHomeScreen)에서 한 번만 호출
 export function useSyncWardTodayMedication(wardId: string) {
   const serverWardId = toServerWardId(wardId);
 

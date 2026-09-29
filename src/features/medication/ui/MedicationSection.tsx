@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { TodayMedicationStatus, useSyncWardTodayMedication, useWardTodayMedication } from '@features/medication/model';
+import { TodayMedicationStatus, useWardTodayMedication } from '@features/medication/model';
 import { MEAL_TYPE_LABELS, MEAL_TYPES } from '@features/medication/utils';
 import { SectionCard, AddButton } from '@shared/ui';
 import PrescriptionIcon from '@assets/icons/section/prescription2.svg';
@@ -8,6 +8,7 @@ import CapsuleOnIcon from '@assets/icons/medication/capsule-on.svg';
 import CapsuleOffIcon from '@assets/icons/medication/capsule-off.svg';
 
 // 보호자 홈 "복약 관리" — 어르신의 오늘 시간대별 복용 여부. 오늘 먹을 약이 없는 시간대(꺼져 있거나 복용 요일이 아님)는 흐리게 표시
+// 데이터 불러오기(useSyncWardTodayMedication)는 화면(GuardianHomeScreen)에서 함
 export function MedicationSection({
   wardId,
   wardName,
@@ -17,7 +18,6 @@ export function MedicationSection({
   wardName: string;
   onPressMore?: () => void;
 }) {
-  useSyncWardTodayMedication(wardId);
   const statusBySlot = useWardTodayMedication(wardId, wardName);
 
   return (
