@@ -3,8 +3,18 @@ import { Alert, Linking, PermissionsAndroid, Platform } from 'react-native';
 import { createSound } from 'react-native-nitro-sound';
 import { uploadVoiceFileApi } from '@shared/api/voiceApi';
 
+const MICROPHONE_SETTINGS_MESSAGE = '마이크 권한이 꺼져 있어요. 설정에서 마이크 권한을 허용해 주세요.';
+
+function alertOpenSettings(message: string) {
+  Alert.alert('', message, [
+    { text: '취소', style: 'cancel' },
+    { text: '설정 열기', onPress: () => Linking.openSettings() },
+  ]);
+}
+
 async function requestMicrophonePermission() {
   // iOS는 녹음을 처음 시작할 때 시스템이 Info.plist(NSMicrophoneUsageDescription) 문구로 직접 물어봄
+  // — 거부된 상태면 startRecorder가 실패하므로 그쪽(handleRecord catch)에서 안내함
   if (Platform.OS !== 'android') return true;
   const result = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO, {
     title: '마이크 권한',
@@ -13,10 +23,10 @@ async function requestMicrophonePermission() {
     buttonNegative: '거부',
   });
   if (result === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
-    Alert.alert('', '마이크 권한이 꺼져 있어요. 설정에서 마이크 권한을 허용해 주세요.', [
-      { text: '취소', style: 'cancel' },
-      { text: '설정 열기', onPress: () => Linking.openSettings() },
-    ]);
+    alertOpenSettings(MICROPHONE_SETTINGS_MESSAGE);
+  } else if (result === PermissionsAndroid.RESULTS.DENIED) {
+    // 이번에만 거부한 경우 — 아무 반응 없이 끝나면 버튼이 고장 난 것처럼 보여서 이유를 알려줌
+    Alert.alert('', '마이크 권한을 허용해야 음성을 녹음할 수 있어요.');
   }
   return result === PermissionsAndroid.RESULTS.GRANTED;
 }
@@ -89,7 +99,12 @@ export function useVoiceRecording() {
     } catch (error) {
       console.error('[useVoiceRecording] 녹음 실패', error);
       setIsRecording(false);
-      Alert.alert('', '녹음을 시작하지 못했어요. 잠시 후 다시 시도해 주세요.');
+      if (Platform.OS === 'ios') {
+        // iOS는 권한 상태를 미리 알 방법이 없어서(별도 권한 라이브러리 없음) 실패 시 권한 가능성을 함께 안내
+        alertOpenSettings('녹음을 시작하지 못했어요. 마이크 권한이 꺼져 있다면 설정에서 허용해 주세요.');
+      } else {
+        Alert.alert('', '녹음을 시작하지 못했어요. 잠시 후 다시 시도해 주세요.');
+      }
     } finally {
       setIsBusy(false);
     }
