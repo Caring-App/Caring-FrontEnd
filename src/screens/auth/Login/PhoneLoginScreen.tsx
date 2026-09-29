@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ActivityIndicator, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
-import { loginApi } from '@features/auth/api';
-import { FORMATTED_PHONE_MAX_LENGTH, formatPhoneNumber, normalizePhoneDigits } from '@features/auth/utils';
-import { logApiError, setTokens } from '@shared/api';
-import { useSessionStore } from '@shared/store/useSessionStore';
+import { usePhoneLogin } from '@features/auth/model';
+import { FORMATTED_PHONE_MAX_LENGTH, formatPhoneNumber } from '@features/auth/utils';
 import { CaringLogoHorizontal } from '@shared/ui/AppHeader/CaringLogo';
 import { colors } from '@shared/theme/colors';
 
@@ -18,33 +16,7 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'PhoneLogin'>;
 
 // 전화번호 + 비밀번호 로그인 (Figma 964:5521)
 export default function PhoneLoginScreen({ navigation }: Props) {
-  // 입력칸에는 010-0000-0000 형태로 보여주고, 상태·전송은 숫자만(회원가입 때 숫자만 저장하므로 로그인도 맞춤)
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [loginError, setLoginError] = useState('');
-
-  const canSubmit = !!phone && !!password && !isSubmitting;
-
-  const handleLogin = async () => {
-    if (!canSubmit) return;
-    setLoginError('');
-    setIsSubmitting(true);
-    try {
-      const result = await loginApi({ phone, password });
-      await setTokens(result.accessToken, result.refreshToken);
-      useSessionStore.getState().login(result.role, {
-        memberId: result.memberId,
-        name: result.name,
-        nickname: result.nickname,
-      });
-    } catch (error) {
-      logApiError('로그인 실패:', error);
-      setLoginError('전화번호 또는 비밀번호가 올바르지 않습니다.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const { phone, setPhone, password, setPassword, isFilled, isSubmitting, loginError, handleLogin } = usePhoneLogin();
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
@@ -69,7 +41,7 @@ export default function PhoneLoginScreen({ navigation }: Props) {
               placeholderTextColor={colors.textAuthDesc}
               keyboardType="number-pad"
               value={formatPhoneNumber(phone)}
-              onChangeText={value => setPhone(normalizePhoneDigits(value))}
+              onChangeText={setPhone}
               maxLength={FORMATTED_PHONE_MAX_LENGTH}
             />
           </View>
@@ -91,10 +63,10 @@ export default function PhoneLoginScreen({ navigation }: Props) {
 
         <TouchableOpacity
           className={`mt-10 h-[58px] items-center justify-center rounded-lg ${
-            phone && password ? 'bg-primary' : 'bg-loginButtonDisabled'
+            isFilled ? 'bg-primary' : 'bg-loginButtonDisabled'
           }`}
           onPress={handleLogin}
-          disabled={!canSubmit}
+          disabled={!isFilled || isSubmitting}
           activeOpacity={0.8}
         >
           {isSubmitting ? (

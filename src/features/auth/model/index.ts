@@ -11,3 +11,5 @@ export { useSignupSubmit } from './useSignupSubmit';
 export { DISEASE_LIST } from './diseaseList';
 export * from './types';
 export { useSignupExit } from './useSignupExit';
+export { usePhoneLogin } from './usePhoneLogin';
+export { useSocialLoginStart } from './useSocialLoginStart';
