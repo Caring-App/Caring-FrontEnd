@@ -1,4 +1,16 @@
 // 하루 요약 레포트 관련 백엔드 DTO (/v3/api-docs의 health-record / step-record / report-setting / daily-report 기준)
+// 와 화면용 타입
+
+export type HealthMetricKey = 'steps' | 'bloodSugar' | 'bloodPressure';
+
+// 건강 수치 그래프 한 장 — 날짜별 값(기록 없는 날은 null)
+export interface HealthMetricSeries {
+  key: HealthMetricKey;
+  label: string;
+  unit: string;
+  dates: string[];
+  values: (number | null)[];
+}
 
 // 건강 수치를 기록할 수 있는 항목 — 백엔드는 기저질환별 숫자 하나만 받음(HealthRecordRequestDto)
 export type HealthRecordKind = 'bloodSugar' | 'bloodPressure';

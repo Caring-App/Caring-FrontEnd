@@ -1,13 +1,4 @@
-export type HealthMetricKey = 'steps' | 'bloodSugar' | 'bloodPressure';
-
-// 건강 수치 그래프 한 장 — 날짜별 값(기록 없는 날은 null)
-export interface HealthMetricSeries {
-  key: HealthMetricKey;
-  label: string;
-  unit: string;
-  dates: string[];
-  values: (number | null)[];
-}
+import type { HealthMetricSeries } from './reportTypes';
 
 // 연동 전 목업 어르신(사용가이드 투어용) 전용 그래프 데이터 — 실제 어르신은 GET /api/health-record/{wardId}/graph 사용
 export const MOCK_HEALTH_METRICS: HealthMetricSeries[] = [

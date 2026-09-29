@@ -6,8 +6,7 @@ import { getTodayDailyReportApi } from '../api/dailyReportApi';
 import { getReportTimeApi, updateReportTimeApi } from '../api/reportSettingApi';
 import { getTodayStepsApi } from '../api/stepRecordApi';
 import { buildHealthMetricSeries, getRecentDateKeys, latestHealthValues, toReportTimeKey } from '../utils/reportUtils';
-import type { HealthMetricSeries } from './mockHealthMetrics';
-import type { DailyReportResponse, HealthRecordKind } from './reportTypes';
+import type { DailyReportResponse, HealthMetricSeries, HealthRecordKind } from './reportTypes';
 
 // 그래프에 보여줄 기간(오늘 포함)
 export const HEALTH_GRAPH_DAYS = 7;

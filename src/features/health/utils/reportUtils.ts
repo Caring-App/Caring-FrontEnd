@@ -1,8 +1,9 @@
 import { getLocalDateKey } from '@shared/utils/date';
 import { HEALTH_RECORD_DISEASES } from '../model/healthRecordDiseases';
-import type { HealthMetricKey, HealthMetricSeries } from '../model/mockHealthMetrics';
 import type {
   DailyReportHealthDetail,
+  HealthMetricKey,
+  HealthMetricSeries,
   DailyValue,
   HealthGraphResponse,
   HealthRecordKind,
