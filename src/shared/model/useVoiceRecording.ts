@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Linking, PermissionsAndroid, Platform } from 'react-native';
 import { createSound } from 'react-native-nitro-sound';
 import { uploadVoiceFileApi } from '@shared/api/voiceApi';
@@ -26,7 +26,9 @@ async function requestMicrophonePermission() {
 // → 녹음만 하고 모달을 닫으면 서버에 불필요한 파일이 쌓이지 않음.
 // 수정 모달에서는 이미 서버에 있는 녹음(savedUrl)을 그대로 재생·유지할 수 있음.
 export function useVoiceRecording() {
-  const soundRef = useRef(createSound());
+  // useRef(createSound())는 첫 값만 쓰고 버리지만 createSound() 자체는 렌더마다 실행돼 네이티브 객체가 계속 생김
+  // — lazy 초기화로 처음 한 번만 만듦
+  const [sound] = useState(createSound);
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   // 녹음 시작/정지가 네이티브 백그라운드 스레드에서 처리돼 잠깐 걸리므로 그동안 버튼 연타를 막는 용도
@@ -37,24 +39,23 @@ export function useVoiceRecording() {
   const hasRecorded = !!localPath || !!savedUrl;
 
   const stopPlayback = async () => {
-    soundRef.current.removePlaybackEndListener();
-    await soundRef.current.stopPlayer().catch(() => {});
+    sound.removePlaybackEndListener();
+    await sound.stopPlayer().catch(() => {});
     setIsPlaying(false);
   };
 
   // 모달이 닫히거나 화면을 벗어나면 녹음·재생을 멈춤
   useEffect(() => {
-    const sound = soundRef.current;
     return () => {
       sound.removePlaybackEndListener();
       sound.stopRecorder().catch(() => {});
       sound.stopPlayer().catch(() => {});
     };
-  }, []);
+  }, [sound]);
 
   // 모달을 새로 열 때 호출 — 수정 모달이면 기존에 저장된 녹음 URL을 넘김
   const reset = (initialUrl?: string | null) => {
-    if (isRecording) soundRef.current.stopRecorder().catch(() => {});
+    if (isRecording) sound.stopRecorder().catch(() => {});
     if (isPlaying) stopPlayback();
     setIsRecording(false);
     setLocalPath(null);
@@ -66,14 +67,14 @@ export function useVoiceRecording() {
     setIsBusy(true);
     try {
       if (isRecording) {
-        const path = await soundRef.current.stopRecorder();
+        const path = await sound.stopRecorder();
         setIsRecording(false);
         setLocalPath(path);
         return;
       }
       if (!(await requestMicrophonePermission())) return;
       if (isPlaying) await stopPlayback();
-      await soundRef.current.startRecorder();
+      await sound.startRecorder();
       setIsRecording(true);
     } catch (error) {
       console.error('[useVoiceRecording] 녹음 실패', error);
@@ -97,11 +98,11 @@ export function useVoiceRecording() {
       return;
     }
     try {
-      soundRef.current.addPlaybackEndListener(() => {
-        soundRef.current.removePlaybackEndListener();
+      sound.addPlaybackEndListener(() => {
+        sound.removePlaybackEndListener();
         setIsPlaying(false);
       });
-      await soundRef.current.startPlayer(source);
+      await sound.startPlayer(source);
       setIsPlaying(true);
     } catch (error) {
       console.error('[useVoiceRecording] 재생 실패', error);
@@ -113,7 +114,7 @@ export function useVoiceRecording() {
   const handleDeleteRecording = async () => {
     if (isBusy) return;
     if (isRecording) {
-      await soundRef.current.stopRecorder().catch(() => {});
+      await sound.stopRecorder().catch(() => {});
       setIsRecording(false);
     }
     if (isPlaying) await stopPlayback();
