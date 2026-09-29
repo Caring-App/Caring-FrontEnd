@@ -43,7 +43,7 @@ export function SeniorHomeScreen() {
 
         <WardScheduleCard />
 
-        <WardMedicationCard wardId={wardId} />
+        <WardMedicationCard />
       </ScrollView>
 
       <HealthRecordModal

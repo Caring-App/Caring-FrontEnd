@@ -54,6 +54,8 @@ export function formatDays(days: Weekday[]) {
     .join(', ');
 }
 
+// 시간대 표시 순서와 라벨 — 복약 관련 화면(어르신 카드, 보호자 홈, 하루 요약, 등록 모달)이 모두 이 값을 씀
+export const MEAL_TYPES: MealType[] = ['morning', 'lunch', 'dinner'];
 export const MEAL_TYPE_LABELS: Record<MealType, string> = { morning: '아침', lunch: '점심', dinner: '저녁' };
 
 const MEAL_TYPE_TO_PILL_NAME: Record<MealType, PillName> = { morning: 'MORNING', lunch: 'LUNCH', dinner: 'DINNER' };
@@ -149,4 +151,36 @@ export function pillScheduleToEntry(schedule: PillSchedule): MedicationEntry {
     voiceFileUrl: schedule.voiceFileUrl ?? '',
     enabled: schedule.active,
   };
+}
+
+// Date.getDay()(0=일요일) → 복약 스케줄의 요일 값. Weekday가 복약 도메인 타입이라 shared가 아닌 여기에 둠
+const JS_DAY_TO_WEEKDAY: Weekday[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
+export function getTodayWeekday(now = new Date()): Weekday {
+  return JS_DAY_TO_WEEKDAY[now.getDay()];
+}
+
+// 어르신이 복용 확인(POST /api/pill/confirm)하면 백엔드(PillLogService.notifyProtectorOfCompletion)가 보호자에게
+// 제목 "복약 완료", 내용 "{어르신 이름} 님 [아침약|점심약|저녁약] 복용이 확인되었습니다." 알림 기록을 남김.
+// 보호자용 "어르신 오늘 복약 상태" 조회 API가 없어서 이 알림 문구를 파싱해 오늘 복용한 시간대를 알아냄
+// — 백엔드가 알림 문구를 바꾸면 여기도 같이 바꿔야 함.
+const PILL_CONFIRM_TITLE = '복약 완료';
+const PILL_CONFIRM_PATTERN = /^(.+) 님 \[(아침약|점심약|저녁약)\] 복용이 확인되었습니다\.?$/;
+const PILL_LABEL_TO_MEAL_TYPE: Record<string, MealType> = { 아침약: 'morning', 점심약: 'lunch', 저녁약: 'dinner' };
+
+// 시간대별로 오늘 복용 확인된 횟수를 셈 — 같은 시간대 스케줄이 여러 개면 알림도 스케줄마다 따로 옴
+export function countTakenMealTypesFromNotifications(
+  notifications: { title: string; content: string; createdAt: string }[],
+  wardName: string,
+  dateKey: string,
+): Record<MealType, number> {
+  const counts: Record<MealType, number> = { morning: 0, lunch: 0, dinner: 0 };
+  notifications.forEach(({ title, content, createdAt }) => {
+    if (title !== PILL_CONFIRM_TITLE || !createdAt.startsWith(dateKey)) return;
+    const match = PILL_CONFIRM_PATTERN.exec(content.trim());
+    if (match && match[1] === wardName) {
+      counts[PILL_LABEL_TO_MEAL_TYPE[match[2]]] += 1;
+    }
+  });
+  return counts;
 }

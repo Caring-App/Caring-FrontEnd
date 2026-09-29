@@ -8,6 +8,7 @@ import { AppHeader } from '@shared/ui';
 import { colors } from '@shared/theme/colors';
 import { useGuardianMenuStore } from '@features/guardian-menu/model';
 import { DailyReportCard } from '@features/health/ui';
+import { useSyncWardTodayMedication } from '@features/medication/model';
 import { MedicationSection } from '@features/medication/ui';
 import { LocationSection } from '@features/location/ui';
 import { ScheduleSection } from '@features/schedule/ui';
@@ -34,6 +35,8 @@ export function GuardianHomeScreen() {
   const isWardsLoaded = useSelectedWardStore(state => state.isLoaded);
   const ward = wards.find(item => item.id === selectedWardId) ?? wards[0];
   const tourScroll = useTourScrollTracking('home');
+  // 복약 카드와 하루 요약 레포트가 함께 쓰는 오늘 복약 데이터(알림 목록·복약 스케줄)를 화면 단위에서 한 번만 불러옴
+  useSyncWardTodayMedication(ward.id);
 
   useEffect(() => {
     if (!isWardsLoaded) {
@@ -102,7 +105,7 @@ export function GuardianHomeScreen() {
           <ScheduleSection wardId={ward.id} wardName={ward.name} />
         </TourTarget>
         <TourTarget id="medication.section" className="mt-4">
-          <MedicationSection wardId={ward.id} onPressMore={() => stackNavigation?.navigate('Medication')} />
+          <MedicationSection wardId={ward.id} wardName={ward.name} onPressMore={() => stackNavigation?.navigate('Medication')} />
         </TourTarget>
         <TourTarget id="location.section" className="mt-4">
           <LocationSection wardId={ward.id} onPressMore={() => stackNavigation?.navigate('Map')} />

@@ -2,16 +2,15 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { MOCK_WARDS } from '@features/ward-management/model';
+import { MealType } from './medicationTypes';
 
-export type MealSlot = 'morning' | 'lunch' | 'dinner';
-export type MedicationTaken = Record<MealSlot, boolean>;
+export type MedicationTaken = Record<MealType, boolean>;
 
 interface MedicationState {
-  // TODO: "오늘 복용했는지" 여부를 서버에 기록하는 API가 아직 없어서(복약 스케줄 자체를 정의하는
-  // /api/pill/schedule과는 별개 개념) 기기 로컬 저장까지만 함 — 보호자/어르신이 서로 다른 기기를
-  // 쓰는 실서비스에서는 이것만으론 동기화가 안 되고, 해당 API가 생기면 그쪽으로 교체 필요.
+  // 연동 전 목업 어르신(사용가이드 투어 등) 전용 로컬 값. 실제 어르신의 복용 기록은 서버가 원본 —
+  // 어르신 화면은 useTodayPills(/api/pill/today, /api/pill/confirm), 보호자 화면은 useWardTodayMedication(알림 기록) 참고.
   takenByWard: Record<string, MedicationTaken>;
-  setTaken: (wardId: string, slot: MealSlot, value: boolean) => void;
+  setTaken: (wardId: string, slot: MealType, value: boolean) => void;
 }
 
 // TODO: 백엔드 연동 전 mock 데이터, 어르신별로 다른 값임을 보여주기 위한 임시 시드
