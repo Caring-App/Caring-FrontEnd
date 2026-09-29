@@ -220,10 +220,7 @@ export const useScheduleRegistrationForm = (
       showAlarmPicker,
       hasAlarmTime,
       soundType,
-      isRecording: voiceRecording.isRecording,
-      isPlaying: voiceRecording.isPlaying,
-      isRecordingBusy: voiceRecording.isBusy,
-      hasRecorded: voiceRecording.hasRecorded,
+      recording: voiceRecording.controls,
       isSubmitting,
     },
     actions: {
@@ -242,9 +239,6 @@ export const useScheduleRegistrationForm = (
       setAlarmTime,
       toggleAlarmPicker,
       setSoundType,
-      handleRecord: voiceRecording.handleRecord,
-      handlePlay: voiceRecording.handlePlay,
-      handleDeleteRecording: voiceRecording.handleDeleteRecording,
       handleSave,
     },
   };

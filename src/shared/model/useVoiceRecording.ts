@@ -4,6 +4,18 @@ import { createSound } from 'react-native-nitro-sound';
 import { uploadVoiceFileApi } from '@shared/api/voiceApi';
 import type { SoundType } from '@shared/types';
 
+// useVoiceRecording().controls — 녹음 UI(SoundSettingsCard/VoiceRecordingControls)가 필요로 하는 상태·동작을 한 묶음으로 전달
+export interface VoiceRecordingState {
+  isRecording: boolean;
+  isPlaying: boolean;
+  hasRecorded: boolean;
+  // 녹음 시작/정지가 처리되는 동안(네이티브 백그라운드 스레드) 버튼을 잠깐 막음
+  isBusy: boolean;
+  onRecord: () => void;
+  onPlay: () => void;
+  onDelete: () => void;
+}
+
 const MICROPHONE_SETTINGS_MESSAGE = '마이크 권한이 꺼져 있어요. 설정에서 마이크 권한을 허용해 주세요.';
 
 function alertOpenSettings(message: string) {
@@ -174,14 +186,19 @@ export function useVoiceRecording() {
     return savedUrl ?? '';
   };
 
-  return {
+  // 녹음 UI(SoundSettingsCard)에 그대로 넘기는 묶음
+  const controls: VoiceRecordingState = {
     isRecording,
     isPlaying,
-    isBusy,
     hasRecorded,
-    handleRecord,
-    handlePlay,
-    handleDeleteRecording,
+    isBusy,
+    onRecord: handleRecord,
+    onPlay: handlePlay,
+    onDelete: handleDeleteRecording,
+  };
+
+  return {
+    controls,
     reset,
     stop,
     validateBeforeSave,

@@ -3,17 +3,8 @@ import { Pressable, Text, View } from 'react-native';
 import MicrophoneIcon from '@assets/icons/schedule/microphone-outline.svg';
 import PlayIcon from '@assets/icons/action/play-fill.svg';
 import DeleteIcon from '@assets/icons/action/delete.svg';
+import type { VoiceRecordingState } from '@shared/model';
 
-interface VoiceRecordingControlsProps {
-  isRecording: boolean;
-  isPlaying: boolean;
-  hasRecorded: boolean;
-  // 녹음 시작/정지가 처리되는 동안(네이티브 백그라운드 스레드) 버튼을 잠깐 막음
-  isBusy: boolean;
-  onRecord: () => void;
-  onPlay: () => void;
-  onDelete: () => void;
-}
 
 function RecordingButton({
   icon,
@@ -46,15 +37,8 @@ function getStatusMessage(isRecording: boolean, isPlaying: boolean, hasRecorded:
   return '녹음 버튼을 눌러 어르신께 들려드릴 음성을 녹음해 주세요.';
 }
 
-export function VoiceRecordingControls({
-  isRecording,
-  isPlaying,
-  hasRecorded,
-  isBusy,
-  onRecord,
-  onPlay,
-  onDelete,
-}: VoiceRecordingControlsProps) {
+export function VoiceRecordingControls({ recording }: { recording: VoiceRecordingState }) {
+  const { isRecording, isPlaying, hasRecorded, isBusy, onRecord, onPlay, onDelete } = recording;
   return (
     <View className="mt-3">
       <View className="flex-row gap-2">

@@ -2,18 +2,13 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { SoundType } from '@shared/types';
 import { RadioButton } from './RadioButton';
+import type { VoiceRecordingState } from '@shared/model';
 import { VoiceRecordingControls } from './VoiceRecordingControls';
 
 interface SoundSettingsCardProps {
   soundType: SoundType;
   onChangeSoundType: (type: SoundType) => void;
-  isRecording: boolean;
-  isPlaying: boolean;
-  hasRecorded: boolean;
-  isRecordingBusy: boolean;
-  onRecord: () => void;
-  onPlay: () => void;
-  onDelete: () => void;
+  recording: VoiceRecordingState;
 }
 
 const SOUND_OPTIONS: { type: SoundType; label: string }[] = [
@@ -24,13 +19,7 @@ const SOUND_OPTIONS: { type: SoundType; label: string }[] = [
 export function SoundSettingsCard({
   soundType,
   onChangeSoundType,
-  isRecording,
-  isPlaying,
-  hasRecorded,
-  isRecordingBusy,
-  onRecord,
-  onPlay,
-  onDelete,
+  recording,
 }: SoundSettingsCardProps) {
   return (
     <View className="mt-5 rounded-card border border-border p-4">
@@ -49,15 +38,7 @@ export function SoundSettingsCard({
               <Text className="font-pretendard-semibold text-lg text-text-body">{label}</Text>
             </Pressable>
             {type === 'voice' && active && (
-              <VoiceRecordingControls
-                isRecording={isRecording}
-                isPlaying={isPlaying}
-                hasRecorded={hasRecorded}
-                isBusy={isRecordingBusy}
-                onRecord={onRecord}
-                onPlay={onPlay}
-                onDelete={onDelete}
-              />
+              <VoiceRecordingControls recording={recording} />
             )}
           </View>
         );

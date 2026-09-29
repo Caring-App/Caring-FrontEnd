@@ -156,10 +156,7 @@ export const useMedicationRegistrationForm = (
       reminderInterval,
       showReminderOptions,
       soundType,
-      isRecording: voiceRecording.isRecording,
-      isPlaying: voiceRecording.isPlaying,
-      isRecordingBusy: voiceRecording.isBusy,
-      hasRecorded: voiceRecording.hasRecorded,
+      recording: voiceRecording.controls,
       isSubmitting,
     },
     actions: {
@@ -171,9 +168,6 @@ export const useMedicationRegistrationForm = (
       toggleReminderOptions,
       selectReminderInterval,
       setSoundType,
-      handleRecord: voiceRecording.handleRecord,
-      handlePlay: voiceRecording.handlePlay,
-      handleDeleteRecording: voiceRecording.handleDeleteRecording,
       handleSave,
     },
   };
