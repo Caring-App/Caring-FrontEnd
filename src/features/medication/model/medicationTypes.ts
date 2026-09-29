@@ -45,6 +45,8 @@ export interface MedicationRegistrationData {
   time: TimeState;
   reminderInterval: string;
   soundType: MedicationSoundType;
+  // 보호자 음성 녹음 파일 URL(POST /api/voice/upload 결과). 기본 알림음(TTS)이면 빈 문자열
+  voiceFileUrl: string;
 }
 
 // 화면에 그려지는 항목 = 백엔드 스케줄 1건(pillScheduleId 1개, 시간대 1개).
@@ -56,5 +58,6 @@ export interface MedicationEntry {
   time: TimeState;
   reminderInterval: string;
   soundType: MedicationSoundType;
+  voiceFileUrl: string;
   enabled: boolean;
 }

@@ -44,6 +44,7 @@ export function taskScheduleToEntry(schedule: TaskSchedule): ScheduleEntry {
     scheduleTime: taskTimeToTimeState(schedule.taskTime),
     alarmTime: taskTimeToTimeState(schedule.ttsVoiceTime),
     soundType: alarmTypeToSoundType(schedule.alarmType),
+    voiceFileUrl: schedule.voiceFileUrl ?? '',
   };
 }
 
@@ -57,7 +58,6 @@ export function buildTaskScheduleRequest(data: ScheduleRegistrationData): TaskSc
     ttsVoiceTime: timeStateToTaskTime(data.alarmTime),
     ttsMessage: buildTtsMessage(data.title),
     alarmType: soundTypeToAlarmType(data.soundType),
-    // TODO: useVoiceRecording이 아직 로컬 스텁이라(실제 파일 업로드 없음) 항상 빈 값으로 보냄 — 녹음 업로드 붙으면 채우기
-    voiceFileUrl: '',
+    voiceFileUrl: data.voiceFileUrl,
   };
 }

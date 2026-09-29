@@ -194,10 +194,7 @@ export function MedicationRegistrationModal({
               <SoundSettingsCard
                 soundType={state.soundType}
                 onChangeSoundType={actions.setSoundType}
-                isRecording={state.isRecording}
-                onRecord={actions.handleRecord}
-                onPlay={actions.handlePlay}
-                onDelete={actions.handleDeleteRecording}
+                recording={state.recording}
               />
 
               <Pressable

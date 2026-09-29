@@ -146,6 +146,7 @@ export function pillScheduleToEntry(schedule: PillSchedule): MedicationEntry {
     time: takeTimeToTimeState(schedule.takeTime),
     reminderInterval: minutesToReminderInterval(schedule.retryAlarm),
     soundType: alarmTypeToSoundType(schedule.alarmType),
+    voiceFileUrl: schedule.voiceFileUrl ?? '',
     enabled: schedule.active,
   };
 }

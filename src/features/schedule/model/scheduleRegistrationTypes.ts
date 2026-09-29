@@ -13,6 +13,8 @@ export interface ScheduleRegistrationData {
   scheduleTime: TimeState;
   alarmTime: TimeState;
   soundType: ScheduleSoundType;
+  // 보호자 음성 녹음 파일 URL(POST /api/voice/upload 결과). 기본 알림음(TTS)이면 빈 문자열
+  voiceFileUrl: string;
 }
 
 export interface ScheduleEntry extends ScheduleRegistrationData {
