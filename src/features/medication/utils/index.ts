@@ -150,3 +150,40 @@ export function pillScheduleToEntry(schedule: PillSchedule): MedicationEntry {
     enabled: schedule.active,
   };
 }
+
+const JS_DAY_TO_WEEKDAY: Weekday[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
+export function getTodayWeekday(now = new Date()): Weekday {
+  return JS_DAY_TO_WEEKDAY[now.getDay()];
+}
+
+// 기기 로컬 날짜 'YYYY-MM-DD' — 서버 LocalDateTime 문자열의 날짜 부분과 비교하는 용도
+export function getLocalDateKey(now = new Date()): string {
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${now.getFullYear()}-${month}-${day}`;
+}
+
+// 어르신이 복용 확인(POST /api/pill/confirm)하면 백엔드(PillLogService.notifyProtectorOfCompletion)가 보호자에게
+// 제목 "복약 완료", 내용 "{어르신 이름} 님 [아침약|점심약|저녁약] 복용이 확인되었습니다." 알림 기록을 남김.
+// 보호자용 "어르신 오늘 복약 상태" 조회 API가 없어서 이 알림 문구를 파싱해 오늘 복용한 시간대를 알아냄
+// — 백엔드가 알림 문구를 바꾸면 여기도 같이 바꿔야 함.
+const PILL_CONFIRM_TITLE = '복약 완료';
+const PILL_CONFIRM_PATTERN = /^(.+) 님 \[(아침약|점심약|저녁약)\] 복용이 확인되었습니다\.?$/;
+const PILL_LABEL_TO_MEAL_TYPE: Record<string, MealType> = { 아침약: 'morning', 점심약: 'lunch', 저녁약: 'dinner' };
+
+export function findTakenMealTypesFromNotifications(
+  notifications: { title: string; content: string; createdAt: string }[],
+  wardName: string,
+  dateKey: string,
+): Set<MealType> {
+  const taken = new Set<MealType>();
+  notifications.forEach(({ title, content, createdAt }) => {
+    if (title !== PILL_CONFIRM_TITLE || !createdAt.startsWith(dateKey)) return;
+    const match = PILL_CONFIRM_PATTERN.exec(content.trim());
+    if (match && match[1] === wardName) {
+      taken.add(PILL_LABEL_TO_MEAL_TYPE[match[2]]);
+    }
+  });
+  return taken;
+}

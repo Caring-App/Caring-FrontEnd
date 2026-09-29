@@ -22,8 +22,8 @@ const SLOT_LABELS: Record<MealType, string> = { morning: '아침', lunch: '점�
 // 돌봄대상자 메인 화면의 "복약 관리" 카드. 오늘 복약 기록은 서버(/api/pill/today) 기준이라 매일 새로 시작하고,
 // 보호자가 꺼둔 시간대·오늘 복용 요일이 아닌 시간대는 흐리게 표시되며 누를 수 없음.
 // 복용 확인은 되돌릴 수 없어서(서버에 취소 API 없음) 누르면 한 번 더 확인받음
-export function WardMedicationCard({ wardId }: { wardId: string }) {
-  const { pillsBySlot, isLoading, confirmingSlot, confirmPill, error } = useTodayPills(wardId);
+export function WardMedicationCard() {
+  const { pillsBySlot, isLoading, confirmingSlot, confirmPill, error } = useTodayPills();
   const [pendingSlot, setPendingSlot] = useState<MealType | null>(null);
 
   const handleConfirm = () => {

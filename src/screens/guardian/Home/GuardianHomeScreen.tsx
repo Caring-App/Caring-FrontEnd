@@ -102,7 +102,7 @@ export function GuardianHomeScreen() {
           <ScheduleSection wardId={ward.id} wardName={ward.name} />
         </TourTarget>
         <TourTarget id="medication.section" className="mt-4">
-          <MedicationSection wardId={ward.id} onPressMore={() => stackNavigation?.navigate('Medication')} />
+          <MedicationSection wardId={ward.id} wardName={ward.name} onPressMore={() => stackNavigation?.navigate('Medication')} />
         </TourTarget>
         <TourTarget id="location.section" className="mt-4">
           <LocationSection wardId={ward.id} onPressMore={() => stackNavigation?.navigate('Map')} />
