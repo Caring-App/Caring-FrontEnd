@@ -5,12 +5,15 @@ import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import { MOCK_WARDS, useWardFontScaleStore } from '@features/ward-management/model';
 import { WardText } from '@features/ward-management/ui';
+import { useStepSync } from '@features/health/model';
 import { HealthRecordModal, WardHealthStatusCard } from '@features/health/ui';
 import { WardScheduleCard } from '@features/schedule/ui';
 import { WardMedicationCard } from '@features/medication/ui';
 
 export function SeniorHomeScreen() {
   const [isHealthRecordVisible, setIsHealthRecordVisible] = useState(false);
+  // 오늘 걸음 수를 Health Connect에서 읽어 서버로 보냄(보호자 하루 요약 레포트용)
+  useStepSync();
   // 로그인된 WARD 계정 자신이 곧 wardId — 연동/복약스케줄 등 백엔드 API의 wardId는 WARD 역할
   // member의 memberId를 그대로 씀(별도 ward 테이블 없이 member.role=WARD가 그 자체로 어르신).
   // 실로그인 시 useSessionStore.profile.memberId에 실제 값이 들어있으므로 그대로 사용.

@@ -5,3 +5,4 @@ export * from './useHealthRecordForm';
 export * from './mockHealthMetrics';
 export * from './reportTypes';
 export * from './healthRecordDiseases';
+export * from './useStepSync';
