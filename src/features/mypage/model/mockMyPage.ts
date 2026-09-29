@@ -1,7 +1,8 @@
 import { FaqItem, ProfileInfo, WithdrawReasonOption } from './types';
 
+// 이름은 화면에서 로그인 세션의 회원 이름으로 덮어씀(ProfileScreen) — 전화번호/주소는 아직 조회 API 연동 전
 export const MOCK_PROFILE: ProfileInfo = {
-  name: '이세연님',
+  name: '',
   phone: '',
   address: '',
 };

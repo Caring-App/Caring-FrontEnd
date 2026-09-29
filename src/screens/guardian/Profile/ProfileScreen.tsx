@@ -22,6 +22,9 @@ export function ProfileScreen() {
   const navigation = useNavigation();
   const stackNavigation = navigation.getParent<GuardianStackNavigationProp>();
   const [profile, setProfile] = useState(MOCK_PROFILE);
+  // 이름은 로그인한 회원 정보(세션)에서 가져옴 — 사이드바(GuardianMenuDrawer)와 같은 출처라 세션 이름이 바뀌면 둘 다 함께 바뀜
+  const userName = useSessionStore(state => state.profile?.name);
+  const displayProfile = { ...profile, name: userName ? `${userName}님` : '' };
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [linkCodeModalVisible, setLinkCodeModalVisible] = useState(false);
 
@@ -39,7 +42,7 @@ export function ProfileScreen() {
 
         <View className="mt-4">
           <ProfileCard
-            profile={profile}
+            profile={displayProfile}
             onPressEditInfo={() => setEditModalVisible(true)}
             onPressLinkCode={() => setLinkCodeModalVisible(true)}
           />
@@ -72,7 +75,7 @@ export function ProfileScreen() {
 
       <LinkCodeModal
         visible={linkCodeModalVisible}
-        name={profile.name}
+        name={displayProfile.name}
         code={MOCK_LINK_CODE}
         onClose={() => setLinkCodeModalVisible(false)}
       />
