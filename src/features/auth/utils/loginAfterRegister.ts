@@ -13,5 +13,6 @@ export async function loginAfterRegister(phone: string, password: string, role: 
     memberId: loginResult.memberId,
     name: loginResult.name,
     nickname: loginResult.nickname,
+    authLevel: loginResult.authLevel,
   });
 }

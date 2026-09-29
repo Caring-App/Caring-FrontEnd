@@ -1,11 +1,13 @@
 import { create } from 'zustand';
-import { UserRole } from '@shared/types';
+import { AuthLevel, UserRole } from '@shared/types';
 import { clearTokens } from '@shared/api/tokenStorage';
 
 interface UserProfile {
   memberId: number;
   name: string;
   nickname: string;
+  // 로그인 응답의 권한 등급. 소셜 회원가입 응답처럼 값이 없으면 일반 회원으로 봄
+  authLevel?: AuthLevel;
 }
 
 interface SessionState {

@@ -74,6 +74,7 @@ export const checkSocialMember = async (
       memberId: data.memberId!,
       name: data.name!,
       nickname: data.nickname!,
+      authLevel: data.authLevel,
     });
     return { status: 'LOGGED_IN' };
   }
