@@ -49,7 +49,8 @@ export type GuardianStackParamList = {
   Settings: undefined;
   Withdrawal: undefined;
   Inquiry: undefined;
-  InquiryChat: undefined;
+  InquiryWrite: undefined;
+  InquiryDetail: { inquiryId: number };
   Faq: undefined;
   Policy: undefined;
   PolicyDetail: { type: PolicyType };
