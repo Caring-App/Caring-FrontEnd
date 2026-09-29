@@ -28,9 +28,12 @@ function buildDailySummary(
 
   // 오늘 먹을 약이 없는 시간대(notScheduled)는 "안 먹음"으로 치지 않음
   const missedSlot = MEAL_TYPES.find(slot => medication[slot] === 'notTaken');
+  const hasMedicationToday = MEAL_TYPES.some(slot => medication[slot] !== 'notScheduled');
   const medicationClause = missedSlot
     ? `${wardName}님은 오늘 ${MEAL_TYPE_LABELS[missedSlot]}약을 복용하지 않았어요`
-    : `${wardName}님은 오늘 약을 모두 잘 복용했어요`;
+    : hasMedicationToday
+      ? `${wardName}님은 오늘 약을 모두 잘 복용했어요`
+      : `${wardName}님은 오늘 복용할 약이 없어요`;
 
   return `${wardName}님의 오늘 건강 상태는 '${HEALTH_STATUS_LABELS[status]}' 이에요! ${medicationClause}`;
 }
