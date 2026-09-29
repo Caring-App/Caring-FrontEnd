@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
 import { loginApi } from '@features/auth/api';
+import { formatPhoneNumber } from '@features/auth/model';
 import { logApiError, setTokens } from '@shared/api';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import { CaringLogoHorizontal } from '@shared/ui/AppHeader/CaringLogo';
@@ -17,6 +18,7 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'PhoneLogin'>;
 
 // 전화번호 + 비밀번호 로그인 (Figma 964:5521)
 export default function PhoneLoginScreen({ navigation }: Props) {
+  // 입력칸에는 010-0000-0000 형태로 보여주고, 상태·전송은 숫자만(회원가입 때 숫자만 저장하므로 로그인도 맞춤)
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,11 +46,6 @@ export default function PhoneLoginScreen({ navigation }: Props) {
     }
   };
 
-  // TODO: 계정 찾기 API가 아직 없음 — 백엔드 준비되면 화면 연결
-  const handleFindAccount = () => {
-    Alert.alert('계정 찾기', '준비 중인 기능입니다.');
-  };
-
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
       <View className="px-5 pt-3">
@@ -68,18 +65,19 @@ export default function PhoneLoginScreen({ navigation }: Props) {
             <Text className="font-pretendard-light text-base text-text-loginLabel">전화번호</Text>
             <TextInput
               className={LOGIN_INPUT_CLASSNAME}
-              placeholder="01012345678"
+              placeholder="전화번호를 입력하세요"
               placeholderTextColor={colors.textSignupDesc}
               keyboardType="number-pad"
-              value={phone}
-              onChangeText={setPhone}
+              value={formatPhoneNumber(phone)}
+              onChangeText={value => setPhone(value.replace(/\D/g, '').slice(0, 11))}
+              maxLength={13}
             />
           </View>
           <View className="gap-2">
             <Text className="font-pretendard-light text-base text-text-loginLabel">비밀번호</Text>
             <TextInput
               className={LOGIN_INPUT_CLASSNAME}
-              placeholder="영문, 숫자, 특수문자 포함 8자 이상"
+              placeholder="비밀번호를 입력하세요"
               placeholderTextColor={colors.textSignupDesc}
               secureTextEntry
               value={password}
@@ -106,11 +104,7 @@ export default function PhoneLoginScreen({ navigation }: Props) {
           )}
         </TouchableOpacity>
 
-        <View className="mt-4 flex-row items-center justify-end gap-3.5">
-          <TouchableOpacity onPress={handleFindAccount} hitSlop={6}>
-            <Text className="font-pretendard text-sm text-text-loginLink">계정 찾기</Text>
-          </TouchableOpacity>
-          <View className="h-[13px] w-px bg-black/5" />
+        <View className="mt-4 flex-row justify-end">
           <TouchableOpacity onPress={() => navigation.navigate('ResetPassword')} hitSlop={6}>
             <Text className="font-pretendard text-sm text-text-loginLink">비밀번호 재설정</Text>
           </TouchableOpacity>
