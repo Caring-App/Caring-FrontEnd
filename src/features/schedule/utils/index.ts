@@ -1,6 +1,7 @@
 import type { TimeState } from '@shared/types';
-import { ScheduleEntry, ScheduleRegistrationData, ScheduleSoundType } from '../model/scheduleRegistrationTypes';
-import { TaskAlarmType, TaskSchedule, TaskScheduleRequest } from '../model/taskScheduleTypes';
+import { alarmTypeToSoundType, soundTypeToAlarmType } from '@shared/utils/alarmType';
+import { ScheduleEntry, ScheduleRegistrationData } from '../model/scheduleRegistrationTypes';
+import { TaskSchedule, TaskScheduleRequest } from '../model/taskScheduleTypes';
 
 export function dateToTaskDate(date: Date): string {
   const year = date.getFullYear();
@@ -26,14 +27,6 @@ export function taskTimeToTimeState(taskTime: string): TimeState {
   const amPm: TimeState['amPm'] = hour24 >= 12 ? 'PM' : 'AM';
   const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12;
   return { hour: String(hour12).padStart(2, '0'), minute: minuteStr ?? '00', second: secondStr ?? '00', amPm };
-}
-
-export function soundTypeToAlarmType(soundType: ScheduleSoundType): TaskAlarmType {
-  return soundType === 'voice' ? 'VOICE_RECORD' : 'TTS';
-}
-
-export function alarmTypeToSoundType(alarmType: TaskAlarmType): ScheduleSoundType {
-  return alarmType === 'VOICE_RECORD' ? 'voice' : 'tts';
 }
 
 // ttsMessage - 등록 폼에 문구를 직접 입력하는 필드가 없어 일정 이름 기반으로 자동 생성.

@@ -1,5 +1,4 @@
-// 백엔드 AlarmType enum(Swagger: TTS | VOICE_RECORD). VOICE_RECORD는 voiceFileUrl이 비어 있으면 서버가 거부함(AlarmValidationUtil)
-export type TaskAlarmType = 'TTS' | 'VOICE_RECORD';
+import type { AlarmType } from '@shared/types';
 
 // GET/POST/PATCH 공통 응답 형태.
 export interface TaskSchedule {
@@ -13,7 +12,7 @@ export interface TaskSchedule {
   // 폼의 "음성 알림 시간"(alarmTime)에 대응 — 일정 시간(taskTime)과 별도로 음성 안내를 보낼 시각.
   ttsVoiceTime: string;
   ttsMessage: string;
-  alarmType: TaskAlarmType;
+  alarmType: AlarmType;
   voiceFileUrl: string;
   placeId: number;
 }
@@ -26,7 +25,7 @@ export interface TaskScheduleRequest {
   taskTime: string;
   ttsVoiceTime: string;
   ttsMessage: string;
-  alarmType: TaskAlarmType;
+  alarmType: AlarmType;
   voiceFileUrl: string;
   placeId: number;
 }
