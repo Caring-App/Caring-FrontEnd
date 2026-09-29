@@ -26,9 +26,19 @@ axiosInstance.interceptors.request.use(
   error => Promise.reject(error),
 );
 
-// 액세스 토큰 만료(401) 시 refreshToken으로 재발급 후 원래 요청을 재시도.
-// 동시에 여러 요청이 401을 맞아도 재발급은 한 번만 일어나도록 대기열로 묶어서 처리.
+// 액세스 토큰 만료 시 refreshToken으로 재발급 후 원래 요청을 재시도.
+// 동시에 여러 요청이 만료를 맞아도 재발급은 한 번만 일어나도록 대기열로 묶어서 처리.
 let isRefreshing = false;
+
+// 토큰 만료로 볼 응답인지 — 백엔드(Spring Security)는 만료·무효 토큰을 인증 실패로만 넘기고 별도 401 처리가 없어서
+// 기본값인 403을 줌. 이 백엔드는 역할별 접근 제한이 없고 권한 오류(연결 안 된 어르신 등)는 400으로 주므로,
+// 토큰을 실어 보낸 요청의 403은 사실상 "토큰 만료/무효"임. 토큰 없이 보낸 요청의 403은 재발급으로 해결되지 않아 제외.
+// TODO(백엔드): SecurityConfig에 AuthenticationEntryPoint로 401을 주게 되면 403 조건은 제거
+function isAuthExpiredResponse(error: { response?: { status?: number }; config?: { headers?: Record<string, unknown> } }) {
+  const status = error.response?.status;
+  if (status === 401) return true;
+  return status === 403 && !!error.config?.headers?.Authorization;
+}
 let pendingRequests: Array<(accessToken: string | null) => void> = [];
 
 axiosInstance.interceptors.response.use(
@@ -37,7 +47,7 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config;
 
     if (
-      error.response?.status !== 401 ||
+      !isAuthExpiredResponse(error) ||
       originalRequest?._retry ||
       originalRequest?.url === '/api/auth/refresh'
     ) {
