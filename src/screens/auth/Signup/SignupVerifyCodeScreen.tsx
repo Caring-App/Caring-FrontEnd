@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
-import { useSignupDraftStore, useSignupVerificationCode } from '@features/auth/model';
+import { useSignupExit, useSignupVerificationCode } from '@features/auth/model';
 import { AuthStepLayout, AuthTextField } from '@features/auth/ui';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'SignupVerifyCode'>;
@@ -12,10 +12,7 @@ export default function SignupVerifyCodeScreen({ navigation }: Props) {
   const { code, setCode, remainingTime, isExpired, resend, isResending, verify, isVerifying, error } =
     useSignupVerificationCode(() => navigation.navigate('SignupPassword'));
 
-  const handleClose = () => {
-    useSignupDraftStore.getState().reset();
-    navigation.popToTop();
-  };
+  const handleClose = useSignupExit();
 
   return (
     <AuthStepLayout

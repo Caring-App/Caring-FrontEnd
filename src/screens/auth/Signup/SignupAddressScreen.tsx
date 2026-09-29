@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Pressable, Text, TouchableOpacity, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
-import { useSignupDraftStore, useSignupSubmit } from '@features/auth/model';
+import { useSignupDraftStore, useSignupExit, useSignupSubmit } from '@features/auth/model';
 import { AuthFieldLabel, AuthStepLayout, AuthTextField } from '@features/auth/ui';
 import { AddressSearchModal, AddressSearchResult } from '@shared/ui';
 
@@ -36,10 +36,7 @@ export default function SignupAddressScreen({ navigation }: Props) {
     }
   };
 
-  const handleClose = () => {
-    useSignupDraftStore.getState().reset();
-    navigation.popToTop();
-  };
+  const handleClose = useSignupExit();
 
   return (
     <AuthStepLayout

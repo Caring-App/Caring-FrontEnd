@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
-import { useSignupDraftStore } from '@features/auth/model';
+import { useSignupDraftStore, useSignupExit } from '@features/auth/model';
 import { AuthStepLayout, AuthTextField } from '@features/auth/ui';
 import { isValidPassword, PASSWORD_RULE_MESSAGE } from '@features/auth/utils';
 
@@ -23,10 +23,7 @@ export default function SignupPasswordScreen({ navigation }: Props) {
     navigation.navigate('SignupAddress');
   };
 
-  const handleClose = () => {
-    useSignupDraftStore.getState().reset();
-    navigation.popToTop();
-  };
+  const handleClose = useSignupExit();
 
   return (
     <AuthStepLayout

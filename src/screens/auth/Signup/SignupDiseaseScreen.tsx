@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
-import { useSignupDraftStore, useSignupSubmit } from '@features/auth/model';
+import { useSignupDraftStore, useSignupExit, useSignupSubmit } from '@features/auth/model';
 import { DiseaseSelector, AuthStepLayout } from '@features/auth/ui';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'SignupDisease'>;
@@ -22,10 +22,7 @@ export default function SignupDiseaseScreen({ navigation }: Props) {
     submit();
   };
 
-  const handleClose = () => {
-    useSignupDraftStore.getState().reset();
-    navigation.popToTop();
-  };
+  const handleClose = useSignupExit();
 
   return (
     <AuthStepLayout

@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
-import { useSignupDraftStore, useTermsAgreement, TERM_LIST } from '@features/auth/model';
+import { useSignupDraftStore, useSignupExit, useTermsAgreement, TERM_LIST } from '@features/auth/model';
 import { AuthStepLayout, TermAgreeAllButton, TermRow } from '@features/auth/ui';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'TermsAgreement'>;
@@ -10,6 +10,7 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'TermsAgreement'>;
 // 약관 동의 (Figma 966:5613 미동의 / 966:5711 전체 동의) — 회원가입 단계의 첫 화면
 export default function TermsAgreementScreen({ navigation, route }: Props) {
   const { role, social } = route.params;
+  const handleClose = useSignupExit();
   const { checkedItems, isAllChecked, isRequiredChecked, handleCheckItem, handleCheckAll } = useTermsAgreement(TERM_LIST);
 
   const handleNextPress = () => {
@@ -24,7 +25,7 @@ export default function TermsAgreementScreen({ navigation, route }: Props) {
     <AuthStepLayout
       title={'약관에 동의하고\n케어링을 시작하세요.'}
       description={'고객님의 정보 보호를 위해 최선을 다하고 있습니다.\n아래 내용을 확인 후 동의해주세요.'}
-      onClose={() => navigation.popToTop()}
+      onClose={handleClose}
       buttonLabel="동의하고 계속 진행"
       onPressButton={handleNextPress}
       buttonDisabled={!isRequiredChecked}

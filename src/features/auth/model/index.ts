@@ -10,3 +10,4 @@ export { useSignupVerificationCode } from './useSignupVerificationCode';
 export { useSignupSubmit } from './useSignupSubmit';
 export { DISEASE_LIST } from './diseaseList';
 export * from './types';
+export { useSignupExit } from './useSignupExit';

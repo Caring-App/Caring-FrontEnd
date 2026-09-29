@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { TextInput, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
-import { useSignupDraftStore, useSignupIdentity } from '@features/auth/model';
+import { useSignupExit, useSignupIdentity } from '@features/auth/model';
 import { FORMATTED_PHONE_MAX_LENGTH, formatPhoneNumber } from '@features/auth/utils';
 import { AuthStepLayout, AuthTextField } from '@features/auth/ui';
 
@@ -21,10 +21,7 @@ export default function SignupIdentityScreen({ navigation }: Props) {
     if (step === 'phone') phoneRef.current?.focus();
   }, [step]);
 
-  const handleClose = () => {
-    useSignupDraftStore.getState().reset();
-    navigation.popToTop();
-  };
+  const handleClose = useSignupExit();
 
   return (
     <AuthStepLayout
