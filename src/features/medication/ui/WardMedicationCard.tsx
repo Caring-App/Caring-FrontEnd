@@ -39,9 +39,9 @@ export function WardMedicationCard() {
         ) : (
           <View className="flex-row justify-around">
             {MEAL_TYPES.map(slot => {
-              const pill = pillsBySlot[slot];
-              const isScheduled = !!pill;
-              const isTaken = !!pill?.taken;
+              const pills = pillsBySlot[slot] ?? [];
+              const isScheduled = pills.length > 0;
+              const isTaken = isScheduled && pills.every(pill => pill.taken);
               return (
                 <Pressable
                   key={slot}
