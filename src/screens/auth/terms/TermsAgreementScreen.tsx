@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
 import { useSignupDraftStore, useSignupExit, useTermsAgreement, TERM_LIST } from '@features/auth/model';
@@ -11,6 +12,14 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'TermsAgreement'>;
 export default function TermsAgreementScreen({ navigation, route }: Props) {
   const { role, social } = route.params;
   const handleClose = useSignupExit();
+
+  // 약관 화면은 가입 단계의 시작점 — 여기로 돌아왔다는 건 X가 아니라 안드로이드 뒤로가기로 가입 단계를 빠져나온 것일
+  // 수 있으므로, 앞 단계에서 입력한 값(비밀번호 포함)이 메모리에 남지 않게 비움. "다음"을 누르면 start()로 새로 시작함
+  useFocusEffect(
+    useCallback(() => {
+      useSignupDraftStore.getState().reset();
+    }, []),
+  );
   const { checkedItems, isAllChecked, isRequiredChecked, handleCheckItem, handleCheckAll } = useTermsAgreement(TERM_LIST);
 
   const handleNextPress = () => {
