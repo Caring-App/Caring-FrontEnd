@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Alert } from 'react-native';
 import { AuthStackNavigationProp } from '@app/navigation/types';
 import { registerProtectorApi, registerSocialApi, registerWardApi } from '@features/auth/api';
 import { loginAfterRegister } from '@features/auth/utils';
@@ -94,8 +95,16 @@ export function useSignupSubmit(navigation: AuthStackNavigationProp) {
       useSignupDraftStore.getState().reset();
       goToWelcome(role, name, protectorCode);
     } catch (error) {
+      // 계정은 이미 만들어졌으므로 여기서 "다음"을 다시 누르게 두면 가입을 또 시도해서 "회원가입 실패"가 뜸 —
+      // 입력값을 비우고 전화번호 로그인 화면으로 보내서 방금 만든 계정으로 직접 로그인하게 함
       logApiError('회원가입 후 자동 로그인 실패:', error);
-      setSubmitError('가입은 완료됐지만 로그인에 실패했어요. 로그인 화면에서 다시 시도해 주세요.');
+      useSignupDraftStore.getState().reset();
+      Alert.alert('', '가입은 완료됐지만 자동 로그인에 실패했어요. 가입하신 전화번호로 로그인해 주세요.', [
+        {
+          text: '확인',
+          onPress: () => navigation.reset({ index: 1, routes: [{ name: 'Login' }, { name: 'PhoneLogin' }] }),
+        },
+      ]);
     }
   };
 
