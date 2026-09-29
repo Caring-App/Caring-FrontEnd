@@ -6,6 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GuardianStackParamList } from '@app/navigation/types';
 import { AppHeader } from '@shared/ui';
 import { useSessionStore } from '@shared/store/useSessionStore';
+import { confirmLogout } from '@shared/model';
 import { useGuardianMenuStore } from '@features/guardian-menu/model';
 import { useTourStore } from '@features/guardian-tour/model';
 import { MOCK_LINK_CODE, MOCK_PROFILE } from '@features/mypage/model';
@@ -59,7 +60,7 @@ export function ProfileScreen() {
             }}
           />
           <MenuListItem label="정책 및 약관" onPress={() => stackNavigation?.navigate('Policy')} />
-          <MenuListItem label="로그아웃" onPress={() => useSessionStore.getState().requestLogout()} />
+          <MenuListItem label="로그아웃" onPress={confirmLogout} />
         </View>
       </ScrollView>
 

@@ -3,6 +3,7 @@ import { Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
 import { useSessionStore } from '@shared/store/useSessionStore';
+import { confirmLogout } from '@shared/model';
 import { MOCK_WARDS, useWardFontScaleStore } from '@features/ward-management/model';
 import { WardText } from '@features/ward-management/ui';
 import { useStepSync } from '@features/health/model';
@@ -33,7 +34,7 @@ export function SeniorHomeScreen() {
       <View className="flex-row items-center justify-between px-6 py-4">
         <CaringLogo size={44} />
         <Pressable
-          onPress={() => useSessionStore.getState().requestLogout()}
+          onPress={() => confirmLogout()}
           className="items-center justify-center rounded-card bg-primary px-4 py-2">
           <WardText size="base" className="font-pretendard-semibold text-white">
             로그아웃

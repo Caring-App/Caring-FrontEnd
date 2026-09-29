@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GuardianStackParamList } from '@app/navigation/types';
 import { useSessionStore } from '@shared/store/useSessionStore';
+import { confirmLogout } from '@shared/model';
 import { useSelectedWardStore } from '@features/ward-management/model';
 import { useGuardianMenuStore } from '../model/useGuardianMenuStore';
 import GearIcon from '@assets/icons/menu/gear-white.svg';
@@ -49,7 +50,7 @@ export function GuardianMenuDrawer() {
             className="self-start rounded-card border border-border px-4 py-2"
             onPress={() => {
               close();
-              useSessionStore.getState().requestLogout();
+              confirmLogout();
             }}>
             <Text className="font-pretendard-bold text-md text-white">로그아웃</Text>
           </Pressable>
