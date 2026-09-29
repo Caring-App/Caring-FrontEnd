@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AppState } from 'react-native';
 import { logApiError } from '@shared/api';
+import { useTodayDateKey } from '@shared/model';
 import { confirmPillApi, getTodayPillsApi } from '../api/pillLogApi';
 import { pillNameToMealType } from '../utils';
 import { MealType, PillToday } from './medicationTypes';
@@ -17,6 +18,8 @@ export function useTodayPills() {
   const [isLoading, setIsLoading] = useState(true);
   const [confirmingSlot, setConfirmingSlot] = useState<MealType | null>(null);
   const [error, setError] = useState('');
+  // 화면을 켜둔 채 자정이 지나면 바뀌어서 오늘 목록을 다시 받아옴
+  const dateKey = useTodayDateKey();
 
   const fetchTodayPills = useCallback(async () => {
     try {
@@ -42,7 +45,7 @@ export function useTodayPills() {
       if (state === 'active') fetchTodayPills();
     });
     return () => subscription.remove();
-  }, [fetchTodayPills]);
+  }, [fetchTodayPills, dateKey]);
 
   const confirmPill = async (slot: MealType) => {
     const untaken = (pillsBySlot[slot] ?? []).filter(pill => !pill.taken);

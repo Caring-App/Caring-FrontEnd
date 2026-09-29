@@ -1,9 +1,9 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AppState } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 // 보호자 알림 목록은 notification feature가 유일한 소스라 그대로 가져다 씀(순환참조 없음 — notification은 medication을 참조하지 않음)
 import { useNotificationStore } from '@features/notification/model';
-import { getLocalDateKey } from '@shared/utils/date';
+import { useTodayDateKey } from '@shared/model';
 import { countTakenMealTypesFromNotifications, getTodayWeekday } from '../utils';
 import { MealType } from './medicationTypes';
 import { useMedicationListStore } from './useMedicationListStore';
@@ -27,6 +27,8 @@ export function useWardTodayMedication(wardId: string, wardName: string): Record
     serverWardId === null ? undefined : state.medicationsByWard[serverWardId],
   );
   const localTaken = useMedicationStore(state => state.takenByWard[wardId]);
+  // 자정이 지나면 바뀌어서 오늘 기준(요일·알림 날짜)으로 다시 계산됨
+  const dateKey = useTodayDateKey();
 
   if (serverWardId === null) {
     return {
@@ -43,7 +45,7 @@ export function useWardTodayMedication(wardId: string, wardName: string): Record
     .forEach(entry => {
       scheduledCount[entry.mealType] += 1;
     });
-  const takenCount = countTakenMealTypesFromNotifications(notifications, wardName, getLocalDateKey());
+  const takenCount = countTakenMealTypesFromNotifications(notifications, wardName, dateKey);
 
   const statusOf = (slot: MealType): TodayMedicationStatus => {
     // 스케줄을 아직 못 불러왔으면 알림만 보고 판단("없음"으로 흐리게 하지 않음)
@@ -60,6 +62,7 @@ export function useWardTodayMedication(wardId: string, wardName: string): Record
 // 같은 데이터를 여러 카드(복약 카드, 하루 요약 레포트)가 읽어서, 불러오기는 화면(GuardianHomeScreen)에서 한 번만 호출
 export function useSyncWardTodayMedication(wardId: string) {
   const serverWardId = toServerWardId(wardId);
+  const dateKey = useTodayDateKey();
 
   const refresh = useCallback(() => {
     if (serverWardId === null) return;
@@ -68,6 +71,14 @@ export function useSyncWardTodayMedication(wardId: string) {
   }, [serverWardId]);
 
   useFocusEffect(refresh);
+
+  // 화면을 켜둔 채 자정이 지나면 오늘 기준 데이터로 다시 불러옴(첫 마운트 때는 useFocusEffect가 이미 불러오므로 건너뜀)
+  const [loadedDateKey, setLoadedDateKey] = useState(dateKey);
+  useEffect(() => {
+    if (dateKey === loadedDateKey) return;
+    setLoadedDateKey(dateKey);
+    refresh();
+  }, [dateKey, loadedDateKey, refresh]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', state => {
