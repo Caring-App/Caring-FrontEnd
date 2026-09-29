@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
+import { showNotice } from '@shared/model/useNoticeStore';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 
 export interface AddressSearchResult {
@@ -53,6 +54,7 @@ export function AddressSearchModal({ visible, onClose, onSelect }: AddressSearch
       onSelect(result);
     } catch (error) {
       console.error('[AddressSearchModal] 주소 결과 파싱 실패', error);
+      showNotice('', '주소를 가져오지 못했어요. 다시 검색해 주세요.');
     } finally {
       onClose();
     }

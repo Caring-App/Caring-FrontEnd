@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { resetOnLogout } from '@shared/store/resetOnLogout';
 import { logApiError } from '@shared/api';
+import { notifyLoadFailed } from '@shared/model';
 import { getNotificationsApi, markNotificationReadApi } from '../api';
 import { NotificationItem } from './types';
 
@@ -38,6 +39,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
       });
     } catch (error) {
       logApiError('알림 목록 조회 실패', error);
+      notifyLoadFailed();
     } finally {
       set({ isLoading: false });
     }

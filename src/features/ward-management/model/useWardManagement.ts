@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { logApiError } from '@shared/api';
+import { notifyLoadFailed } from '@shared/model';
 // FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, 돌봄대상자 관리 화면이 연동 상세/수정
 // API(getConnectionDetailApi/updateConnectionApi)를 직접 써야 해서 의도적으로 참조함
 // (순환참조 없음, account-link는 ward-management를 참조하지 않음).
@@ -46,6 +47,7 @@ export function useWardManagement() {
           return { id: ward.id, phone: detail.phone, address: detail.address };
         } catch (error) {
           logApiError('돌봄대상자 상세 조회 실패', error);
+          notifyLoadFailed();
           return null;
         }
       }),

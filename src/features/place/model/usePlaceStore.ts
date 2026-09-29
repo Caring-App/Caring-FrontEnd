@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { resetOnLogout } from '@shared/store/resetOnLogout';
 import { logApiError } from '@shared/api';
+import { notifyLoadFailed } from '@shared/model';
 import { createPlaceApi, deletePlaceApi, getPlacesApi } from '../api/placeApi';
 import { Place } from './placeTypes';
 
@@ -23,6 +24,7 @@ export const usePlaceStore = create<PlaceState>((set) => ({
       set(state => ({ placesByWard: { ...state.placesByWard, [wardId]: places } }));
     } catch (error) {
       logApiError('자주 가는 장소 목록 조회 실패', error);
+      notifyLoadFailed();
     } finally {
       set({ isLoading: false });
     }

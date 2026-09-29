@@ -4,6 +4,7 @@ import { create } from 'zustand';
 // (순환참조 없음, account-link는 ward-management를 참조하지 않음).
 import { getConnectionsApi } from '@features/account-link/api';
 import { logApiError } from '@shared/api';
+import { notifyLoadFailed } from '@shared/model';
 import { resetOnLogout } from '@shared/store/resetOnLogout';
 import { connectionFontSizeToOption } from '../utils';
 import { MOCK_WARDS } from './mockWards';
@@ -60,6 +61,7 @@ export const useSelectedWardStore = create<SelectedWardState>((set, get) => ({
       }));
     } catch (error) {
       logApiError('연동된 어르신 목록 조회 실패', error);
+      notifyLoadFailed();
       set({ isLoaded: true });
     } finally {
       set({ isLoading: false });

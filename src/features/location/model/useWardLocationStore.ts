@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { resetOnLogout } from '@shared/store/resetOnLogout';
 import { logApiError } from '@shared/api';
+import { notifyLoadFailed } from '@shared/model';
 import { getWardLatestLocationApi } from '../api';
 import { WardLocation } from './types';
 
@@ -22,6 +23,7 @@ export const useWardLocationStore = create<WardLocationState>((set, get) => ({
       set(state => ({ locationsByWard: { ...state.locationsByWard, [wardId]: location } }));
     } catch (error) {
       logApiError('어르신 최신 위치 조회 실패', error);
+      notifyLoadFailed();
     } finally {
       set(state => {
         const next = new Set(state.loadingWardIds);
