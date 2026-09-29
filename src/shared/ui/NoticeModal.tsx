@@ -65,9 +65,9 @@ export function NoticeModal({
               )}
 
               <View className="mt-6 flex-row gap-4">
-                {notice.buttons.map(button => (
+                {notice.buttons.map((button, index) => (
                   <Pressable
-                    key={button.text}
+                    key={index}
                     className={`flex-1 items-center justify-center rounded-[8px] py-4 ${
                       button.style === 'cancel'
                         ? 'bg-buttonMuted'
