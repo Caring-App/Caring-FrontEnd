@@ -1,4 +1,5 @@
-export type TaskAlarmType = 'TTS' | 'VOICE';
+// 백엔드 AlarmType enum(Swagger: TTS | VOICE_RECORD). VOICE_RECORD는 voiceFileUrl이 비어 있으면 서버가 거부함(AlarmValidationUtil)
+export type TaskAlarmType = 'TTS' | 'VOICE_RECORD';
 
 // GET/POST/PATCH 공통 응답 형태.
 export interface TaskSchedule {

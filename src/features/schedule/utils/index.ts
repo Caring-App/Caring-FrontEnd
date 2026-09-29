@@ -29,11 +29,11 @@ export function taskTimeToTimeState(taskTime: string): TimeState {
 }
 
 export function soundTypeToAlarmType(soundType: ScheduleSoundType): TaskAlarmType {
-  return soundType === 'voice' ? 'VOICE' : 'TTS';
+  return soundType === 'voice' ? 'VOICE_RECORD' : 'TTS';
 }
 
 export function alarmTypeToSoundType(alarmType: TaskAlarmType): ScheduleSoundType {
-  return alarmType === 'VOICE' ? 'voice' : 'tts';
+  return alarmType === 'VOICE_RECORD' ? 'voice' : 'tts';
 }
 
 // ttsMessage - 등록 폼에 문구를 직접 입력하는 필드가 없어 일정 이름 기반으로 자동 생성.

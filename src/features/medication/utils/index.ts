@@ -140,11 +140,11 @@ export function minutesToReminderInterval(minutes: number): string {
 }
 
 export function soundTypeToAlarmType(soundType: MedicationSoundType): PillAlarmType {
-  return soundType === 'voice' ? 'VOICE' : 'TTS';
+  return soundType === 'voice' ? 'VOICE_RECORD' : 'TTS';
 }
 
 export function alarmTypeToSoundType(alarmType: PillAlarmType): MedicationSoundType {
-  return alarmType === 'VOICE' ? 'voice' : 'tts';
+  return alarmType === 'VOICE_RECORD' ? 'voice' : 'tts';
 }
 
 export function pillScheduleToEntry(schedule: PillSchedule): MedicationEntry {
