@@ -8,6 +8,9 @@ interface SoundSettingsCardProps {
   soundType: SoundType;
   onChangeSoundType: (type: SoundType) => void;
   isRecording: boolean;
+  isPlaying: boolean;
+  hasRecorded: boolean;
+  isRecordingBusy: boolean;
   onRecord: () => void;
   onPlay: () => void;
   onDelete: () => void;
@@ -22,6 +25,9 @@ export function SoundSettingsCard({
   soundType,
   onChangeSoundType,
   isRecording,
+  isPlaying,
+  hasRecorded,
+  isRecordingBusy,
   onRecord,
   onPlay,
   onDelete,
@@ -43,7 +49,15 @@ export function SoundSettingsCard({
               <Text className="font-pretendard-semibold text-lg text-text-body">{label}</Text>
             </Pressable>
             {type === 'voice' && active && (
-              <VoiceRecordingControls isRecording={isRecording} onRecord={onRecord} onPlay={onPlay} onDelete={onDelete} />
+              <VoiceRecordingControls
+                isRecording={isRecording}
+                isPlaying={isPlaying}
+                hasRecorded={hasRecorded}
+                isBusy={isRecordingBusy}
+                onRecord={onRecord}
+                onPlay={onPlay}
+                onDelete={onDelete}
+              />
             )}
           </View>
         );
