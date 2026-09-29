@@ -4,7 +4,7 @@ import { logApiError } from '@shared/api';
 import { useSignupDraftStore } from './useSignupDraftStore';
 
 // 인증번호 유효 시간 — 백엔드 MemberService.sendSms의 만료 시간(발송 후 3분)과 동일하게 맞춤. 인증번호는 6자리
-const VERIFICATION_SECONDS = 180;
+export const VERIFICATION_SECONDS = 180;
 
 export const formatRemainingTime = (seconds: number) =>
   `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;

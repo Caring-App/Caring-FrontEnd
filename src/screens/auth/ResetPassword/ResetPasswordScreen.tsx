@@ -1,17 +1,16 @@
 import React from 'react';
-import { ActivityIndicator, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
+import { Text, View } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '@app/navigation/types';
+import { formatPhoneNumber } from '@features/auth/model';
 import useResetPassword from '@features/auth/model/useResetPassword';
-import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
-import { FormField } from '@shared/ui';
-import { colors } from '@shared/theme/colors';
+import { SignupStepLayout, SignupTextField } from '@features/auth/ui';
 
-const FORM_INPUT_CLASSNAME =
-  'rounded-md border border-border-input bg-surface px-3.5 py-2 font-pretendard-light text-lg text-text-body';
-const FORM_INPUT_PLACEHOLDER_COLOR = colors.textPlaceholder;
+type Props = NativeStackScreenProps<AuthStackParamList, 'ResetPassword'>;
 
-export default function ResetPasswordScreen({ navigation }: { navigation: any }) {
+// 비밀번호 찾기 — 별도 시안이 없어 회원가입 단계 화면(SignupStepLayout, 회색 입력창)과 같은 스타일로 구성.
+// 휴대폰 인증을 마쳐야 새 비밀번호 입력칸이 열림
+export default function ResetPasswordScreen({ navigation }: Props) {
   const {
     phone,
     setPhone,
@@ -23,6 +22,8 @@ export default function ResetPasswordScreen({ navigation }: { navigation: any })
     isCodeSent,
     isVerifyingCode,
     isPhoneVerified,
+    isCodeExpired,
+    remainingTime,
     authError,
     newPassword,
     setNewPassword,
@@ -34,135 +35,88 @@ export default function ResetPasswordScreen({ navigation }: { navigation: any })
     handleSubmit,
   } = useResetPassword(navigation);
 
+  const isPhoneComplete = /^01\d{8,9}$/.test(phone);
+  const isConfirmMismatched = !!newPasswordConfirm && newPassword !== newPasswordConfirm;
+
   return (
-    <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
-      <ScrollView className="flex-1" contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }} keyboardShouldPersistTaps="handled">
-        {/* 상단 헤더 */}
-        <View className="relative flex-row items-center justify-center py-4">
-          <View className="absolute left-0">
-            <CaringLogo size={44} />
-          </View>
-          <Text className="font-pretendard-bold text-2xl text-text-primary">비밀번호 찾기</Text>
-        </View>
+    <SignupStepLayout
+      title="비밀번호를 재설정해주세요"
+      description={'가입하신 휴대폰번호로 인증한 뒤\n새 비밀번호를 설정해 주세요.'}
+      onClose={() => navigation.goBack()}
+      closeLabel="비밀번호 찾기 닫기"
+      buttonLabel="비밀번호 변경"
+      onPressButton={handleSubmit}
+      buttonDisabled={!isFormValid}
+      isLoading={isSubmitting}
+      errorMessage={submitError}
+    >
+      <View className="mt-6 gap-6">
+        <SignupTextField
+          label="휴대폰번호"
+          placeholder="휴대폰번호를 입력하세요"
+          keyboardType="number-pad"
+          value={formatPhoneNumber(phone)}
+          onChangeText={setPhone}
+          maxLength={13}
+          autoFocus
+          sideButton={{
+            label: isCodeSent ? '재요청' : '인증 요청',
+            onPress: handleSendAuthCode,
+            disabled: !isPhoneComplete || isPhoneVerified,
+            isLoading: isSendingCode,
+          }}
+        />
 
-        <Text className="mt-2 text-center font-pretendard-medium text-sm text-text-muted">
-          가입하신 전화번호를 인증하고{'\n'}새 비밀번호를 설정해 주세요
-        </Text>
+        {isCodeSent && (
+          <SignupTextField
+            label="인증번호"
+            placeholder="인증번호"
+            keyboardType="number-pad"
+            textContentType="oneTimeCode"
+            autoComplete="sms-otp"
+            value={authCode}
+            onChangeText={setAuthCode}
+            editable={!isPhoneVerified}
+            errorMessage={isPhoneVerified ? undefined : authError}
+            helperMessage={isPhoneVerified ? '휴대폰 인증이 완료되었습니다.' : undefined}
+            rightElement={
+              !isPhoneVerified && (
+                <Text className="font-pretendard-medium text-base text-text-signupDesc">{remainingTime}</Text>
+              )
+            }
+            sideButton={{
+              label: isPhoneVerified ? '완료' : '확인',
+              onPress: handleVerifyAuthCode,
+              disabled: !authCode || isCodeExpired || isPhoneVerified,
+              isLoading: isVerifyingCode,
+            }}
+          />
+        )}
 
-        <View className="mt-6">
-          <View className="mb-4">
-            <View className="mb-2 flex-row items-center justify-between">
-              <Text className="font-pretendard-semibold text-lg text-text-body">전화번호</Text>
-              <TouchableOpacity
-                className="min-w-[52px] items-center rounded-md bg-primary px-3 py-1"
-                onPress={handleSendAuthCode}
-                disabled={isSendingCode || !phone}
-                activeOpacity={0.8}
-              >
-                {isSendingCode ? (
-                  <ActivityIndicator size="small" color={colors.surface} />
-                ) : (
-                  <Text className="font-pretendard-semibold text-[11px] text-white">
-                    {isCodeSent ? '재전송' : '인증'}
-                  </Text>
-                )}
-              </TouchableOpacity>
-            </View>
-            <TextInput
-              className={FORM_INPUT_CLASSNAME}
-              placeholder="전화번호를 입력해 주세요"
-              placeholderTextColor={FORM_INPUT_PLACEHOLDER_COLOR}
-              keyboardType="number-pad"
-              value={phone}
-              onChangeText={setPhone}
-            />
-            {isCodeSent && !isPhoneVerified && (
-              <Text className="mt-1 text-xs text-text-muted">인증번호가 발송되었습니다.</Text>
-            )}
-          </View>
+        {/* 발송 전 발송 실패 에러는 인증번호 칸이 없어서 여기서 보여줌 */}
+        {!isCodeSent && !!authError && <Text className="-mt-4 text-xs text-text-danger">{authError}</Text>}
 
-          <View className="mb-4">
-            <View className="mb-2 flex-row items-center justify-between">
-              <Text className="font-pretendard-semibold text-lg text-text-body">인증번호 입력</Text>
-              <TouchableOpacity
-                className="min-w-[52px] items-center rounded-md bg-primary px-3 py-1"
-                onPress={handleVerifyAuthCode}
-                disabled={isVerifyingCode || isPhoneVerified || !authCode}
-                activeOpacity={0.8}
-              >
-                {isVerifyingCode ? (
-                  <ActivityIndicator size="small" color={colors.surface} />
-                ) : (
-                  <Text className="font-pretendard-semibold text-[11px] text-white">
-                    {isPhoneVerified ? '확인 완료' : '확인'}
-                  </Text>
-                )}
-              </TouchableOpacity>
-            </View>
-            <TextInput
-              className={FORM_INPUT_CLASSNAME}
-              placeholder="인증번호를 입력해 주세요"
-              placeholderTextColor={FORM_INPUT_PLACEHOLDER_COLOR}
-              keyboardType="number-pad"
-              value={authCode}
-              onChangeText={setAuthCode}
-              editable={!isPhoneVerified}
-            />
-            {isPhoneVerified ? (
-              <Text className="mt-1 text-xs text-primary">휴대폰 인증이 완료되었습니다.</Text>
-            ) : (
-              !!authError && <Text className="mt-1 text-xs text-text-danger">{authError}</Text>
-            )}
-          </View>
-
-          <FormField label="새 비밀번호">
-            <TextInput
-              className={FORM_INPUT_CLASSNAME}
-              placeholder="새 비밀번호를 입력해 주세요"
-              placeholderTextColor={FORM_INPUT_PLACEHOLDER_COLOR}
+        {isPhoneVerified && (
+          <>
+            <SignupTextField
+              label="새 비밀번호"
+              placeholder="새 비밀번호를 입력하세요"
               secureTextEntry
               value={newPassword}
               onChangeText={setNewPassword}
-              editable={isPhoneVerified}
             />
-          </FormField>
-
-          <FormField label="새 비밀번호 확인">
-            <TextInput
-              className={FORM_INPUT_CLASSNAME}
-              placeholder="새 비밀번호를 다시 입력해 주세요"
-              placeholderTextColor={FORM_INPUT_PLACEHOLDER_COLOR}
+            <SignupTextField
+              label="새 비밀번호 확인"
+              placeholder="새 비밀번호를 다시 한번 입력하세요"
               secureTextEntry
               value={newPasswordConfirm}
               onChangeText={setNewPasswordConfirm}
-              editable={isPhoneVerified}
+              onSubmitEditing={handleSubmit}
+              errorMessage={isConfirmMismatched ? '비밀번호가 일치하지 않습니다.' : undefined}
             />
-            {!!newPassword && !!newPasswordConfirm && newPassword !== newPasswordConfirm && (
-              <Text className="mt-1 text-xs text-text-danger">비밀번호가 일치하지 않습니다.</Text>
-            )}
-          </FormField>
-        </View>
-
-        {!!submitError && <Text className="mt-2 text-center text-xs text-text-danger">{submitError}</Text>}
-      </ScrollView>
-
-      {/* 비밀번호 변경 버튼 (하단 고정) */}
-      <View className="bg-surface px-6 pb-10 pt-2">
-        <TouchableOpacity
-          className={`h-[52px] items-center justify-center rounded-card ${
-            isFormValid && !isSubmitting ? 'bg-primary' : 'bg-border-link'
-          }`}
-          onPress={handleSubmit}
-          disabled={!isFormValid || isSubmitting}
-          activeOpacity={0.8}
-        >
-          {isSubmitting ? (
-            <ActivityIndicator size="small" color={colors.surface} />
-          ) : (
-            <Text className="font-pretendard-semibold text-lg text-white">비밀번호 변경</Text>
-          )}
-        </TouchableOpacity>
+          </>
+        )}
       </View>
-    </SafeAreaView>
+    </SignupStepLayout>
   );
 }
