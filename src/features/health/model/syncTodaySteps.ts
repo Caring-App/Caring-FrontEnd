@@ -19,6 +19,6 @@ export async function syncTodaySteps() {
     await recordStepsApi(await readTodaySteps());
   } catch (error) {
     if (isDeadlinePassedError(error)) return;
-    console.warn('[syncTodaySteps] 걸음 수 동기화 실패', error instanceof Error ? error.message : error);
+    console.log('[syncTodaySteps] 걸음 수 동기화 실패', error instanceof Error ? error.message : error);
   }
 }

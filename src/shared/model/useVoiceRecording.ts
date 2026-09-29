@@ -113,7 +113,7 @@ export function useVoiceRecording() {
       await sound.startRecorder();
       setIsRecording(true);
     } catch (error) {
-      console.error('[useVoiceRecording] 녹음 실패', error);
+      console.log('[useVoiceRecording] 녹음 실패', error);
       setIsRecording(false);
       if (Platform.OS === 'ios') {
         // iOS는 권한 상태를 미리 알 방법이 없어서(별도 권한 라이브러리 없음) 실패 시 권한 가능성을 함께 안내
@@ -146,7 +146,7 @@ export function useVoiceRecording() {
       await sound.startPlayer(source);
       setIsPlaying(true);
     } catch (error) {
-      console.error('[useVoiceRecording] 재생 실패', error);
+      console.log('[useVoiceRecording] 재생 실패', error);
       setIsPlaying(false);
       showNotice('', '녹음을 재생하지 못했어요.');
     }

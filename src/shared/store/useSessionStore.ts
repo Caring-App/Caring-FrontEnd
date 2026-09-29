@@ -40,7 +40,7 @@ export const useSessionStore = create<SessionState>(set => ({
   login: (role, profile) => set(state => ({ isLoggedIn: true, role, profile: profile ?? state.profile })),
   setPendingProfile: (role, profile) => set({ role, profile }),
   logout: () => {
-    clearTokens().catch(error => console.error('토큰 삭제 실패:', error));
+    clearTokens().catch(error => console.log('토큰 삭제 실패:', error));
     set({ isLoggedIn: false, role: null, profile: null, linkedCode: null, isLogoutConfirmVisible: false });
   },
   setLinkedCode: linkedCode => set({ linkedCode }),

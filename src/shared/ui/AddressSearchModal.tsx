@@ -53,7 +53,7 @@ export function AddressSearchModal({ visible, onClose, onSelect }: AddressSearch
       const result = JSON.parse(event.nativeEvent.data) as AddressSearchResult;
       onSelect(result);
     } catch (error) {
-      console.error('[AddressSearchModal] 주소 결과 파싱 실패', error);
+      console.log('[AddressSearchModal] 주소 결과 파싱 실패', error);
       showNotice('', '주소를 가져오지 못했어요. 다시 검색해 주세요.');
     } finally {
       onClose();
