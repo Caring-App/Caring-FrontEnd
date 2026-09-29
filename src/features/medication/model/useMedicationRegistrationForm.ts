@@ -76,7 +76,9 @@ export const useMedicationRegistrationForm = (
     }
     setShowTimePicker(false);
     setShowReminderOptions(false);
-    voiceRecording.reset(editingMedication?.voiceFileUrl);
+    // TTS 스케줄의 voiceFileUrl은 서버가 Google Cloud TTS로 만든 안내 음성이라 "보호자 녹음"으로 불러오면 안 됨
+    // (불러오면 녹음 없이도 녹음이 있는 것처럼 보이고, 그대로 저장 시 TTS 음성이 VOICE_RECORD로 저장됐음)
+    voiceRecording.reset(editingMedication?.soundType === 'voice' ? editingMedication.voiceFileUrl : null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, editingMedication]);
 
