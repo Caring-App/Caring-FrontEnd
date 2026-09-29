@@ -4,6 +4,7 @@ import { registerProtectorApi, registerSocialApi, registerWardApi } from '@featu
 import { loginAfterRegister } from '@features/auth/utils';
 import { logApiError, setTokens } from '@shared/api';
 import { useSessionStore } from '@shared/store/useSessionStore';
+import { UserRole } from '@shared/types';
 import { SocialProviderCode } from './types';
 import { useSignupDraftStore } from './useSignupDraftStore';
 
@@ -12,6 +13,19 @@ const REGISTER_FAILED_MESSAGE = '회원가입에 실패했습니다. 입력하�
 // 회원가입 마지막 단계(보호자: 주소, 돌봄대상자: 기저질환)에서 호출 — 단계별로 모아둔 입력값으로
 // 로컬/소셜 가입 API를 골라 호출하고, 성공하면 역할별 환영 화면으로 이동함
 export function useSignupSubmit(navigation: AuthStackNavigationProp) {
+  // 가입이 끝나면 약관~주소 단계 화면을 스택에서 모두 걷어냄 — navigate로 쌓으면 환영 화면에서 뒤로가기로
+  // 이미 입력값이 비워진 가입 단계로 돌아가 "다음"을 눌러도 아무 반응이 없는 상태가 됐음
+  const goToWelcome = (role: UserRole, userName: string, protectorCode?: string) => {
+    navigation.reset({
+      index: 0,
+      routes: [
+        role === 'WARD'
+          ? { name: 'WardSignupWelcome', params: { userName } }
+          : { name: 'SignupWelcome', params: { userName, protectorCode } },
+      ],
+    });
+  };
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
@@ -40,11 +54,7 @@ export function useSignupSubmit(navigation: AuthStackNavigationProp) {
       });
       useSignupDraftStore.getState().reset();
 
-      if (role === 'WARD') {
-        navigation.navigate('WardSignupWelcome', { userName: response.name });
-      } else {
-        navigation.navigate('SignupWelcome', { userName: response.name, protectorCode: response.protectorCode });
-      }
+      goToWelcome(role, response.name, response.protectorCode);
     } catch (error) {
       logApiError('소셜 회원가입 실패:', error);
       setSubmitError(REGISTER_FAILED_MESSAGE);
@@ -82,11 +92,7 @@ export function useSignupSubmit(navigation: AuthStackNavigationProp) {
     try {
       await loginAfterRegister(phone, password, role);
       useSignupDraftStore.getState().reset();
-      if (role === 'WARD') {
-        navigation.navigate('WardSignupWelcome', { userName: name });
-      } else {
-        navigation.navigate('SignupWelcome', { userName: name, protectorCode });
-      }
+      goToWelcome(role, name, protectorCode);
     } catch (error) {
       logApiError('회원가입 후 자동 로그인 실패:', error);
       setSubmitError('가입은 완료됐지만 로그인에 실패했어요. 로그인 화면에서 다시 시도해 주세요.');
