@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { sendSmsCodeApi, verifySmsCodeApi } from '@features/auth/api';
 import { logApiError } from '@shared/api';
+import { normalizePhoneDigits } from '../utils/phone';
 import { formatRemainingTime, VERIFICATION_SECONDS } from './useSignupVerificationCode';
 
 // 전화번호 + SMS 인증번호 확인을 한 화면에서 처리하는 흐름 (비밀번호 찾기)
@@ -30,7 +31,7 @@ export function usePhoneVerification() {
 
   // 인증 완료 후 전화번호를 다시 바꾸면 이전 인증은 무효로 처리
   const handleSetPhone = (value: string) => {
-    setPhone(value.replace(/\D/g, '').slice(0, 11));
+    setPhone(normalizePhoneDigits(value));
     setIsCodeSent(false);
     setIsPhoneVerified(false);
     setExpiresAt(null);

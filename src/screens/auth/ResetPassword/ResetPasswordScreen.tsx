@@ -2,9 +2,9 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
-import { formatPhoneNumber } from '@features/auth/model';
 import useResetPassword from '@features/auth/model/useResetPassword';
 import { SignupStepLayout, SignupTextField } from '@features/auth/ui';
+import { FORMATTED_PHONE_MAX_LENGTH, formatPhoneNumber, isValidPhoneNumber } from '@features/auth/utils';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'ResetPassword'>;
 
@@ -35,7 +35,7 @@ export default function ResetPasswordScreen({ navigation }: Props) {
     handleSubmit,
   } = useResetPassword(navigation);
 
-  const isPhoneComplete = /^01\d{8,9}$/.test(phone);
+  const isPhoneComplete = isValidPhoneNumber(phone);
   const isConfirmMismatched = !!newPasswordConfirm && newPassword !== newPasswordConfirm;
 
   return (
@@ -57,7 +57,7 @@ export default function ResetPasswordScreen({ navigation }: Props) {
           keyboardType="number-pad"
           value={formatPhoneNumber(phone)}
           onChangeText={setPhone}
-          maxLength={13}
+          maxLength={FORMATTED_PHONE_MAX_LENGTH}
           autoFocus
           sideButton={{
             label: isCodeSent ? '재요청' : '인증 요청',

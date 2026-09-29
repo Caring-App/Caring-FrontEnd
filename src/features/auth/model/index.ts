@@ -4,7 +4,7 @@ export { useSignupTypeSelect } from './useSignupTypeSelect';
 export { useTermsAgreement, TERM_LIST } from './useTermsAgreement';
 export type { TermItem } from './useTermsAgreement';
 export { useSignupDraftStore } from './useSignupDraftStore';
-export { useSignupIdentity, formatPhoneNumber } from './useSignupIdentity';
+export { useSignupIdentity } from './useSignupIdentity';
 export type { IdentityStep } from './useSignupIdentity';
 export { useSignupVerificationCode } from './useSignupVerificationCode';
 export { useSignupSubmit } from './useSignupSubmit';

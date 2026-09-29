@@ -2,7 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { TextInput, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
-import { formatPhoneNumber, useSignupDraftStore, useSignupIdentity } from '@features/auth/model';
+import { useSignupDraftStore, useSignupIdentity } from '@features/auth/model';
+import { FORMATTED_PHONE_MAX_LENGTH, formatPhoneNumber } from '@features/auth/utils';
 import { SignupStepLayout, SignupTextField } from '@features/auth/ui';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'SignupIdentity'>;
@@ -45,7 +46,7 @@ export default function SignupIdentityScreen({ navigation }: Props) {
             keyboardType="number-pad"
             value={formatPhoneNumber(phone)}
             onChangeText={setPhone}
-            maxLength={13}
+            maxLength={FORMATTED_PHONE_MAX_LENGTH}
             onSubmitEditing={handleNext}
           />
         )}

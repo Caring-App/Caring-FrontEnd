@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { sendSmsCodeApi } from '@features/auth/api';
 import { logApiError } from '@shared/api';
+import { isValidPhoneNumber, normalizePhoneDigits } from '../utils/phone';
 import { useSignupDraftStore } from './useSignupDraftStore';
 
 // 본인인증 정보 입력은 이름 → 휴대폰번호 순으로 한 칸씩 위에 추가되는 단계형 폼(Figma 967:5842 ~ 967:6566).
@@ -8,16 +9,6 @@ import { useSignupDraftStore } from './useSignupDraftStore';
 // 쓰지도 않을 주민번호를 수집하는 건 개인정보 보호 측면에서도 부담이라 제외함
 export const IDENTITY_STEPS = ['name', 'phone'] as const;
 export type IdentityStep = (typeof IDENTITY_STEPS)[number];
-
-const onlyDigits = (value: string) => value.replace(/\D/g, '');
-
-// 010-0000-0000 형태로 표시 — 저장/전송은 숫자만 (백엔드 예시도 01012345678 형태)
-export const formatPhoneNumber = (digits: string) => {
-  if (digits.length < 4) return digits;
-  if (digits.length < 8) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
-  if (digits.length === 10) return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
-  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
-};
 
 export function useSignupIdentity(onCodeSent: () => void) {
   const [stepIndex, setStepIndex] = useState(0);
@@ -31,7 +22,7 @@ export function useSignupIdentity(onCodeSent: () => void) {
 
   const isStepValid: Record<IdentityStep, boolean> = {
     name: name.trim().length > 0,
-    phone: /^01\d{8,9}$/.test(phone),
+    phone: isValidPhoneNumber(phone),
   };
   const isLastStep = stepIndex === IDENTITY_STEPS.length - 1;
   // 지금 노출된 필드가 모두 채워져야 "다음"으로 다음 필드를 열거나 인증번호를 보낼 수 있음
@@ -39,7 +30,7 @@ export function useSignupIdentity(onCodeSent: () => void) {
 
   const advance = useCallback(() => setStepIndex(prev => Math.min(prev + 1, IDENTITY_STEPS.length - 1)), []);
 
-  const handleChangePhone = (value: string) => setPhone(onlyDigits(value).slice(0, 11));
+  const handleChangePhone = (value: string) => setPhone(normalizePhoneDigits(value));
 
   // 인증번호 발송 성공 시 이름/전화번호를 저장하고 다음 화면으로
   const requestCode = async () => {

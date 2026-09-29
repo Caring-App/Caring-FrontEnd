@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
 import { loginApi } from '@features/auth/api';
-import { formatPhoneNumber } from '@features/auth/model';
+import { FORMATTED_PHONE_MAX_LENGTH, formatPhoneNumber, normalizePhoneDigits } from '@features/auth/utils';
 import { logApiError, setTokens } from '@shared/api';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import { CaringLogoHorizontal } from '@shared/ui/AppHeader/CaringLogo';
@@ -69,8 +69,8 @@ export default function PhoneLoginScreen({ navigation }: Props) {
               placeholderTextColor={colors.textSignupDesc}
               keyboardType="number-pad"
               value={formatPhoneNumber(phone)}
-              onChangeText={value => setPhone(value.replace(/\D/g, '').slice(0, 11))}
-              maxLength={13}
+              onChangeText={value => setPhone(normalizePhoneDigits(value))}
+              maxLength={FORMATTED_PHONE_MAX_LENGTH}
             />
           </View>
           <View className="gap-2">
