@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { resetOnLogout } from '@shared/store/resetOnLogout';
 import { logApiError } from '@shared/api';
+import { soundTypeToAlarmType } from '@shared/utils/alarmType';
 import {
   createPillScheduleApi,
   deletePillScheduleApi,
@@ -13,7 +14,6 @@ import {
   mealTypeToPillName,
   pillScheduleToEntry,
   reminderIntervalToMinutes,
-  soundTypeToAlarmType,
   timeStateToTakeTime,
 } from '../utils';
 import { MedicationEntry, MedicationRegistrationData, PillScheduleRequest } from './medicationTypes';

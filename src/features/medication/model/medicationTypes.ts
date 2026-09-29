@@ -1,4 +1,4 @@
-import type { SoundType, TimeState } from '@shared/types';
+import type { AlarmType, SoundType, TimeState } from '@shared/types';
 
 export type MealType = 'morning' | 'lunch' | 'dinner';
 
@@ -8,7 +8,6 @@ export type MedicationSoundType = SoundType;
 
 // 백엔드 pillName enum. 스웨거에 스키마 탭 없이 예시값(MORNING)만 있어 나머지는 MealType 대응으로 추정.
 export type PillName = 'MORNING' | 'LUNCH' | 'DINNER';
-export type PillAlarmType = 'TTS' | 'VOICE';
 
 // GET/POST/PUT/PATCH 공통 응답 형태 — 스케줄 1건 = 시간대(pillName) 1개.
 // 백엔드 모델에 "약 이름" 자유텍스트 필드는 없음(피그마 디자인에도 없음, 사용자 확인 완료).
@@ -21,7 +20,7 @@ export interface PillSchedule {
   takeDays: string;
   takeTime: string;
   retryAlarm: number;
-  alarmType: PillAlarmType;
+  alarmType: AlarmType;
   voiceFileUrl: string;
   active: boolean;
 }
@@ -34,7 +33,7 @@ export interface PillScheduleRequest {
   takeDays: string;
   takeTime: string;
   retryAlarm: number;
-  alarmType: PillAlarmType;
+  alarmType: AlarmType;
   voiceFileUrl: string;
   active: boolean;
   isActive: boolean;

@@ -1,9 +1,8 @@
 import type { TimeState } from '@shared/types';
+import { alarmTypeToSoundType } from '@shared/utils/alarmType';
 import {
   MealType,
   MedicationEntry,
-  MedicationSoundType,
-  PillAlarmType,
   PillName,
   PillSchedule,
   Weekday,
@@ -137,14 +136,6 @@ export function reminderIntervalToMinutes(interval: string): number {
 
 export function minutesToReminderInterval(minutes: number): string {
   return Object.keys(REMINDER_MINUTES).find(key => REMINDER_MINUTES[key] === minutes) ?? '10분 후';
-}
-
-export function soundTypeToAlarmType(soundType: MedicationSoundType): PillAlarmType {
-  return soundType === 'voice' ? 'VOICE' : 'TTS';
-}
-
-export function alarmTypeToSoundType(alarmType: PillAlarmType): MedicationSoundType {
-  return alarmType === 'VOICE' ? 'voice' : 'tts';
 }
 
 export function pillScheduleToEntry(schedule: PillSchedule): MedicationEntry {
