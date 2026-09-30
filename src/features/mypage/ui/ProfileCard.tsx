@@ -3,14 +3,13 @@ import { Pressable, Text, View } from 'react-native';
 import UserIcon from '@assets/icons/under_nav/mypage.svg';
 import PencilLineIcon from '@assets/icons/action/pencil-line.svg';
 import ChevronRightOrangeIcon from '@assets/icons/action/chevron-right-orange.svg';
-import { ProfileInfo } from '../model';
 
 export function ProfileCard({
-  profile,
+  name,
   onPressEditInfo,
   onPressLinkCode,
 }: {
-  profile: ProfileInfo;
+  name: string;
   onPressEditInfo: () => void;
   onPressLinkCode: () => void;
 }) {
@@ -20,7 +19,7 @@ export function ProfileCard({
         <View className="h-[30px] w-[30px] items-center justify-center rounded-full bg-avatar">
           <UserIcon width={18} height={18} />
         </View>
-        <Text className="text-xl font-pretendard-bold text-text-primary">{profile.name}</Text>
+        <Text className="text-xl font-pretendard-bold text-text-primary">{name}</Text>
       </View>
 
       <View className="my-3 h-px bg-border-divider" />

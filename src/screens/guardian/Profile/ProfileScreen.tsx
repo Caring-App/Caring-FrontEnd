@@ -9,7 +9,6 @@ import { useSessionStore } from '@shared/store/useSessionStore';
 import { confirmLogout } from '@shared/model';
 import { useGuardianMenuStore } from '@features/guardian-menu/model';
 import { useTourStore } from '@features/guardian-tour/model';
-import { MOCK_LINK_CODE, MOCK_PROFILE } from '@features/mypage/model';
 import {
   EditPersonalInfoModal,
   LinkCodeModal,
@@ -22,11 +21,12 @@ type GuardianStackNavigationProp = NativeStackNavigationProp<GuardianStackParamL
 export function ProfileScreen() {
   const navigation = useNavigation();
   const stackNavigation = navigation.getParent<GuardianStackNavigationProp>();
-  const [profile, setProfile] = useState(MOCK_PROFILE);
   // 이름은 로그인한 회원 정보(세션)에서 가져옴 — 사이드바(GuardianMenuDrawer)와 같은 출처라 세션 이름이 바뀌면 둘 다 함께 바뀜
   const userName = useSessionStore(state => state.profile?.name);
-  const displayProfile = { ...profile, name: userName ? `${userName}님` : '' };
+  const displayName = userName ? `${userName}님` : '';
   const [editModalVisible, setEditModalVisible] = useState(false);
+  // 개인 정보 수정 모달은 열 때마다 빈 입력으로 시작해야 해서 key를 바꿔 새로 마운트
+  const [editModalKey, setEditModalKey] = useState(0);
   const [linkCodeModalVisible, setLinkCodeModalVisible] = useState(false);
 
   return (
@@ -43,8 +43,11 @@ export function ProfileScreen() {
 
         <View className="mt-4">
           <ProfileCard
-            profile={displayProfile}
-            onPressEditInfo={() => setEditModalVisible(true)}
+            name={displayName}
+            onPressEditInfo={() => {
+              setEditModalKey(key => key + 1);
+              setEditModalVisible(true);
+            }}
             onPressLinkCode={() => setLinkCodeModalVisible(true)}
           />
         </View>
@@ -65,19 +68,14 @@ export function ProfileScreen() {
       </ScrollView>
 
       <EditPersonalInfoModal
+        key={editModalKey}
         visible={editModalVisible}
-        profile={profile}
         onClose={() => setEditModalVisible(false)}
-        onSave={info => {
-          setProfile(prev => ({ ...prev, phone: info.phone, address: info.address }));
-          setEditModalVisible(false);
-        }}
       />
 
       <LinkCodeModal
         visible={linkCodeModalVisible}
-        name={displayProfile.name}
-        code={MOCK_LINK_CODE}
+        name={displayName}
         onClose={() => setLinkCodeModalVisible(false)}
       />
     </SafeAreaView>

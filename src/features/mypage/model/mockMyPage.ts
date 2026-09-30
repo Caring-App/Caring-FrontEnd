@@ -1,13 +1,4 @@
-import { FaqItem, ProfileInfo, WithdrawReasonOption } from './types';
-
-// 이름은 화면에서 로그인 세션의 회원 이름으로 덮어씀(ProfileScreen) — 전화번호/주소는 아직 조회 API 연동 전
-export const MOCK_PROFILE: ProfileInfo = {
-  name: '',
-  phone: '',
-  address: '',
-};
-
-export const MOCK_LINK_CODE = 'ABC123-DFG456';
+import { FaqItem, WithdrawReasonOption } from './types';
 
 export const MOCK_FAQS: FaqItem[] = [
   {

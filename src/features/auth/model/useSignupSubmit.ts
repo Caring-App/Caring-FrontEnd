@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { AuthStackNavigationProp } from '@app/navigation/types';
 import { registerProtectorApi, registerSocialApi, registerWardApi } from '@features/auth/api';
 import { loginAfterRegister } from '@features/auth/utils';
-import { logApiError, setTokens } from '@shared/api';
+import { getApiErrorMessage, logApiError, setTokens } from '@shared/api';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import { UserRole } from '@shared/types';
 import { SocialProviderCode } from './types';
@@ -10,6 +10,8 @@ import { useSignupDraftStore } from './useSignupDraftStore';
 import { showNotice } from '@shared/model';
 
 const REGISTER_FAILED_MESSAGE = '회원가입에 실패했습니다. 입력하신 정보를 다시 확인해 주세요.';
+// 백엔드는 인증번호 발송 후 3분이 지나면 인증을 마쳤어도 가입 요청을 이 메시지로 거절함(인증 확인 후에도 만료 시각이 그대로)
+const PHONE_VERIFICATION_EXPIRED_MESSAGE = '휴대폰 인증이 완료되지 않았습니다.';
 
 // 회원가입 마지막 단계(보호자: 주소, 돌봄대상자: 기저질환)에서 호출 — 단계별로 모아둔 입력값으로
 // 로컬/소셜 가입 API를 골라 호출하고, 성공하면 역할별 환영 화면으로 이동함
@@ -86,7 +88,19 @@ export function useSignupSubmit(navigation: AuthStackNavigationProp) {
       }
     } catch (error) {
       logApiError(`${role === 'WARD' ? '돌봄대상자' : '보호자'} 회원가입 실패:`, error);
-      setSubmitError(REGISTER_FAILED_MESSAGE);
+      const serverMessage = getApiErrorMessage(error);
+      if (serverMessage === PHONE_VERIFICATION_EXPIRED_MESSAGE) {
+        // 입력해둔 값은 그대로 두고 인증번호 화면으로 돌아가 재인증만 받음 — 재인증 후엔 마지막 단계로 바로 돌아옴
+        useSignupDraftStore.getState().setNeedsReverify(true);
+        showNotice(
+          '휴대폰 인증 시간이 지났어요',
+          '인증번호를 받은 뒤 3분 안에 가입을 마쳐야 해요. 인증번호를 다시 받아 인증해 주시면 입력하신 정보로 가입을 이어갈 수 있어요.',
+          [{ text: '확인', onPress: () => navigation.navigate('SignupVerifyCode') }],
+        );
+        return;
+      }
+      // "이미 가입된 전화번호입니다." 같은 서버 사유가 있으면 그대로 보여줌
+      setSubmitError(serverMessage ?? REGISTER_FAILED_MESSAGE);
       return;
     }
 

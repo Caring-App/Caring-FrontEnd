@@ -1,29 +1,27 @@
-import React, { useState } from 'react';
-import { Modal, Pressable, Text, View } from 'react-native';
+import React from 'react';
+import { ActivityIndicator, Modal, Pressable, Text, View } from 'react-native';
 import { colors } from '@shared/theme/colors';
 import RssIcon from '@assets/icons/action/rss.svg';
 import CloseXIcon from '@assets/icons/action/close-x.svg';
+import { useProtectorCode } from '../model';
 
 export function LinkCodeModal({
   visible,
   name,
-  code,
   onClose,
 }: {
   visible: boolean;
   name: string;
-  code: string;
   onClose: () => void;
 }) {
-  const [copied, setCopied] = useState(false);
+  const { code, isLoading, hasLoadFailed, retry, copied, copy } = useProtectorCode(visible);
 
   return (
     <Modal
       visible={visible}
       transparent
       animationType="fade"
-      onRequestClose={onClose}
-      onShow={() => setCopied(false)}>
+      onRequestClose={onClose}>
       <Pressable className="flex-1 items-center justify-center bg-black/30 px-4" onPress={onClose}>
         <Pressable className="w-full max-w-[375px] rounded-card bg-surface p-4" onPress={() => {}}>
           <View className="flex-row items-center justify-between">
@@ -44,17 +42,27 @@ export function LinkCodeModal({
 
           <View className="mt-4 items-center gap-3 rounded-card border border-border p-4">
             <Text className="text-lg font-pretendard-semibold text-text-body">연동 코드</Text>
-            <View className="w-full items-center rounded-[6px] border border-border-input py-2">
-              <Text className="text-lg font-pretendard-semibold text-text-body">{code}</Text>
+            <View className="min-h-[44px] w-full items-center justify-center rounded-[6px] border border-border-input py-2">
+              {code ? (
+                <Text className="text-lg font-pretendard-semibold text-text-body">{code}</Text>
+              ) : isLoading ? (
+                <ActivityIndicator size="small" color={colors.primary} />
+              ) : hasLoadFailed ? (
+                <Text className="text-sm font-pretendard-medium text-text-muted">코드를 불러오지 못했어요.</Text>
+              ) : null}
             </View>
-            {/* TODO: 클립보드 라이브러리(@react-native-clipboard/clipboard) 도입 후 실제 복사 연동 */}
-            <Pressable
-              className="items-center justify-center rounded-[8px] bg-primary px-4 py-1.5"
-              onPress={() => setCopied(true)}>
-              <Text className="text-sm font-pretendard-semibold text-surface">
-                {copied ? '복사됨' : '복사'}
-              </Text>
-            </Pressable>
+            {!code && hasLoadFailed && !isLoading ? (
+              <Pressable className="items-center justify-center rounded-[8px] bg-primary px-4 py-1.5" onPress={retry}>
+                <Text className="text-sm font-pretendard-semibold text-surface">다시 시도</Text>
+              </Pressable>
+            ) : (
+              <Pressable
+                className={`items-center justify-center rounded-[8px] px-4 py-1.5 ${code ? 'bg-primary' : 'bg-buttonMuted'}`}
+                onPress={copy}
+                disabled={!code}>
+                <Text className="text-sm font-pretendard-semibold text-surface">{copied ? '복사됨' : '복사'}</Text>
+              </Pressable>
+            )}
           </View>
         </Pressable>
       </Pressable>

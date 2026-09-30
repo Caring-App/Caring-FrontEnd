@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
-import { WITHDRAW_REASONS } from '@features/mypage/model';
+import { useWithdraw, WITHDRAW_REASONS } from '@features/mypage/model';
 import { RadioOption } from '@features/mypage/ui';
+import { colors } from '@shared/theme/colors';
 
 export function WithdrawalScreen() {
   const navigation = useNavigation();
   const [reasonId, setReasonId] = useState<string | null>(null);
   const [checklistConfirmed, setChecklistConfirmed] = useState(false);
   const [agreedToWithdraw, setAgreedToWithdraw] = useState(false);
+  const { withdraw, isWithdrawing } = useWithdraw();
 
   const canWithdraw = checklistConfirmed && reasonId !== null && agreedToWithdraw;
 
@@ -78,10 +80,15 @@ export function WithdrawalScreen() {
         </Pressable>
 
         <Pressable
-          disabled={!canWithdraw}
+          onPress={withdraw}
+          disabled={!canWithdraw || isWithdrawing}
           className="items-center justify-center rounded-card bg-primary py-4"
           style={{ opacity: canWithdraw ? 1 : 0.4 }}>
-          <Text className="text-2xl font-pretendard-semibold text-surface">탈퇴하기</Text>
+          {isWithdrawing ? (
+            <ActivityIndicator size="small" color={colors.surface} />
+          ) : (
+            <Text className="text-2xl font-pretendard-semibold text-surface">탈퇴하기</Text>
+          )}
         </Pressable>
       </View>
     </SafeAreaView>

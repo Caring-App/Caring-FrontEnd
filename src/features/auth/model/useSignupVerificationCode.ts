@@ -5,8 +5,11 @@ import { normalizeVerificationCode } from '../utils/verificationCode';
 import { useSignupDraftStore } from './useSignupDraftStore';
 import { useVerificationCountdown } from './useVerificationCountdown';
 
-// 인증번호 입력 화면 — 본인인증 화면에서 이미 1회 발송된 상태로 진입하므로 마운트 시점부터 타이머 시작
-export function useSignupVerificationCode(onVerified: () => void) {
+type NextSignupStep = 'SignupPassword' | 'SignupAddress' | 'SignupDisease';
+
+// 인증번호 입력 화면 — 본인인증 화면에서 이미 1회 발송된 상태로 진입하므로 마운트 시점부터 타이머 시작.
+// 인증을 마치면 다음 단계를 알려줌 — 평소엔 비밀번호, 가입 요청이 인증 만료로 거절돼 다시 인증한 경우엔 마지막 단계
+export function useSignupVerificationCode(onVerified: (nextStep: NextSignupStep) => void) {
   const phone = useSignupDraftStore(state => state.phone);
   const [code, setCode] = useState('');
   const countdown = useVerificationCountdown(true);
@@ -40,8 +43,14 @@ export function useSignupVerificationCode(onVerified: () => void) {
     setIsVerifying(true);
     try {
       await verifySmsCodeApi(phone, code);
-      useSignupDraftStore.getState().setAuthCode(code);
-      onVerified();
+      const draft = useSignupDraftStore.getState();
+      draft.setAuthCode(code);
+      if (draft.needsReverify) {
+        draft.setNeedsReverify(false);
+        onVerified(draft.role === 'WARD' ? 'SignupDisease' : 'SignupAddress');
+      } else {
+        onVerified('SignupPassword');
+      }
     } catch (verifyError) {
       logApiError('SMS 인증번호 확인 실패:', verifyError);
       setError('인증번호가 일치하지 않습니다.');
