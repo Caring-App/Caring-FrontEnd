@@ -5,7 +5,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GuardianStackParamList } from '@app/navigation/types';
 import { useInquiryStore } from '@features/inquiry/model';
-import { InquiryInfoCard, InquiryListItem } from '@features/inquiry/ui';
+import { InquiryListItem } from '@features/inquiry/ui';
 import { colors } from '@shared/theme/colors';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 
@@ -47,13 +47,10 @@ export function InquiryScreen() {
         }>
         <Text className="mt-4 text-xl font-pretendard-bold text-text-primary">도움이 필요하신가요?</Text>
         <Text className="mb-4 mt-2 text-md font-pretendard-medium text-text-muted">
-          궁금하신 점이나 불편 사항을 문의로 남겨주시면 운영시간 내에 답변드립니다. 급한 문의는 고객센터로
-          연락주세요.
+          궁금하신 점이나 불편 사항을 문의로 남겨주시면 확인 후 답변드릴게요.
         </Text>
 
-        <InquiryInfoCard />
-
-        <View className="mt-6 flex-row items-center justify-between">
+        <View className="mt-2 flex-row items-center justify-between">
           <Text className="text-lg font-pretendard-bold text-text-primary">내 문의 내역</Text>
           <Pressable className="rounded-[8px] bg-primary px-3 py-2" onPress={() => navigation.navigate('InquiryWrite')}>
             <Text className="text-sm font-pretendard-semibold text-surface">문의 작성하기</Text>

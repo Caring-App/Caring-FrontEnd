@@ -63,7 +63,7 @@ export function InquiryDetailScreen({ navigation, route }: Props) {
                 </>
               ) : (
                 <Text className="mt-2 text-md font-pretendard-medium text-text-muted">
-                  아직 답변이 등록되지 않았어요. 운영시간 내에 답변드릴게요.
+                  아직 답변이 등록되지 않았어요. 확인 후 답변드릴게요.
                 </Text>
               )}
             </View>
