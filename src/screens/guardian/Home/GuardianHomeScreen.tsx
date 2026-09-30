@@ -13,7 +13,7 @@ import { MedicationSection } from '@features/medication/ui';
 import { LocationSection } from '@features/location/ui';
 import { ScheduleSection } from '@features/schedule/ui';
 import { WelfareSection } from '@features/welfare-facility/ui';
-import { useSelectedWardStore } from '@features/ward-management/model';
+import { useSelectedWard, useSelectedWardStore } from '@features/ward-management/model';
 import { NoLinkedWardNotice } from '@features/ward-management/ui';
 import {
   MEDICATION_MODAL_STEP_INDEX,
@@ -31,11 +31,9 @@ const WARD_MANAGEMENT_STEP_INDEX = TOUR_STEPS.findIndex(step => step.screen === 
 export function GuardianHomeScreen() {
   const navigation = useNavigation();
   const stackNavigation = navigation.getParent<GuardianStackNavigationProp>();
-  const selectedWardId = useSelectedWardStore(state => state.selectedWardId);
-  const wards = useSelectedWardStore(state => state.wards);
   const isWardsLoaded = useSelectedWardStore(state => state.isLoaded);
   // 연동된 어르신이 없으면 undefined(투어 중엔 목업 어르신) — 아래에서 안내 화면으로 분기
-  const ward = wards.find(item => item.id === selectedWardId) ?? wards[0];
+  const { ward } = useSelectedWard();
   const tourScroll = useTourScrollTracking('home');
   // 복약 카드와 하루 요약 레포트가 함께 쓰는 오늘 복약 데이터(알림 목록·복약 스케줄)를 화면 단위에서 한 번만 불러옴
   useSyncWardTodayMedication(ward?.id ?? '');

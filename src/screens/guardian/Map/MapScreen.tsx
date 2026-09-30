@@ -4,14 +4,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NaverMapView, NaverMapMarkerOverlay } from '@mj-studio/react-native-naver-map';
 import { useWardLocation } from '@features/location/model';
-import { useSelectedWardStore } from '@features/ward-management/model';
+import { useSelectedWard } from '@features/ward-management/model';
 import { NoLinkedWardNotice } from '@features/ward-management/ui';
 import { colors } from '@shared/theme/colors';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 
 export function MapScreen() {
   const navigation = useNavigation();
-  const selectedWardId = useSelectedWardStore(state => state.selectedWardId);
+  const { selectedWardId } = useSelectedWard();
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top']}>

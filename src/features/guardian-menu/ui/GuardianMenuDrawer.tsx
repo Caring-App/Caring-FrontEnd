@@ -5,7 +5,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GuardianStackParamList } from '@app/navigation/types';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import { confirmLogout } from '@shared/model';
-import { useSelectedWardStore } from '@features/ward-management/model';
+import { useSelectedWardStore, useWardList } from '@features/ward-management/model';
 import { useGuardianMenuStore } from '../model/useGuardianMenuStore';
 import GearIcon from '@assets/icons/menu/gear-white.svg';
 import PersonVcardIcon from '@assets/icons/menu/person-vcard.svg';
@@ -17,7 +17,7 @@ export function GuardianMenuDrawer() {
   const isOpen = useGuardianMenuStore(state => state.isOpen);
   const close = useGuardianMenuStore(state => state.close);
   const navigation = useNavigation<GuardianStackNavigationProp>();
-  const wards = useSelectedWardStore(state => state.wards);
+  const wards = useWardList();
   // 로그인 응답의 회원 이름 — 프로필이 없는 경우(세션 복원 전 등)엔 이름 없이 인사만 보여줌
   const userName = useSessionStore(state => state.profile?.name);
 

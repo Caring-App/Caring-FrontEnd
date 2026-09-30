@@ -6,7 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GuardianStackParamList } from '@app/navigation/types';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 import CrosshairIcon from '@assets/icons/action/crosshair.svg';
-import { useSelectedWardStore } from '@features/ward-management/model';
+import { useSelectedWard } from '@features/ward-management/model';
 import { WELFARE_SEARCH_RADIUS_KM } from '@features/welfare-facility/model';
 import { NearbyWelfareFacilityList } from '@features/welfare-facility/ui';
 import { NoLinkedWardNotice } from '@features/ward-management/ui';
@@ -15,9 +15,7 @@ type GuardianStackNavigationProp = NativeStackNavigationProp<GuardianStackParamL
 
 export function WelfareFacilityListScreen() {
   const navigation = useNavigation<GuardianStackNavigationProp>();
-  const selectedWardId = useSelectedWardStore(state => state.selectedWardId);
-  const wards = useSelectedWardStore(state => state.wards);
-  const ward = wards.find(item => item.id === selectedWardId) ?? wards[0];
+  const { ward } = useSelectedWard();
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top']}>

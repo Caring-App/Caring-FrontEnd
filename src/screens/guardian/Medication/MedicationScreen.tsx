@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
 import PlusIcon from '@assets/icons/action/plus.svg';
 import { logApiError } from '@shared/api';
-import { useSelectedWardStore } from '@features/ward-management/model';
+import { useSelectedWard } from '@features/ward-management/model';
 import { MedicationEntry, useMedicationListStore } from '@features/medication/model';
 import { MedicationListItem, MedicationRegistrationModal } from '@features/medication/ui';
 import { sortMedicationsByTime } from '@features/medication/utils';
@@ -15,9 +15,7 @@ import { NoLinkedWardNotice } from '@features/ward-management/ui';
 
 export function MedicationScreen() {
   const navigation = useNavigation();
-  const selectedWardId = useSelectedWardStore(state => state.selectedWardId);
-  const wards = useSelectedWardStore(state => state.wards);
-  const ward = wards.find(item => item.id === selectedWardId) ?? wards[0];
+  const { ward } = useSelectedWard();
   // 연동된 어르신이 없으면 NaN — Number('')는 0이라 빈 id를 그대로 바꾸면 0번 어르신을 조회하게 됨
   const wardIdNumber = ward ? Number(ward.id) : NaN;
   const medications = useMedicationListStore(state => state.medicationsByWard[wardIdNumber]) ?? [];
