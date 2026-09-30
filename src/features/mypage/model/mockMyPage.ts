@@ -11,12 +11,6 @@ export const MOCK_LINK_CODE = 'ABC123-DFG456';
 
 export const MOCK_FAQS: FaqItem[] = [
   {
-    id: '1',
-    category: '고객센터',
-    question: '고객센터 운영시간이 어떻게 되나요?',
-    answer: '평일 08:00 ~ 17:00 (주말 및 공휴일 휴무), 점심시간 12:00 ~ 13:00 입니다.',
-  },
-  {
     id: '2',
     category: '회원',
     question: '회원 탈퇴 후 재가입할 수 있나요?',

@@ -15,9 +15,3 @@ export interface WithdrawReasonOption {
   id: string;
   label: string;
 }
-
-export interface ChatMessage {
-  id: string;
-  sender: 'system' | 'user';
-  text: string;
-}

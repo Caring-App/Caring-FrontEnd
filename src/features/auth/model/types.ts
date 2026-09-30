@@ -1,4 +1,4 @@
-import { UserRole } from '@shared/types';
+import { AuthLevel, UserRole } from '@shared/types';
 
 export interface LoginRequest {
   phone: string;
@@ -10,7 +10,7 @@ export interface LoginResponse {
   name: string;
   nickname: string;
   role: UserRole;
-  authLevel: string;
+  authLevel: AuthLevel;
   accessToken: string;
   refreshToken: string;
 }
@@ -22,6 +22,7 @@ export interface SocialLoginCheckResponse {
   name?: string;
   nickname?: string;
   role?: UserRole;
+  authLevel?: AuthLevel;
   accessToken?: string;
   refreshToken?: string;
 }

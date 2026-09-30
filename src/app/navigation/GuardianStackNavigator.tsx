@@ -13,7 +13,8 @@ import { WelfareFacilityDetailScreen } from '@screens/guardian/WelfareFacilities
 import { SettingsScreen } from '@screens/guardian/Settings/SettingsScreen';
 import { WithdrawalScreen } from '@screens/guardian/Withdrawal/WithdrawalScreen';
 import { InquiryScreen } from '@screens/guardian/Inquiry/InquiryScreen';
-import { InquiryChatScreen } from '@screens/guardian/Inquiry/InquiryChatScreen';
+import { InquiryWriteScreen } from '@screens/guardian/Inquiry/InquiryWriteScreen';
+import { InquiryDetailScreen } from '@screens/guardian/Inquiry/InquiryDetailScreen';
 import { FaqScreen } from '@screens/guardian/Faq/FaqScreen';
 import { PolicyScreen } from '@screens/guardian/Policy/PolicyScreen';
 import { PolicyDetailScreen } from '@screens/guardian/PolicyDetail/PolicyDetailScreen';
@@ -34,7 +35,8 @@ export function GuardianStackNavigator() {
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Withdrawal" component={WithdrawalScreen} />
         <Stack.Screen name="Inquiry" component={InquiryScreen} />
-        <Stack.Screen name="InquiryChat" component={InquiryChatScreen} />
+        <Stack.Screen name="InquiryWrite" component={InquiryWriteScreen} />
+        <Stack.Screen name="InquiryDetail" component={InquiryDetailScreen} />
         <Stack.Screen name="Faq" component={FaqScreen} />
         <Stack.Screen name="Policy" component={PolicyScreen} />
         <Stack.Screen name="PolicyDetail" component={PolicyDetailScreen} />

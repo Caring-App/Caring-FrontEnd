@@ -6,4 +6,3 @@ export * from './LinkCodeModal';
 export * from './SettingsToggleRow';
 export * from './RadioOption';
 export * from './FaqAccordionItem';
-export * from './ChatBubble';

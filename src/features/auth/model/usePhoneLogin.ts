@@ -25,6 +25,7 @@ export function usePhoneLogin() {
         memberId: result.memberId,
         name: result.name,
         nickname: result.nickname,
+        authLevel: result.authLevel,
       });
     } catch (error) {
       logApiError('로그인 실패:', error);

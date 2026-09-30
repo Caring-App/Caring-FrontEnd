@@ -22,8 +22,6 @@ module.exports = {
           danger: '#e10004',
           // 폼 입력창 placeholder(Figma 60:5411 등, #6C757D) — mypage/ward-management FormField 공용
           placeholder: '#6c757d',
-          // 1:1 문의하기 채팅 입력창 placeholder(Figma 151:26522, #A1A1A1)
-          placeholderMuted: '#a1a1a1',
           // 일정 등록 모달 인라인 캘린더의 이전/다음 달 날짜(Figma 55:3009 date-picker-dropdown, #ADB5BD)
           calendarMuted: '#adb5bd',
           // 보호자 홈 미니 캘린더의 요일 라벨(Figma 55:2459, #BDBDBD)
@@ -90,8 +88,6 @@ module.exports = {
           DEFAULT: '#ffffff',
           // 돌봄대상자 관리 카드의 글자 크기 세그먼트 컨트롤 배경(Figma 41:1997, #EFF1F5)
           subtle: '#eff1f5',
-          // 1:1 문의하기 채팅 말풍선 배경(Figma 151:26522, #EEEEEE)
-          chat: '#eeeeee',
           // 약관 동의 화면 "전체 동의" 행 배경(Figma 151:17581, #F9FAFB)
           termsRow: '#f9fafb',
           // 회원가입 리뉴얼 회색 입력창 배경(Figma 967:6586 등, #F5F5F5)
