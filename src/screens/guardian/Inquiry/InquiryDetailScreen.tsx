@@ -22,7 +22,7 @@ type Props = NativeStackScreenProps<GuardianStackParamList, 'InquiryDetail'>;
 
 // 문의 상세 — 문의 내용과 답변. 관리자 계정이면 아직 답변이 없을 때 여기서 답변을 등록할 수 있음
 export function InquiryDetailScreen({ navigation, route }: Props) {
-  const { inquiry, canAnswer, answerDraft, setAnswerDraft, isAnswering, submitAnswer } = useInquiryDetail(
+  const { inquiry, hasLoadFailed, retry, canAnswer, answerDraft, setAnswerDraft, isAnswering, submitAnswer } = useInquiryDetail(
     route.params.inquiryId,
   );
   const canSubmitAnswer = !!answerDraft.trim() && !isAnswering;
@@ -37,7 +37,16 @@ export function InquiryDetailScreen({ navigation, route }: Props) {
       </View>
 
       {!inquiry ? (
-        <ActivityIndicator className="mt-10" size="small" color={colors.primary} />
+        hasLoadFailed ? (
+          <View className="mt-10 items-center gap-3">
+            <Text className="text-md font-pretendard-medium text-text-muted">문의를 불러오지 못했어요.</Text>
+            <Pressable className="rounded-[8px] bg-primary px-4 py-2" onPress={retry}>
+              <Text className="text-sm font-pretendard-semibold text-surface">다시 시도</Text>
+            </Pressable>
+          </View>
+        ) : (
+          <ActivityIndicator className="mt-10" size="small" color={colors.primary} />
+        )
       ) : (
         <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <ScrollView className="flex-1 px-4" contentContainerClassName="py-4" keyboardShouldPersistTaps="handled">

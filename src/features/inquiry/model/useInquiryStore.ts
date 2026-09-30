@@ -11,8 +11,11 @@ interface InquiryState {
   inquiryById: Record<number, Inquiry>;
   isLoading: boolean;
   hasLoaded: boolean;
+  // 마지막 목록 조회가 실패했는지 — 실패를 "작성한 문의 없음"과 구분해서 보여주기 위함
+  hasLoadFailed: boolean;
   fetchInquiries: () => Promise<void>;
-  fetchInquiry: (inquiryId: number) => Promise<void>;
+  // 성공하면 true — 상세 화면이 실패 상태(다시 시도)를 보여주는 데 사용
+  fetchInquiry: (inquiryId: number) => Promise<boolean>;
   // 성공하면 true — 실패 사유는 안내 모달로 알림
   createInquiry: (title: string, content: string) => Promise<boolean>;
   answerInquiry: (inquiryId: number, answer: string) => Promise<boolean>;
@@ -23,14 +26,16 @@ export const useInquiryStore = create<InquiryState>((set, get) => ({
   inquiryById: {},
   isLoading: false,
   hasLoaded: false,
+  hasLoadFailed: false,
 
   fetchInquiries: async () => {
     if (get().isLoading) return;
     set({ isLoading: true });
     try {
-      set({ inquiries: await getMyInquiriesApi(), hasLoaded: true });
+      set({ inquiries: await getMyInquiriesApi(), hasLoaded: true, hasLoadFailed: false });
     } catch (error) {
       logApiError('내 문의 목록 조회 실패', error);
+      set({ hasLoadFailed: true });
       notifyLoadFailed();
     } finally {
       set({ isLoading: false });
@@ -41,9 +46,11 @@ export const useInquiryStore = create<InquiryState>((set, get) => ({
     try {
       const inquiry = await getInquiryApi(inquiryId);
       set(state => ({ inquiryById: { ...state.inquiryById, [inquiryId]: inquiry } }));
+      return true;
     } catch (error) {
       logApiError('문의 상세 조회 실패', error);
       notifyLoadFailed();
+      return false;
     }
   },
 

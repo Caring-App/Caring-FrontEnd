@@ -17,6 +17,7 @@ export function InquiryScreen() {
   const inquiries = useInquiryStore(state => state.inquiries);
   const isLoading = useInquiryStore(state => state.isLoading);
   const hasLoaded = useInquiryStore(state => state.hasLoaded);
+  const hasLoadFailed = useInquiryStore(state => state.hasLoadFailed);
 
   // 작성하고 돌아왔거나 그 사이 답변이 달렸을 수 있어서 화면에 들어올 때마다 다시 조회
   useFocusEffect(
@@ -61,8 +62,9 @@ export function InquiryScreen() {
           {!hasLoaded && isLoading ? (
             <ActivityIndicator className="py-10" size="small" color={colors.primary} />
           ) : inquiries.length === 0 ? (
+            // 조회 실패를 "작성한 문의 없음"으로 보이지 않게 구분(이전에 받아둔 목록이 있으면 그대로 보여줌)
             <Text className="py-10 text-center text-md font-pretendard-medium text-text-muted">
-              아직 작성한 문의가 없어요.
+              {hasLoadFailed ? '문의 목록을 불러오지 못했어요. 아래로 당겨 다시 시도해 주세요.' : '아직 작성한 문의가 없어요.'}
             </Text>
           ) : (
             inquiries.map(inquiry => (

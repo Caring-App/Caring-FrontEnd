@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import { INQUIRY_CONTENT_MAX_LENGTH } from './types';
 import { useInquiryStore } from './useInquiryStore';
@@ -12,10 +12,18 @@ export function useInquiryDetail(inquiryId: number) {
   const isAdmin = useSessionStore(state => state.profile?.authLevel === 'ADMIN');
   const [answerDraft, setAnswerDraft] = useState('');
   const [isAnswering, setIsAnswering] = useState(false);
+  // 상세 조회 실패 여부 — 목록에 없는 문의(삭제·권한 없음 등)면 보여줄 값이 없어 로딩 대신 다시 시도 안내를 띄움
+  const [hasLoadFailed, setHasLoadFailed] = useState(false);
+
+  const load = useCallback(async () => {
+    setHasLoadFailed(false);
+    const succeeded = await useInquiryStore.getState().fetchInquiry(inquiryId);
+    if (!succeeded) setHasLoadFailed(true);
+  }, [inquiryId]);
 
   useEffect(() => {
-    useInquiryStore.getState().fetchInquiry(inquiryId);
-  }, [inquiryId]);
+    load();
+  }, [load]);
 
   const canAnswer = isAdmin && !!inquiry && !inquiry.answered;
 
@@ -29,6 +37,8 @@ export function useInquiryDetail(inquiryId: number) {
 
   return {
     inquiry,
+    hasLoadFailed,
+    retry: load,
     canAnswer,
     answerDraft,
     setAnswerDraft: (value: string) => setAnswerDraft(value.slice(0, INQUIRY_CONTENT_MAX_LENGTH)),
