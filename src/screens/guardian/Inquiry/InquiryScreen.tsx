@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -18,6 +18,14 @@ export function InquiryScreen() {
   const isLoading = useInquiryStore(state => state.isLoading);
   const hasLoaded = useInquiryStore(state => state.hasLoaded);
   const hasLoadFailed = useInquiryStore(state => state.hasLoadFailed);
+  // 당겨서 새로고침할 때만 상단 새로고침 표시 — 화면 진입 시 자동 재조회엔 띄우지 않음
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await useInquiryStore.getState().fetchInquiries();
+    setIsRefreshing(false);
+  };
 
   // 작성하고 돌아왔거나 그 사이 답변이 달렸을 수 있어서 화면에 들어올 때마다 다시 조회
   useFocusEffect(
@@ -41,8 +49,8 @@ export function InquiryScreen() {
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
-            refreshing={isLoading && hasLoaded}
-            onRefresh={() => useInquiryStore.getState().fetchInquiries()}
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
             colors={[colors.primary]}
           />
         }>
