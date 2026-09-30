@@ -74,3 +74,13 @@ export function notifyLoadFailed() {
     buttons: DEFAULT_BUTTONS,
   });
 }
+
+// 로그인이 만료돼(refreshToken까지 거절됨) 로그인 화면으로 돌아왔을 때 — 요청 여러 개가 동시에 만료돼도 한 번만 알림
+export function notifySessionExpired() {
+  useNoticeStore.getState().push({
+    key: 'session-expired',
+    title: '로그인이 만료되었어요',
+    message: '다시 로그인해 주세요.',
+    buttons: DEFAULT_BUTTONS,
+  });
+}
