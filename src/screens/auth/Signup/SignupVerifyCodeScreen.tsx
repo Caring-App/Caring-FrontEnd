@@ -10,7 +10,7 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'SignupVerifyCode'>;
 // 인증번호 입력 (Figma 970:7194) — 3분 타이머 + 재요청
 export default function SignupVerifyCodeScreen({ navigation }: Props) {
   const { code, setCode, remainingTime, isExpired, resend, isResending, verify, isVerifying, error } =
-    useSignupVerificationCode(() => navigation.navigate('SignupPassword'));
+    useSignupVerificationCode(nextStep => navigation.navigate(nextStep));
 
   const handleClose = useSignupExit();
 

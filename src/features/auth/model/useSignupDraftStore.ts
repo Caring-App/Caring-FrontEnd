@@ -17,12 +17,16 @@ interface SignupDraftState {
   baseAddress: string;
   detailAddress: string;
   diseases: string[];
+  // 가입 요청이 휴대폰 인증 만료로 거절돼 인증만 다시 하는 중인지 — 재인증을 마치면 비밀번호 단계를 건너뛰고
+  // 입력해둔 값이 남아있는 마지막 단계(주소/기저질환)로 바로 돌아감
+  needsReverify: boolean;
   start: (role: UserRole, social?: SocialSignupProfile) => void;
   setIdentity: (name: string, phone: string) => void;
   setAuthCode: (authCode: string) => void;
   setPassword: (password: string, passwordConfirm: string) => void;
   setAddress: (baseAddress: string, detailAddress: string) => void;
   setDiseases: (diseases: string[]) => void;
+  setNeedsReverify: (needsReverify: boolean) => void;
   reset: () => void;
 }
 
@@ -37,6 +41,7 @@ const INITIAL_DRAFT = {
   baseAddress: '',
   detailAddress: '',
   diseases: [],
+  needsReverify: false,
 };
 
 export const useSignupDraftStore = create<SignupDraftState>(set => ({
@@ -47,5 +52,6 @@ export const useSignupDraftStore = create<SignupDraftState>(set => ({
   setPassword: (password, passwordConfirm) => set({ password, passwordConfirm }),
   setAddress: (baseAddress, detailAddress) => set({ baseAddress, detailAddress }),
   setDiseases: diseases => set({ diseases }),
+  setNeedsReverify: needsReverify => set({ needsReverify }),
   reset: () => set(INITIAL_DRAFT),
 }));
