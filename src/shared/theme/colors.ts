@@ -9,6 +9,7 @@ export const colors = {
   textBody: '#212529',
   textLoginPlaceholder: '#aeb5b5',
   textCalendarMuted: '#adb5bd',
+  textCalendarScheduleDot: '#8e8e93',
   switchTrackOff: '#d9d9d9',
   textAuthTitle: '#1a1614',
   textAuthPlaceholder: '#bdbdbd',

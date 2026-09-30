@@ -11,9 +11,10 @@ import { MonthYearPickerModal } from './MonthYearPickerModal';
 import { ScheduleDetailModal } from './ScheduleDetailModal';
 import { formatScheduleDateTimeShort } from '../model/scheduleFormat';
 import { showNotice } from '@shared/model';
+import { colors } from '@shared/theme/colors';
 
-// tailwind.config.js의 text.calendarScheduleDot과 동일한 값 (borderRadius 이슈로 인라인 필요)
-const SCHEDULE_DOT_COLOR = '#8E8E93';
+// tailwind.config.js의 text.calendarScheduleDot (borderRadius 이슈로 className 대신 style로 넣어야 해서 colors에서 가져옴)
+const SCHEDULE_DOT_COLOR = colors.textCalendarScheduleDot;
 
 function toMinutes(time: ScheduleEntry['scheduleTime']) {
   const { hour, minute } = to24Hour(time);
