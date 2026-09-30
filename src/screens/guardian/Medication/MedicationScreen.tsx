@@ -11,13 +11,15 @@ import { MedicationListItem, MedicationRegistrationModal } from '@features/medic
 import { sortMedicationsByTime } from '@features/medication/utils';
 import { MEDICATION_MODAL_STEP_INDEX, useTourStore } from '@features/guardian-tour/model';
 import { showNotice } from '@shared/model';
+import { NoLinkedWardNotice } from '@features/ward-management/ui';
 
 export function MedicationScreen() {
   const navigation = useNavigation();
   const selectedWardId = useSelectedWardStore(state => state.selectedWardId);
   const wards = useSelectedWardStore(state => state.wards);
   const ward = wards.find(item => item.id === selectedWardId) ?? wards[0];
-  const wardIdNumber = Number(selectedWardId);
+  // 연동된 어르신이 없으면 NaN — Number('')는 0이라 빈 id를 그대로 바꾸면 0번 어르신을 조회하게 됨
+  const wardIdNumber = ward ? Number(ward.id) : NaN;
   const medications = useMedicationListStore(state => state.medicationsByWard[wardIdNumber]) ?? [];
   const sortedMedications = sortMedicationsByTime(medications);
   const toggleEnabled = useMedicationListStore(state => state.toggleEnabled);
@@ -68,6 +70,7 @@ export function MedicationScreen() {
         </View>
         <Pressable
           onPress={openCreate}
+          disabled={!ward}
           className="flex-row items-center gap-1.5 rounded-card border border-border px-3.5 py-2">
           <PlusIcon width={12} height={12} />
           <Text className="font-pretendard-semibold text-base text-text-strong">복약 등록</Text>
@@ -78,6 +81,8 @@ export function MedicationScreen() {
         className="flex-1 px-4"
         contentContainerClassName="gap-4 py-4"
         showsVerticalScrollIndicator={false}>
+        {/* 사용 가이드를 이 화면에서 끝내면 투어용 목업 어르신이 사라져 연동된 어르신이 없는 상태가 될 수 있음 */}
+        {!ward && <NoLinkedWardNotice />}
         {sortedMedications.map(entry => (
           <MedicationListItem
             key={entry.id}
@@ -95,9 +100,9 @@ export function MedicationScreen() {
       </ScrollView>
 
       <MedicationRegistrationModal
-        visible={isRegistrationVisible}
+        visible={isRegistrationVisible && !!ward}
         wardId={wardIdNumber}
-        wardName={ward.name}
+        wardName={ward?.name ?? ''}
         editingMedication={editingMedication}
         onClose={closeRegistration}
       />

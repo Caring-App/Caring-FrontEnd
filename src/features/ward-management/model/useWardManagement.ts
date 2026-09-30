@@ -31,7 +31,7 @@ function settingSaveFailedMessage(error: unknown) {
 }
 
 // WardManagementScreen(돌봄대상자 관리 탭)의 데이터 로딩/저장 로직 전부.
-// wards 목록 자체는 useSelectedWardStore(getConnectionsApi 기반, 연동 없으면 MOCK_WARDS 폴백) —
+// wards 목록 자체는 useSelectedWardStore(getConnectionsApi 기반, 연동 없으면 빈 목록 — 투어 중에만 MOCK_WARDS) —
 // 홈 화면 어르신 전환 스위처·메뉴 드로어와 동일한 소스라, 여기서 수정하면 다른 화면에도 바로 반영됨.
 // 백엔드 combineAddress와 같은 규칙(상세 주소가 있으면 공백으로 이어 붙임) — mock 어르신 로컬 반영용
 function combineAddress(baseAddress: string, detailAddress: string) {

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { ActivityIndicator, Dimensions, ScrollView } from 'react-native';
+import { ActivityIndicator, Dimensions, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -14,6 +14,7 @@ import { LocationSection } from '@features/location/ui';
 import { ScheduleSection } from '@features/schedule/ui';
 import { WelfareSection } from '@features/welfare-facility/ui';
 import { useSelectedWardStore } from '@features/ward-management/model';
+import { NoLinkedWardNotice } from '@features/ward-management/ui';
 import {
   MEDICATION_MODAL_STEP_INDEX,
   TOUR_STEPS,
@@ -33,10 +34,11 @@ export function GuardianHomeScreen() {
   const selectedWardId = useSelectedWardStore(state => state.selectedWardId);
   const wards = useSelectedWardStore(state => state.wards);
   const isWardsLoaded = useSelectedWardStore(state => state.isLoaded);
+  // 연동된 어르신이 없으면 undefined(투어 중엔 목업 어르신) — 아래에서 안내 화면으로 분기
   const ward = wards.find(item => item.id === selectedWardId) ?? wards[0];
   const tourScroll = useTourScrollTracking('home');
   // 복약 카드와 하루 요약 레포트가 함께 쓰는 오늘 복약 데이터(알림 목록·복약 스케줄)를 화면 단위에서 한 번만 불러옴
-  useSyncWardTodayMedication(ward.id);
+  useSyncWardTodayMedication(ward?.id ?? '');
 
   useEffect(() => {
     if (!isWardsLoaded) {
@@ -81,6 +83,20 @@ export function GuardianHomeScreen() {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-surface" edges={['top']}>
         <ActivityIndicator size="large" color={colors.primary} />
+      </SafeAreaView>
+    );
+  }
+
+  if (!ward) {
+    return (
+      <SafeAreaView className="flex-1 bg-surface" edges={['top']}>
+        <AppHeader
+          onPressBell={() => stackNavigation?.navigate('Notification')}
+          onPressMenu={() => useGuardianMenuStore.getState().open()}
+        />
+        <View className="px-4 pt-4">
+          <NoLinkedWardNotice onPressLinkCode={() => stackNavigation?.navigate('Tabs', { screen: 'Profile' })} />
+        </View>
       </SafeAreaView>
     );
   }
