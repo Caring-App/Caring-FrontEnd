@@ -82,7 +82,7 @@ export function ScheduleRegistrationModal({
                   value={state.title}
                   onChangeText={actions.setTitle}
                   placeholder="일정 이름을 입력하세요"
-                  placeholderTextColor="#6C757D"
+                  placeholderTextColor={colors.textPlaceholder}
                   className="rounded-md border border-border-input px-3.5 py-2 font-pretendard text-lg text-text-primary"
                 />
               </View>

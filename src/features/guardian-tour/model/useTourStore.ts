@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { ScrollView, View } from 'react-native';
+import { resetOnLogout } from '@shared/store/resetOnLogout';
 
 export interface TourTargetLayout {
   x: number;
@@ -88,3 +89,6 @@ export const useTourStore = create<TourState>((set, get) => ({
   setScrollOffset: (scrollId, y) =>
     set(state => ({ scrollOffsets: { ...state.scrollOffsets, [scrollId]: y } })),
 }));
+
+// 투어 도중 로그아웃하면 다음 로그인 때 투어가 켜진 채로(목업 어르신이 보이는 채로) 시작되지 않게 초기화
+resetOnLogout(useTourStore);

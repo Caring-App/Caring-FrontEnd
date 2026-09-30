@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 import { AuthLevel, UserRole } from '@shared/types';
 import { clearTokens } from '@shared/api/tokenStorage';
+import { clearSavedSession, saveSession } from './savedSession';
 
-interface UserProfile {
+export interface UserProfile {
   memberId: number;
   name: string;
   nickname: string;
@@ -29,16 +30,24 @@ interface SessionState {
   markSplashShown: () => void;
 }
 
-export const useSessionStore = create<SessionState>(set => ({
+export const useSessionStore = create<SessionState>((set, get) => ({
   isLoggedIn: false,
   role: null,
   profile: null,
   linkedCode: null,
   hasShownSplash: false,
-  login: (role, profile) => set(state => ({ isLoggedIn: true, role, profile: profile ?? state.profile })),
+  login: (role, profile) => {
+    set(state => ({ isLoggedIn: true, role, profile: profile ?? state.profile }));
+    // 앱을 다시 켰을 때 로그인 상태를 복원할 수 있게 저장(SplashScreen → restoreSession)
+    const savedProfile = get().profile;
+    if (savedProfile) {
+      saveSession({ role, profile: savedProfile }).catch(error => console.log('세션 저장 실패:', error));
+    }
+  },
   setPendingProfile: (role, profile) => set({ role, profile }),
   logout: () => {
     clearTokens().catch(error => console.log('토큰 삭제 실패:', error));
+    clearSavedSession().catch(error => console.log('세션 삭제 실패:', error));
     set({ isLoggedIn: false, role: null, profile: null, linkedCode: null });
   },
   setLinkedCode: linkedCode => set({ linkedCode }),

@@ -6,3 +6,4 @@ export {
   normalizeVerificationCode,
   formatRemainingTime,
 } from './verificationCode';
+export { restoreSession } from './restoreSession';

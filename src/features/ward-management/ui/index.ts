@@ -4,3 +4,4 @@ export * from './FontSizeSegmentedControl';
 export * from './EditWardModal';
 export * from './FormField';
 export * from './WardText';
+export * from './NoLinkedWardNotice';

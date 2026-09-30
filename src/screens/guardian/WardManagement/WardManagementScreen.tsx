@@ -9,7 +9,7 @@ import { useGuardianMenuStore } from '@features/guardian-menu/model';
 import { useTourScrollTracking } from '@features/guardian-tour/model';
 import { TourOverlay, TourTarget } from '@features/guardian-tour/ui';
 import { WardInfoUpdate, useSelectedWardStore, useWardManagement } from '@features/ward-management/model';
-import { EditWardModal, WardCard } from '@features/ward-management/ui';
+import { EditWardModal, NoLinkedWardNotice, WardCard } from '@features/ward-management/ui';
 
 type GuardianStackNavigationProp = NativeStackNavigationProp<GuardianStackParamList>;
 
@@ -48,6 +48,7 @@ export function WardManagementScreen() {
           <View className="rounded-card border border-border bg-surface p-4">
             <Text className="text-xl font-pretendard-bold text-text-primary">돌봄대상자 관리</Text>
             <View className="mt-4 gap-4">
+              {wards.length === 0 && <NoLinkedWardNotice />}
               {wards.map(ward => (
                 <WardCard
                   key={ward.id}
