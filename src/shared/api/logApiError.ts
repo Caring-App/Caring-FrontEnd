@@ -13,6 +13,12 @@ export function logApiError(context: string, error: unknown) {
       status: error.response?.status,
       url: error.config?.url,
       serverMessage: error.response?.data?.message,
+      // 서버 메시지가 없는 응답(본문 없는 403, 프록시·게이트웨이의 HTML 에러 페이지 등)은 어디서 온 응답인지 알 수 있게
+      // 본문 앞부분을 남김 — 토큰 값은 남기지 않고 토큰을 실어 보냈는지만 기록
+      ...(error.response?.data?.message
+        ? {}
+        : { responseBody: String(error.response?.data ?? '').slice(0, 200) }),
+      sentAuthHeader: !!error.config?.headers?.Authorization,
     });
     return;
   }
