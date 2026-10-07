@@ -35,6 +35,12 @@ export function buildDailySummary(
   return `${wardName}님의 오늘 건강 상태는 '${HEALTH_STATUS_LABELS[status]}' 이에요! ${medicationClause}`;
 }
 
+// 요약 문구를 한 문장씩 줄바꿈 — 서버 AI 요약은 문장이 공백으로만 이어져 와서 그대로 보여주면 읽기 어려움.
+// 문장부호(. ! ?, 뒤에 붙은 닫는 따옴표·괄호 포함) 뒤에 공백이 올 때만 끊으므로 "120.5" 같은 소수는 안 끊김
+export function splitSummarySentences(summary: string) {
+  return summary.trim().replace(/([.!?]['"’”)]*)[ \t]+/g, '$1\n');
+}
+
 const HEALTH_VALUE_LABELS: Record<HealthRecordKind, { label: string; unit: string }> = {
   bloodSugar: { label: '혈당 수치', unit: 'mg/dL' },
   bloodPressure: { label: '혈압 수치', unit: 'mmHg' },
