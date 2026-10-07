@@ -1,5 +1,6 @@
 import type { TimeState } from '@shared/types';
 import { alarmTypeToSoundType } from '@shared/utils/alarmType';
+import { getLocalDateKey } from '@shared/utils/date';
 import {
   MealType,
   MedicationEntry,
@@ -176,7 +177,8 @@ export function countTakenMealTypesFromNotifications(
 ): Record<MealType, number> {
   const counts: Record<MealType, number> = { morning: 0, lunch: 0, dinner: 0 };
   notifications.forEach(({ title, content, createdAt }) => {
-    if (title !== PILL_CONFIRM_TITLE || !createdAt.startsWith(dateKey)) return;
+    // createdAt은 서버 UTC라 문자열 앞부분을 그대로 비교하면 한국 시각 오전 9시 전 알림이 전날로 잡힘 — 기기 시간대 날짜로 바꿔 비교
+    if (title !== PILL_CONFIRM_TITLE || getLocalDateKey(new Date(createdAt)) !== dateKey) return;
     const match = PILL_CONFIRM_PATTERN.exec(content.trim());
     if (match && match[1] === wardName) {
       counts[PILL_LABEL_TO_MEAL_TYPE[match[2]]] += 1;
