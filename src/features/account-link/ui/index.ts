@@ -1,1 +1,1 @@
-export {};
+export { WardNoLinkNotice } from './WardNoLinkNotice';
