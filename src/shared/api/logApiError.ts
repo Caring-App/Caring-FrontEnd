@@ -19,6 +19,9 @@ export function logApiError(context: string, error: unknown) {
         ? {}
         : { responseBody: String(error.response?.data ?? '').slice(0, 200) }),
       sentAuthHeader: !!error.config?.headers?.Authorization,
+      // 응답 자체가 없는 실패("Network Error")는 axios가 원인을 숨김 — RN 네이티브 네트워킹이 넘겨준
+      // 실제 원인(연결 거부·타임아웃·파일 읽기 실패 등)이 XMLHttpRequest._response에 남아 있어 같이 기록
+      ...(error.response ? {} : { nativeError: String(error.request?._response ?? '').slice(0, 300) }),
     });
     return;
   }
