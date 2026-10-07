@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AppState } from 'react-native';
 import { logApiError } from '@shared/api';
-import { useTodayDateKey } from '@shared/model';
+import { showNotice, useTodayDateKey } from '@shared/model';
 import { confirmPillApi, getTodayPillsApi } from '../api/pillLogApi';
 import { pillNameToMealType } from '../utils';
 import { MealType, PillToday } from './medicationTypes';
@@ -21,7 +21,8 @@ export function useTodayPills() {
   // 화면을 켜둔 채 자정이 지나면 바뀌어서 오늘 목록을 다시 받아옴
   const dateKey = useTodayDateKey();
 
-  const fetchTodayPills = useCallback(async () => {
+  // 조회한 시간대별 목록을 돌려줌(실패하면 null) — 복약 확인 실패 후 서버 상태를 다시 보는 데 씀
+  const fetchTodayPills = useCallback(async (): Promise<TodayPillsBySlot | null> => {
     try {
       const pills = await getTodayPillsApi();
       const bySlot: TodayPillsBySlot = {};
@@ -31,9 +32,11 @@ export function useTodayPills() {
       });
       setPillsBySlot(bySlot);
       setError('');
+      return bySlot;
     } catch (fetchError) {
       logApiError('오늘 복약 목록 조회 실패', fetchError);
       setError('복약 정보를 불러오지 못했어요.');
+      return null;
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +60,11 @@ export function useTodayPills() {
       if (failed.length > 0) {
         failed.forEach(result => logApiError('복약 확인 실패', result.reason));
         // 다른 기기에서 이미 확인했거나 날짜가 바뀐 경우 등 — 일부만 성공했을 수도 있어서 서버 기준 상태로 다시 맞춤
-        await fetchTodayPills();
+        const latest = await fetchTodayPills();
+        // 다른 기기에서 이미 확인돼 결국 다 먹음이면 안내하지 않음. 그 외엔 안내 없이 되돌리기만 하면
+        // 어르신은 눌렀다고 생각하는데 보호자에게는 안 먹은 걸로 보임
+        const allTaken = !!latest && (latest[slot] ?? []).every(pill => pill.taken);
+        if (!allTaken) showNotice('약 먹은 걸 기록하지 못했어요', '잠시 후 다시 눌러 주세요.');
         return;
       }
       const confirmedIds = new Set(untaken.map(pill => pill.pillLogId));
