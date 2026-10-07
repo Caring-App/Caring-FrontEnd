@@ -169,7 +169,7 @@ const PILL_CONFIRM_TITLE = '복약 완료';
 const PILL_CONFIRM_PATTERN = /^(.+) 님 \[(아침약|점심약|저녁약)\] 복용이 확인되었습니다\.?$/;
 const PILL_LABEL_TO_MEAL_TYPE: Record<string, MealType> = { 아침약: 'morning', 점심약: 'lunch', 저녁약: 'dinner' };
 
-// 시간대별로 오늘 복용 확인된 횟수를 셈 — 같은 시간대 스케줄이 여러 개면 알림도 스케줄마다 따로 옴
+// 시간대별로 오늘 복용 확인된 횟수를 셈 — 같은 시간대 스케줄이 여러 개면 알림도 어르신 쪽 복약 기록마다 따로 옴
 export function countTakenMealTypesFromNotifications(
   notifications: { title: string; content: string; createdAt: string }[],
   wardName: string,
