@@ -25,7 +25,7 @@ export function ProfileScreen() {
   const userName = useSessionStore(state => state.profile?.name);
   const displayName = userName ? `${userName}님` : '';
   const [editModalVisible, setEditModalVisible] = useState(false);
-  // 개인 정보 수정 모달은 열 때마다 빈 입력으로 시작해야 해서 key를 바꿔 새로 마운트
+  // 개인 정보 수정 모달은 열 때마다 입력을 비우고 현재 주소를 다시 받아와야 해서 key를 바꿔 새로 마운트
   const [editModalKey, setEditModalKey] = useState(0);
   const [linkCodeModalVisible, setLinkCodeModalVisible] = useState(false);
 

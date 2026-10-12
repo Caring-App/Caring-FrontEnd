@@ -3,3 +3,14 @@ export type UserRole = 'PROTECTOR' | 'WARD';
 
 // 회원 권한 등급 — ADMIN만 문의 답변 등록 등 관리자 기능 사용 가능
 export type AuthLevel = 'ADMIN' | 'USER';
+
+// GET /api/member/me 응답 — 로그인한 회원 본인 정보.
+// 주소가 없는 회원은 baseAddress·detailAddress가 null로 옴
+export interface MemberMe {
+  name: string;
+  phone: string;
+  baseAddress: string | null;
+  detailAddress: string | null;
+  pushEnabled: boolean;
+  role: UserRole;
+}
