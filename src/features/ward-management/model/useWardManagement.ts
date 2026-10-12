@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { getApiErrorMessage, logApiError } from '@shared/api';
 import { notifyLoadFailed } from '@shared/model';
+import { combineAddress } from '@shared/utils/address';
 // FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, 돌봄대상자 관리 화면이 연동 상세/수정
 // API(getConnectionDetailApi/updateConnectionApi)를 직접 써야 해서 의도적으로 참조함
 // (순환참조 없음, account-link는 ward-management를 참조하지 않음).
@@ -33,11 +34,6 @@ function settingSaveFailedMessage(error: unknown) {
 // WardManagementScreen(돌봄대상자 관리 탭)의 데이터 로딩/저장 로직 전부.
 // wards 목록 자체는 useSelectedWardStore(getConnectionsApi 기반, 연동 없으면 빈 목록 — 투어 중에만 MOCK_WARDS) —
 // 홈 화면 어르신 전환 스위처·메뉴 드로어와 동일한 소스라, 여기서 수정하면 다른 화면에도 바로 반영됨.
-// 백엔드 combineAddress와 같은 규칙(상세 주소가 있으면 공백으로 이어 붙임) — mock 어르신 로컬 반영용
-function combineAddress(baseAddress: string, detailAddress: string) {
-  return detailAddress.trim() ? `${baseAddress} ${detailAddress.trim()}` : baseAddress;
-}
-
 export function useWardManagement() {
   // 화면에 보여줄 목록(투어 중 목업 포함). 서버에서 상세를 불러오는 대상은 아래에서 숫자 id(실제 연동)만 추림
   const wards = useWardList();
