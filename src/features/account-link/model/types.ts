@@ -44,3 +44,10 @@ export interface UpdateConnectionRequest {
   baseAddress: string;
   detailAddress: string;
 }
+
+// 어르신 본인의 연동 상태 (GET /api/connection/me)
+// 백엔드와 합의한 형식(2026-10-07) — 연동 안 됐으면 { connected: false, protectorName: null }
+export interface WardConnectionStatus {
+  connected: boolean;
+  protectorName: string | null;
+}

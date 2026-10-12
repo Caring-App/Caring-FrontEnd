@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { TourTarget } from '@features/guardian-tour/ui';
 import type { WardDailyReportData } from '../model';
-import { buildSummaryStatLines, formatReportTimeLabel } from '../utils';
+import { buildSummaryStatLines, formatReportTimeLabel, splitSummarySentences } from '../utils';
 
 interface DailyReportSummaryProps {
   data: WardDailyReportData & { reportTime: string };
@@ -18,7 +18,9 @@ export function DailyReportSummary({ data, liveSummary, expanded }: DailyReportS
   return (
     <TourTarget id="dailyReport.summary" className="mt-3 rounded-card border border-border bg-surface p-4">
       <Text className="text-md font-semibold text-text-primary">오늘 하루 요약</Text>
-      <Text className="mt-2 text-sm text-text-primary">{data.report?.healthSummary || liveSummary}</Text>
+      <Text className="mt-2 text-sm text-text-primary">
+        {splitSummarySentences(data.report?.healthSummary || liveSummary)}
+      </Text>
       {expanded && (
         <>
           {!data.report && (

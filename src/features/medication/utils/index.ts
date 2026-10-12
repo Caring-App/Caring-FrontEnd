@@ -1,5 +1,6 @@
 import type { TimeState } from '@shared/types';
 import { alarmTypeToSoundType } from '@shared/utils/alarmType';
+import { getLocalDateKey } from '@shared/utils/date';
 import {
   MealType,
   MedicationEntry,
@@ -168,7 +169,7 @@ const PILL_CONFIRM_TITLE = '복약 완료';
 const PILL_CONFIRM_PATTERN = /^(.+) 님 \[(아침약|점심약|저녁약)\] 복용이 확인되었습니다\.?$/;
 const PILL_LABEL_TO_MEAL_TYPE: Record<string, MealType> = { 아침약: 'morning', 점심약: 'lunch', 저녁약: 'dinner' };
 
-// 시간대별로 오늘 복용 확인된 횟수를 셈 — 같은 시간대 스케줄이 여러 개면 알림도 스케줄마다 따로 옴
+// 시간대별로 오늘 복용 확인된 횟수를 셈 — 같은 시간대 스케줄이 여러 개면 알림도 어르신 쪽 복약 기록마다 따로 옴
 export function countTakenMealTypesFromNotifications(
   notifications: { title: string; content: string; createdAt: string }[],
   wardName: string,
@@ -176,7 +177,8 @@ export function countTakenMealTypesFromNotifications(
 ): Record<MealType, number> {
   const counts: Record<MealType, number> = { morning: 0, lunch: 0, dinner: 0 };
   notifications.forEach(({ title, content, createdAt }) => {
-    if (title !== PILL_CONFIRM_TITLE || !createdAt.startsWith(dateKey)) return;
+    // createdAt은 서버 UTC라 문자열 앞부분을 그대로 비교하면 한국 시각 오전 9시 전 알림이 전날로 잡힘 — 기기 시간대 날짜로 바꿔 비교
+    if (title !== PILL_CONFIRM_TITLE || getLocalDateKey(new Date(createdAt)) !== dateKey) return;
     const match = PILL_CONFIRM_PATTERN.exec(content.trim());
     if (match && match[1] === wardName) {
       counts[PILL_LABEL_TO_MEAL_TYPE[match[2]]] += 1;
