@@ -15,3 +15,10 @@ export const formatPhoneNumber = (digits: string) => {
 export const FORMATTED_PHONE_MAX_LENGTH = 13;
 
 export const isValidPhoneNumber = (digits: string) => /^01\d{8,9}$/.test(digits);
+
+// 서버에서 받은 번호를 보여줄 때 — 숫자만 오든 하이픈이 섞여 오든 010-0000-0000으로 맞춤.
+// 휴대폰 번호 형식이 아니면(유선 번호 등) 자리를 잘못 끊을 수 있어 받은 값 그대로 보여줌
+export const formatPhoneForDisplay = (value: string) => {
+  const digits = normalizePhoneDigits(value);
+  return isValidPhoneNumber(digits) ? formatPhoneNumber(digits) : value;
+};

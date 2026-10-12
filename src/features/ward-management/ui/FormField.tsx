@@ -10,12 +10,14 @@ export function FormField({
   value,
   onChangeText,
   keyboardType,
+  maxLength,
 }: {
   label: string;
   placeholder: string;
   value: string;
   onChangeText: (text: string) => void;
   keyboardType?: 'default' | 'phone-pad';
+  maxLength?: number;
 }) {
   return (
     <SharedFormField
@@ -29,6 +31,7 @@ export function FormField({
         placeholder={placeholder}
         placeholderTextColor={colors.textPlaceholder}
         keyboardType={keyboardType}
+        maxLength={maxLength}
         className="rounded-[6px] border border-border-input px-3 py-2 text-base text-text-primary"
       />
     </SharedFormField>
