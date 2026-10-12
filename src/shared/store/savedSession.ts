@@ -3,8 +3,8 @@ import type { UserProfile } from './useSessionStore';
 import type { UserRole } from '@shared/types';
 
 // 앱을 다시 켰을 때 로그인 상태를 복원하기 위해 저장해 두는 세션 정보(토큰과 같은 암호화 저장소).
-// 토큰만으로는 역할(보호자/어르신)과 회원 정보를 알 수 없어서 로그인할 때 같이 저장함
-// TODO(백엔드): 내 정보 조회 API(GET /api/member/me)가 생기면 복원 시 그 응답으로 최신 정보를 받아올 것
+// 토큰만으로는 역할(보호자/어르신)과 회원 정보를 알 수 없어서 로그인할 때 같이 저장함.
+// 복원할 때 이름은 GET /api/member/me로 최신 값을 받아 덮어씀(restoreSession) — memberId는 그 응답에 없어서 저장값 사용
 export interface SavedSession {
   role: UserRole;
   profile: UserProfile;
