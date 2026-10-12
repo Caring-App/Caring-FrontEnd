@@ -3,7 +3,7 @@ import { TextInput, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
 import { useSignupExit, useSignupIdentity } from '@features/auth/model';
-import { FORMATTED_PHONE_MAX_LENGTH, formatPhoneNumber } from '@features/auth/utils';
+import { FORMATTED_PHONE_MAX_LENGTH, formatPhoneNumber } from '@shared/utils/phone';
 import { AuthStepLayout, AuthTextField } from '@features/auth/ui';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'SignupIdentity'>;

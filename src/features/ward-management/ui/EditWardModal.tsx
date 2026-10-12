@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
 import EditPencilOrangeIcon from '@assets/icons/action/edit-pencil-orange.svg';
 import CloseXIcon from '@assets/icons/action/close-x.svg';
-import { FORMATTED_PHONE_MAX_LENGTH, formatPhoneNumber, normalizePhoneDigits } from '@features/auth/utils';
+import { FORMATTED_PHONE_MAX_LENGTH, formatPhoneNumber, normalizePhoneDigits } from '@shared/utils/phone';
 import { AddressInput, FormField as SharedFormField } from '@shared/ui';
 import { Ward, WardInfoUpdate } from '../model';
 import { FormField } from './FormField';

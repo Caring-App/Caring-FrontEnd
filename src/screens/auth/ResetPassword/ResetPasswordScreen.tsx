@@ -4,7 +4,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@app/navigation/types';
 import useResetPassword from '@features/auth/model/useResetPassword';
 import { AuthStepLayout, AuthTextField } from '@features/auth/ui';
-import { FORMATTED_PHONE_MAX_LENGTH, formatPhoneNumber, isValidPhoneNumber } from '@features/auth/utils';
+import { FORMATTED_PHONE_MAX_LENGTH, formatPhoneNumber, isValidPhoneNumber } from '@shared/utils/phone';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'ResetPassword'>;
 

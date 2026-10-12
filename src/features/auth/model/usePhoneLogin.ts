@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { loginApi } from '@features/auth/api';
 import { logApiError, setTokens } from '@shared/api';
 import { useSessionStore } from '@shared/store/useSessionStore';
-import { normalizePhoneDigits } from '../utils/phone';
+import { normalizePhoneDigits } from '@shared/utils/phone';
 
 // 전화번호 + 비밀번호 로그인. 전화번호는 숫자만 보관·전송(회원가입 때 숫자만 저장하므로 맞춤)
 export function usePhoneLogin() {

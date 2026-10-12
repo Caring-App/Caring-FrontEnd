@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import EditPencilIcon from '@assets/icons/action/edit-pencil.svg';
-import { formatPhoneForDisplay } from '@features/auth/utils';
+import { formatPhoneForDisplay } from '@shared/utils/phone';
 import { FontSizeOption, Ward } from '../model';
 import { TtsSpeedSlider } from './TtsSpeedSlider';
 import { FontSizeSegmentedControl } from './FontSizeSegmentedControl';

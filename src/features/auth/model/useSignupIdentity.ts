@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { sendSmsCodeApi } from '@features/auth/api';
 import { logApiError } from '@shared/api';
-import { isValidPhoneNumber, normalizePhoneDigits } from '../utils/phone';
+import { isValidPhoneNumber, normalizePhoneDigits } from '@shared/utils/phone';
 import { useSignupDraftStore } from './useSignupDraftStore';
 
 // 본인인증 정보 입력은 이름 → 휴대폰번호 순으로 한 칸씩 위에 추가되는 단계형 폼(Figma 967:5842 ~ 967:6566).

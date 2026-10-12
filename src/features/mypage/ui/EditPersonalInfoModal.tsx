@@ -11,12 +11,8 @@ import {
   View,
 } from 'react-native';
 import CloseXIcon from '@assets/icons/action/close-x.svg';
-import {
-  FORMATTED_PHONE_MAX_LENGTH,
-  formatPhoneNumber,
-  isValidPhoneNumber,
-  VERIFICATION_CODE_LENGTH,
-} from '@features/auth/utils';
+import { VERIFICATION_CODE_LENGTH } from '@features/auth/utils';
+import { FORMATTED_PHONE_MAX_LENGTH, formatPhoneNumber, isValidPhoneNumber } from '@shared/utils/phone';
 import { AddressInput, FormField as SharedFormField } from '@shared/ui';
 import { colors } from '@shared/theme/colors';
 import { useChangePhone, useEditPersonalInfo } from '../model';

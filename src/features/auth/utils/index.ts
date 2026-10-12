@@ -1,12 +1,5 @@
 export { loginAfterRegister } from './loginAfterRegister';
 export {
-  normalizePhoneDigits,
-  formatPhoneNumber,
-  formatPhoneForDisplay,
-  isValidPhoneNumber,
-  FORMATTED_PHONE_MAX_LENGTH,
-} from './phone';
-export {
   VERIFICATION_CODE_LENGTH,
   VERIFICATION_SECONDS,
   normalizeVerificationCode,
