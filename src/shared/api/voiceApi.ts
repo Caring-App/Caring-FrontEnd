@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { axiosInstance } from './axiosInstance';
-
-// 음성 파일은 기본 5초 타임아웃으로는 업로드가 끝나기 전에 끊길 수 있어 넉넉히 둠
-const VOICE_UPLOAD_TIMEOUT_MS = 30000;
+import { SLOW_REQUEST_TIMEOUT_MS } from './timeouts';
 
 const toFileUri = (path: string) => (path.startsWith('file://') ? path : `file://${path}`);
 
@@ -14,7 +12,8 @@ const postVoiceFile = async (uri: string, extension: string) => {
 
   const { data } = await axiosInstance.post<{ voiceFileUrl: string }>('/api/voice/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
-    timeout: VOICE_UPLOAD_TIMEOUT_MS,
+    // 음성 파일은 기본 5초 타임아웃으로는 업로드가 끝나기 전에 끊길 수 있음
+    timeout: SLOW_REQUEST_TIMEOUT_MS,
   });
   return data.voiceFileUrl;
 };
