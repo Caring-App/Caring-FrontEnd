@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
 import EditPencilOrangeIcon from '@assets/icons/action/edit-pencil-orange.svg';
 import CloseXIcon from '@assets/icons/action/close-x.svg';
+import { FORMATTED_PHONE_MAX_LENGTH, formatPhoneNumber, normalizePhoneDigits } from '@shared/utils/phone';
 import { AddressInput, FormField as SharedFormField } from '@shared/ui';
 import { Ward, WardInfoUpdate } from '../model';
 import { FormField } from './FormField';
@@ -19,6 +20,7 @@ export function EditWardModal({
 }) {
   const [nickname, setNickname] = useState('');
   const [name, setName] = useState('');
+  // 숫자만 저장하고 입력칸에서만 하이픈을 붙여 보여줌 — 회원가입·마이페이지와 같은 방식이라 서버에도 숫자만 감
   const [phone, setPhone] = useState('');
   // 새로 검색해서 바꿀 주소 — 비어 있으면 주소는 변경하지 않음(현재 주소는 ward.address로 표시만 함)
   const [newBaseAddress, setNewBaseAddress] = useState('');
@@ -28,7 +30,7 @@ export function EditWardModal({
     if (ward) {
       setNickname(ward.nickname);
       setName(ward.name);
-      setPhone(ward.phone);
+      setPhone(normalizePhoneDigits(ward.phone));
       setNewBaseAddress('');
       setNewDetailAddress('');
     }
@@ -64,9 +66,10 @@ export function EditWardModal({
             <FormField
               label="전화번호"
               placeholder="ex ) 010-1111-2222"
-              value={phone}
-              onChangeText={setPhone}
+              value={formatPhoneNumber(phone)}
+              onChangeText={text => setPhone(normalizePhoneDigits(text))}
               keyboardType="phone-pad"
+              maxLength={FORMATTED_PHONE_MAX_LENGTH}
             />
             {/* 상세 조회 응답엔 합쳐진 주소만 있어서 기존 주소를 검색칸에 채워 넣을 수 없음 — 현재 주소는 보여주기만 하고,
                 바꿀 때만 새로 검색하게 함(주소를 바꾸면 백엔드가 어르신 좌표도 다시 계산함) */}

@@ -11,10 +11,12 @@ export interface WithdrawReasonOption {
 }
 
 // PATCH /api/member 요청 (member-controller, 마이페이지 개인 정보 수정).
-// 서버가 address를 항상 그대로 덮어써서(null이면 주소가 지워짐) 매번 채워 보내야 함.
+// 주소는 회원가입처럼 기본 주소·상세 주소를 나눠 보냄 — baseAddress를 빼면 서버가 기존 주소를 그대로 둠
+// (빈 문자열은 그 값으로 덮어써지므로 주소를 안 바꿀 땐 필드 자체를 빼야 함).
 // 비밀번호는 newPassword가 비어 있으면 서버가 변경하지 않음
 export interface MyPageUpdateRequest {
-  address: string;
+  baseAddress?: string;
+  detailAddress?: string;
   currentPassword?: string;
   newPassword?: string;
   newPasswordCheck?: string;

@@ -1,4 +1,4 @@
-import { clearTokens, getAccessToken } from '@shared/api';
+import { clearTokens, getAccessToken, getMyInfoApi, logApiError } from '@shared/api';
 import { isRefreshRejected, refreshAccessToken } from '@shared/api/axiosInstance';
 import { clearSavedSession, getSavedSession, SavedSession } from '@shared/store/savedSession';
 
@@ -19,8 +19,22 @@ export async function restoreSession(): Promise<SavedSession | null> {
       await Promise.all([clearTokens(), clearSavedSession()]);
       return null;
     }
-    // 인터넷이 잠깐 안 되는 등 재발급 자체를 못 한 경우엔 로그인 상태는 복원하고, 이후 요청에서 다시 재발급을 시도함
+    // 인터넷이 잠깐 안 되는 등 재발급 자체를 못 한 경우엔 로그인 상태는 복원하고, 이후 요청에서 다시 재발급을 시도함.
+    // 내 정보 조회도 같은 이유로 실패할 가능성이 높아 건너뜀 — 응답 없는 서버를 두 번 기다리느라 스플래시가 길어지지 않게
     console.log('세션 복원 중 토큰 재발급 실패(네트워크):', error instanceof Error ? error.message : error);
+    return session;
   }
-  return session;
+  return withLatestName(session);
+}
+
+// 저장된 이름은 로그인 당시 값이라 내 정보 조회로 최신 이름을 받아 덮어씀 — 실패하면 저장된 값 그대로
+// (memberId 등 나머지 프로필은 이 응답에 없어서 그대로 둠)
+async function withLatestName(session: SavedSession): Promise<SavedSession> {
+  try {
+    const { name } = await getMyInfoApi();
+    return { ...session, profile: { ...session.profile, name } };
+  } catch (error) {
+    logApiError('세션 복원 중 내 정보 조회 실패', error);
+    return session;
+  }
 }

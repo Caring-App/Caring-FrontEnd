@@ -11,12 +11,8 @@ import {
   View,
 } from 'react-native';
 import CloseXIcon from '@assets/icons/action/close-x.svg';
-import {
-  FORMATTED_PHONE_MAX_LENGTH,
-  formatPhoneNumber,
-  isValidPhoneNumber,
-  VERIFICATION_CODE_LENGTH,
-} from '@features/auth/utils';
+import { VERIFICATION_CODE_LENGTH } from '@features/auth/utils';
+import { FORMATTED_PHONE_MAX_LENGTH, formatPhoneNumber, isValidPhoneNumber } from '@shared/utils/phone';
 import { AddressInput, FormField as SharedFormField } from '@shared/ui';
 import { colors } from '@shared/theme/colors';
 import { useChangePhone, useEditPersonalInfo } from '../model';
@@ -25,10 +21,10 @@ import { FormField } from './FormField';
 const INPUT_CLASSNAME = 'rounded-[6px] border border-border-input px-3 py-2 text-lg text-text-body';
 
 // 개인 정보 수정 — 전화번호(SMS 인증 후 "전화번호 변경"으로 바로 저장, 모달은 닫지 않음)와 주소·비밀번호(저장하기)는 서버 API가 달라서 따로 저장함.
-// 열 때마다 입력값이 비어 있어야 해서 호출부에서 key를 바꿔 새로 마운트함
+// 열 때마다 입력값을 비우고 현재 주소를 다시 받아와야 해서 호출부에서 key를 바꿔 새로 마운트함
 export function EditPersonalInfoModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const phone = useChangePhone();
-  const info = useEditPersonalInfo(onClose);
+  const info = useEditPersonalInfo(onClose, visible);
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
@@ -108,9 +104,6 @@ export function EditPersonalInfoModal({ visible, onClose }: { visible: boolean; 
 
               <View className="mt-4 gap-4 rounded-card border border-border p-4">
                 <SharedFormField label="주소" containerClassName="gap-2">
-                  <Text className="text-xs font-pretendard-medium text-text-muted">
-                    저장할 때 주소도 함께 저장돼요. 주소가 바뀌지 않았어도 현재 주소를 검색해 입력해 주세요.
-                  </Text>
                   <AddressInput
                     baseAddress={info.baseAddress}
                     detailAddress={info.detailAddress}

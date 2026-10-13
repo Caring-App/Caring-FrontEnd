@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { sendSmsCodeApi, verifySmsCodeApi } from '@features/auth/api';
 import { logApiError } from '@shared/api';
-import { normalizePhoneDigits } from '../utils/phone';
+import { normalizePhoneDigits } from '@shared/utils/phone';
 import { normalizeVerificationCode } from '../utils/verificationCode';
 import { useVerificationCountdown } from './useVerificationCountdown';
 

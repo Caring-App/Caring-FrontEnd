@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import EditPencilIcon from '@assets/icons/action/edit-pencil.svg';
+import { formatPhoneForDisplay } from '@shared/utils/phone';
 import { FontSizeOption, Ward } from '../model';
 import { TtsSpeedSlider } from './TtsSpeedSlider';
 import { FontSizeSegmentedControl } from './FontSizeSegmentedControl';
@@ -28,7 +29,7 @@ export function WardCard({
       <View className="mt-3 gap-1.5">
         <Text className="text-md font-pretendard-semibold text-text-primary">이름 : {ward.name}</Text>
         <Text className="text-md font-pretendard-semibold text-text-primary">
-          전화번호 : {ward.phone}
+          전화번호 : {formatPhoneForDisplay(ward.phone)}
         </Text>
         <Text className="text-md font-pretendard-semibold text-text-primary">주소 : {ward.address}</Text>
       </View>
