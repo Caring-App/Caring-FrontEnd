@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { PermissionsAndroid, Platform } from 'react-native';
-import { getMessaging, getToken, onMessage, onTokenRefresh } from '@react-native-firebase/messaging';
+import { deleteToken, getMessaging, getToken, onMessage, onTokenRefresh } from '@react-native-firebase/messaging';
 import { logApiError, updateFcmTokenApi } from '@shared/api';
 import { showNotice } from '@shared/model';
 import { useSessionStore } from '@shared/store/useSessionStore';
@@ -25,8 +25,23 @@ async function registerToken(token: string) {
 
 // 로그인해 있는 동안 이 기기의 FCM 토큰을 서버에 등록하고, 앱이 켜져 있을 때 온 알림을 처리함.
 // 앱이 켜져 있으면 시스템 알림이 뜨지 않아서 공용 안내 창으로 보여줌 — 백그라운드·종료 상태는 index.js의 처리 함수가 맡음.
-// (로그아웃 시 토큰 삭제는 confirmLogout — 로그아웃 후엔 인증 토큰이 없어 여기서 지울 수 없음)
+// 로그아웃되면 이 기기의 토큰을 폐기함 — 로그인 만료로 자동 로그아웃되면 서버에서 토큰을 지울 수 없어(인증 토큰이 무효)
+// 서버에 남은 토큰으로 이전 계정 알림이 계속 오고, 이 기기로 다른 계정이 로그인하면 같은 토큰이 두 계정에 등록돼
+// 두 계정 알림이 다 옴. 폐기된 토큰으론 알림이 안 가고, 다음 로그인 때 새 토큰을 받아 그 계정에만 등록됨
+// (로그아웃 버튼은 confirmLogout이 서버 토큰도 지움)
 export function usePushRegistration(isLoggedIn: boolean) {
+  const wasLoggedInRef = useRef(false);
+
+  useEffect(() => {
+    // 앱 시작 직후(세션 복원 전)의 로그아웃 상태는 건너뜀 — 로그인했다가 로그아웃된 경우에만 폐기
+    if (!isLoggedIn && wasLoggedInRef.current) {
+      deleteToken(getMessaging()).catch(error =>
+        console.log('FCM 토큰 폐기 실패:', error instanceof Error ? error.message : error),
+      );
+    }
+    wasLoggedInRef.current = isLoggedIn;
+  }, [isLoggedIn]);
+
   useEffect(() => {
     if (!isLoggedIn) return;
     const messaging = getMessaging();
