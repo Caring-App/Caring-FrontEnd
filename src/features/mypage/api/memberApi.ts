@@ -11,6 +11,11 @@ export const changePhoneApi = async (payload: PhoneChangeRequest): Promise<void>
   await axiosInstance.patch('/api/member/phone', payload);
 };
 
+// [푸시 알림 켜기/끄기] — 값을 보내지 않고 서버가 현재 값을 반대로 뒤집음(멱등 아님, 연달아 호출하면 되돌아감)
+export const togglePushApi = async (): Promise<void> => {
+  await axiosInstance.post('/api/member/push-toggle');
+};
+
 // [보호자 연동 코드 조회]
 export const getProtectorCodeApi = async (): Promise<string> => {
   const { data } = await axiosInstance.get<ProtectorCodeResponse>('/api/member/protector-code');
