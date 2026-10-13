@@ -16,9 +16,11 @@ export function taskDateToDate(taskDate: string): Date {
 }
 
 // taskTime/ttsVoiceTime 형식 가정 — TaskSchedule 타입 주석 참고("HH:mm:ss").
-export function timeStateToTaskTime({ hour, minute, second, amPm }: TimeState): string {
+// 초는 항상 00으로 보냄 — 서버 일정 알림 스케줄러가 매 분 0초 시각과 ttsVoiceTime이 정확히 같은 일정만 찾아서,
+// 시간 선택기에서 고른 초가 그대로 저장되면 그 일정 알림은 영영 안 감
+export function timeStateToTaskTime({ hour, minute, amPm }: TimeState): string {
   const hour24 = (Number(hour) % 12) + (amPm === 'PM' ? 12 : 0);
-  return `${String(hour24).padStart(2, '0')}:${minute}:${second}`;
+  return `${String(hour24).padStart(2, '0')}:${minute}:00`;
 }
 
 export function taskTimeToTimeState(taskTime: string): TimeState {
