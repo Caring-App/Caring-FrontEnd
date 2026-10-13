@@ -49,8 +49,7 @@ async function requestMicrophonePermission() {
 // 녹음 파일은 기기에만 있다가 저장할 때(resolveVoiceFileUrl) 한 번 업로드해서 URL로 바꿈
 // → 녹음만 하고 모달을 닫으면 서버에 불필요한 파일이 쌓이지 않음.
 // 수정 모달에서는 이미 서버에 있는 녹음(savedUrl)을 그대로 재생·유지할 수 있음.
-// TODO(백엔드): 다시 녹음해 저장하거나 삭제해도 이전 파일은 서버 저장소(Firebase Storage)에 그대로 남음 —
-// 음성 파일 삭제 API가 없어서 앱에서는 지울 방법이 없음. 백엔드에서 스케줄 수정/삭제 시 이전 파일을 정리해야 함.
+// 다시 녹음해 저장하거나 스케줄을 삭제하면 이전 파일은 백엔드가 스케줄 수정/삭제 때 서버 저장소에서 정리함.
 export function useVoiceRecording() {
   // useRef(createSound())는 첫 값만 쓰고 버리지만 createSound() 자체는 렌더마다 실행돼 네이티브 객체가 계속 생김
   // — lazy 초기화로 처음 한 번만 만듦

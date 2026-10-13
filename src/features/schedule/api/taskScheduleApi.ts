@@ -3,8 +3,7 @@ import { SLOW_REQUEST_TIMEOUT_MS } from '@shared/api/timeouts';
 import { TaskSchedule, TaskScheduleRequest } from '../model/taskScheduleTypes';
 
 // [일정 목록 조회] — 보호자 전용. 어르신 1명의 startDate~endDate(yyyy-MM-dd, 양끝 포함) 일정 조회
-// TODO: startDate/endDate는 백엔드에 요청해서 추가 예정인 파라미터 — 반영 전 서버는 모르는 파라미터를
-// 무시하고 오늘 일정만 돌려줌(date 미지정 시 동작). 반영되면 스웨거에서 파라미터 이름 확인할 것.
+// (startDate/endDate는 백엔드에 요청해 추가된 파라미터 — 2026-10-13 스웨거에서 이름 확인)
 export const getTaskSchedulesApi = async (
   wardId: number,
   range: { startDate: string; endDate: string },
