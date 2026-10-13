@@ -38,7 +38,8 @@ export const useMedicationRegistrationForm = (
   editingMedication: MedicationEntry | null,
   onClose: () => void,
 ) => {
-  const [mealTypes, setMealTypes] = useState<MealType[]>([]);
+  // 시간대는 하나만 고름(MedicationRegistrationData 주석 참고)
+  const [mealType, setMealType] = useState<MealType | null>(null);
   const [days, setDays] = useState<Weekday[]>([]);
 
   const [time, setTimeState] = useState<TimeState>(INITIAL_TIME);
@@ -59,14 +60,14 @@ export const useMedicationRegistrationForm = (
       return;
     }
     if (editingMedication) {
-      setMealTypes([editingMedication.mealType]);
+      setMealType(editingMedication.mealType);
       setDays(editingMedication.days);
       setTimeState(editingMedication.time);
       setHasTime(true);
       setReminderInterval(editingMedication.reminderInterval);
       setSoundType(editingMedication.soundType);
     } else {
-      setMealTypes([]);
+      setMealType(null);
       setDays([]);
       setTimeState(INITIAL_TIME);
       setHasTime(false);
@@ -81,8 +82,7 @@ export const useMedicationRegistrationForm = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, editingMedication]);
 
-  const toggleMealType = (meal: MealType) =>
-    setMealTypes(prev => (prev.includes(meal) ? prev.filter(item => item !== meal) : [...prev, meal]));
+  const selectMealType = (meal: MealType) => setMealType(meal);
 
   const toggleDay = (day: Weekday) =>
     setDays(prev => (prev.includes(day) ? prev.filter(item => item !== day) : [...prev, day]));
@@ -112,7 +112,7 @@ export const useMedicationRegistrationForm = (
       showNotice('', '연동된 어르신 정보를 확인할 수 없습니다. 잠시 후 다시 시도해주세요.');
       return;
     }
-    if (mealTypes.length === 0) {
+    if (!mealType) {
       showNotice('', '식사 시간을 선택해주세요.');
       return;
     }
@@ -131,7 +131,7 @@ export const useMedicationRegistrationForm = (
     setIsSubmitting(true);
     try {
       const voiceFileUrl = await voiceRecording.resolveVoiceFileUrl(soundType);
-      const data: MedicationRegistrationData = { mealTypes, days, time, reminderInterval, soundType, voiceFileUrl };
+      const data: MedicationRegistrationData = { mealType, days, time, reminderInterval, soundType, voiceFileUrl };
       if (editingMedication) {
         await useMedicationListStore.getState().updateMedication(wardId, editingMedication, data);
       } else {
@@ -148,7 +148,7 @@ export const useMedicationRegistrationForm = (
 
   return {
     state: {
-      mealTypes,
+      mealType,
       days,
       activeDayPreset,
       time,
@@ -161,7 +161,7 @@ export const useMedicationRegistrationForm = (
       isSubmitting,
     },
     actions: {
-      toggleMealType,
+      selectMealType,
       toggleDay,
       toggleDayPreset,
       toggleTimePicker,
