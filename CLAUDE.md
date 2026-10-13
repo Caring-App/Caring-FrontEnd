@@ -34,9 +34,11 @@ src/
 ## 상태 관리 컨벤션
 - 여러 화면(특히 보호자 화면 ↔ 어르신 화면)이 공유해야 하는 상태는 `features/{domain}/model/`에 zustand store로 분리
   - `useSessionStore` (`@shared/store`) — 로그인 여부, role(`PROTECTOR`/`WARD`), 연동 코드
-  - `useHealthStatusStore`, `useMedicationStore` (`@features/health`, `@features/medication`) — 어르신이 누른 상태를 보호자 화면에 반영하는 용도. **지금은 로컬 상태뿐**이라 기기 간 실시간 동기화는 안 됨 — 서버/소켓 연동 필요(TODO)
-- 아직 존재하지 않는 화면(어르신 홈, 마이페이지 등)에서 같은 개념의 상태가 필요하면 새 store를 만들지 말고 기존 store 확장부터 검토
-- 화면 구현 시 컴포넌트/훅/타입/mock 데이터는 파일로 분리해서 `features/{domain}/{ui,model}/`에 넣을 것 (`ward-management`, `welfare-facility`, `notification`이 이 패턴의 예시). `GuardianHomeScreen.tsx`는 아직 리팩터 전이라 섹션 컴포넌트들이 한 파일에 다 들어있는 예전 방식임 — 새로 참고할 때는 저 파일이 아니라 `ward-management`/`welfare-facility` 쪽 구조를 따라갈 것
+  - `useHealthStatusStore` (`@features/health`) — 어르신 오늘 기분 상태. mood-check API로 서버와 동기화(보호자·어르신 기기가 달라도 반영됨)
+  - 복약 상태: 어르신 화면은 `useTodayPills`(`GET /api/pill/today`), 보호자 화면은 `useWardTodayMedication`(복약 스케줄 + 알림 목록의 "복약 완료" 알림)으로 계산 — 보호자용 오늘 복약 기록 조회 API가 없어서 알림 문구를 파싱함. `useMedicationStore`는 연동 전 mock 어르신(사용가이드 투어용)에만 씀
+  - `useWardFontScaleStore`, `WardText` (`@shared/model`, `@shared/ui`) — 어르신 화면 글자 크기 배율. 여러 feature의 어르신 카드가 같이 써서 shared에 둠(서버 조회는 ward-management의 `fetchWardFontScale`)
+- 다른 화면에서 같은 개념의 상태가 필요하면 새 store를 만들지 말고 기존 store 확장부터 검토
+- 화면 구현 시 컴포넌트/훅/타입/mock 데이터는 파일로 분리해서 `features/{domain}/{ui,model}/`에 넣을 것 (`ward-management`, `welfare-facility`, `notification`이 이 패턴의 예시). 화면 파일(`screens/`)은 feature의 ui·model을 조합만 하고, 화면 안에 섹션 컴포넌트·상태 로직을 직접 두지 않음 — UI 컴포넌트에서 API를 직접 부르지 말고 model 훅을 거칠 것
 
 ## 에러·안내 표시 컨벤션
 - 사용자에게 보여줄 안내·에러·확인 창은 **`showNotice(title, message?, buttons?)`**(`@shared/model`) 사용 — `Alert.alert`는 쓰지 말 것. 앱 최상단 `NoticeHost`가 공용 `NoticeModal`로 그리고, 어르신 계정이면 글자 크기 배율이 자동 적용됨
