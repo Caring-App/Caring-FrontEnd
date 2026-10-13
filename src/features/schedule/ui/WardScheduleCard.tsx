@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react';
 import { Pressable, View } from 'react-native';
 import CalendarEventIcon from '@assets/icons/section/calendar-event.svg';
+import { useTodayDateKey } from '@shared/model';
 import { WardText } from '@shared/ui';
 import { formatScheduleTime, isSameDay, to24Hour, useMyTodaySchedules } from '../model';
+import { taskDateToDate } from '../utils';
 
 function formatTodayScheduleTitle(today: Date) {
   return `${today.getMonth() + 1}월 ${today.getDate()}일 오늘의 일정`;
@@ -13,8 +15,9 @@ function formatTodayScheduleTitle(today: Date) {
 // TODO: 실제 TTS 음성 재생 연동 전이라 지금은 버튼 UI만 있고 눌러도 동작하지 않음
 export function WardScheduleCard() {
   const schedules = useMyTodaySchedules();
-  // 화면이 떠 있는 동안 자정을 넘기는 경우까지는 고려하지 않음(이 컴포넌트 수명 동안엔 고정값으로 취급)
-  const today = useMemo(() => new Date(), []);
+  // 화면을 켜둔 채 자정이 지나면 바뀌어서 오늘 기준으로 다시 거름(목록 재조회는 useMyTodaySchedules가 함)
+  const dateKey = useTodayDateKey();
+  const today = useMemo(() => taskDateToDate(dateKey), [dateKey]);
   const todaySchedules = useMemo(
     () =>
       schedules
