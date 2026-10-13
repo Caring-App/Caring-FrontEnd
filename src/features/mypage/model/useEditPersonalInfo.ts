@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getApiErrorMessage, getMyInfoApi, logApiError } from '@shared/api';
 import { notifyLoadFailed, showNotice } from '@shared/model';
 import { updateMyPageApi } from '../api';
@@ -13,6 +13,8 @@ export function useEditPersonalInfo(onSaved: () => void, visible: boolean) {
   // 서버에서 받아온 주소 — 입력값과 비교해서 주소를 바꿨는지 판단
   const [loadedAddress, setLoadedAddress] = useState({ baseAddress: '', detailAddress: '' });
   const [isLoadingAddress, setIsLoadingAddress] = useState(true);
+  // 조회 응답보다 먼저 주소를 고르거나 입력했는지 — 그랬다면 늦게 온 응답으로 입력칸을 덮어쓰지 않음
+  const hasEditedAddressRef = useRef(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [newPasswordCheck, setNewPasswordCheck] = useState('');
@@ -30,6 +32,7 @@ export function useEditPersonalInfo(onSaved: () => void, visible: boolean) {
         // 주소를 안 건드리면 보내지 않으니 그대로 둬도 기존 값이 망가지지 않음
         const address = { baseAddress: me.baseAddress ?? '', detailAddress: me.detailAddress ?? '' };
         setLoadedAddress(address);
+        if (hasEditedAddressRef.current) return;
         setBaseAddress(address.baseAddress);
         setDetailAddress(address.detailAddress);
       })
@@ -84,9 +87,15 @@ export function useEditPersonalInfo(onSaved: () => void, visible: boolean) {
 
   return {
     baseAddress,
-    setBaseAddress,
+    setBaseAddress: (value: string) => {
+      hasEditedAddressRef.current = true;
+      setBaseAddress(value);
+    },
     detailAddress,
-    setDetailAddress,
+    setDetailAddress: (value: string) => {
+      hasEditedAddressRef.current = true;
+      setDetailAddress(value);
+    },
     currentPassword,
     setCurrentPassword,
     newPassword,
