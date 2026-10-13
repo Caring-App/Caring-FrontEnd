@@ -28,15 +28,23 @@ export function usePushSetting() {
   const toggle = async () => {
     if (pushEnabled === null || isToggling) return;
     const next = !pushEnabled;
-    // 바로 반영해서 보여주고, 실패하면 되돌림
+    // 바로 반영해서 보여주고, 실패하면 서버 값으로 다시 맞춤
     setPushEnabled(next);
     setIsToggling(true);
     try {
       await togglePushApi();
     } catch (error) {
       logApiError('푸시 알림 설정 변경 실패', error);
-      setPushEnabled(!next);
-      showNotice('푸시 알림 설정을 바꾸지 못했어요', '잠시 후 다시 시도해 주세요.');
+      // 시간 초과 등으로 응답만 못 받았을 뿐 서버에선 이미 바뀌었을 수 있어서, 무작정 되돌리지 않고 서버 값을 다시 받음.
+      // 그것도 실패하면 현재 값을 모르는 상태(null)로 두어 토글을 막음 — 추측한 값으로 누르면 서버와 반대로 어긋남
+      const latest = await getMyInfoApi()
+        .then(me => me.pushEnabled)
+        .catch(refetchError => {
+          logApiError('푸시 알림 설정 다시 조회 실패', refetchError);
+          return null;
+        });
+      setPushEnabled(latest);
+      if (latest !== next) showNotice('푸시 알림 설정을 바꾸지 못했어요', '잠시 후 다시 시도해 주세요.');
     } finally {
       setIsToggling(false);
     }
