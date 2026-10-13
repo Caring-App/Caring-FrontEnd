@@ -1,3 +1,4 @@
+import { logApiError, updateFcmTokenApi } from '@shared/api';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import { showNotice } from './useNoticeStore';
 
@@ -6,6 +7,14 @@ import { showNotice } from './useNoticeStore';
 export function confirmLogout() {
   showNotice('로그아웃 하시겠어요?', '언제든지 다시 로그인하실 수 있어요.', [
     { text: '취소', style: 'cancel' },
-    { text: '로그아웃', onPress: () => useSessionStore.getState().logout() },
+    {
+      text: '로그아웃',
+      onPress: async () => {
+        // 인증 토큰을 지우기 전에 이 기기의 FCM 토큰부터 서버에서 지움 — 안 그러면 로그아웃해도 이 계정 알림이 계속 옴.
+        // 실패해도 로그아웃은 진행 — 이 경우 서버에 토큰이 남아 이 기기로 이전 계정 알림이 올 수 있음
+        await updateFcmTokenApi('').catch(error => logApiError('로그아웃 중 FCM 토큰 삭제 실패', error));
+        useSessionStore.getState().logout();
+      },
+    },
   ]);
 }
