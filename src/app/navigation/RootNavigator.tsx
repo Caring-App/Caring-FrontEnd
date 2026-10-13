@@ -2,6 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { useSessionStore } from '@shared/store/useSessionStore';
+import { usePushRegistration } from '@features/notification/model';
 import SplashScreen from '@screens/auth/Splash/SplashScreen';
 import LoginScreen from '@screens/auth/Login/LoginScreen';
 import PhoneLoginScreen from '@screens/auth/Login/PhoneLoginScreen';
@@ -28,6 +29,8 @@ export const RootNavigator = () => {
   const role = useSessionStore(state => state.role);
   // 스플래시는 앱 실행 직후 한 번만 — 로그아웃해서 인증 스택이 다시 마운트될 땐 시작 화면부터
   const hasShownSplash = useSessionStore(state => state.hasShownSplash);
+  // 보호자·어르신 모두 로그인해 있는 동안 FCM 토큰 등록과 앱 실행 중 알림 처리
+  usePushRegistration(isLoggedIn);
 
   // 1. 보호자(PROTECTOR)로 로그인된 경우
   if (isLoggedIn && role === 'PROTECTOR') {
