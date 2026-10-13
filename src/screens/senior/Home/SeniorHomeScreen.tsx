@@ -4,8 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CaringLogo } from '@shared/ui/AppHeader/CaringLogo';
 import { useSessionStore } from '@shared/store/useSessionStore';
 import { confirmLogout } from '@shared/model';
-import { MOCK_WARDS, useWardFontScaleStore } from '@features/ward-management/model';
-import { WardText } from '@features/ward-management/ui';
+import { WardText } from '@shared/ui';
+import { MOCK_WARDS, fetchWardFontScale } from '@features/ward-management/model';
 import { useStepSync } from '@features/health/model';
 import { HealthRecordModal, StepSyncNotice, WardHealthStatusCard } from '@features/health/ui';
 import { WardScheduleCard } from '@features/schedule/ui';
@@ -29,7 +29,7 @@ export function SeniorHomeScreen() {
   useEffect(() => {
     const wardIdNumber = Number(wardId);
     if (!Number.isNaN(wardIdNumber)) {
-      useWardFontScaleStore.getState().fetchFontScale(wardIdNumber);
+      fetchWardFontScale(wardIdNumber);
     }
   }, [wardId]);
 

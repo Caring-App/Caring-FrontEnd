@@ -1,7 +1,6 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
-// 어르신 글자 크기 배율은 ward-management가 유일한 소스라 WardText를 그대로 가져다 씀(순환참조 없음)
-import { WardText } from '@features/ward-management/ui';
+import { WardText } from '@shared/ui';
 import type { StepsAccessStatus } from '../utils/healthConnect';
 
 const NOTICE_TEXT: Record<Exclude<StepsAccessStatus, 'granted'>, { message: string; button: string }> = {

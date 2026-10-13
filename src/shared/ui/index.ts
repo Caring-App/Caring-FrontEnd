@@ -16,3 +16,5 @@ export { AddressSearchModal } from './AddressSearchModal';
 export { AddressInput } from './AddressInput';
 export type { AddressSearchResult } from './AddressSearchModal';
 export { NoticeModal } from './NoticeModal';
+export { WardText } from './WardText';
+export type { WardTextSize } from './WardText';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, TextProps } from 'react-native';
 import { FONT_SIZES, FONT_SIZE_LINE_HEIGHT_RATIO, FontSizeToken } from '@shared/theme/typography';
-import { useWardFontScaleStore } from '../model/useWardFontScaleStore';
+import { useWardFontScaleStore } from '@shared/model/useWardFontScaleStore';
 
 // 어르신 화면에서 배율을 곱하려면 className(text-xl 등, 빌드 시 고정 px로 컴파일됨)이 아니라
 // shared/theme/typography.ts의 값을 직접 계산해서 써야 함.

@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView, View } from 'react-native';
-import { WardText } from '@features/ward-management/ui';
+import { WardText } from '@shared/ui';
 
 export function SeniorScheduleScreen() {
   return (

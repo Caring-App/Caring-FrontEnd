@@ -3,11 +3,8 @@ import { Pressable, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { getApiErrorMessage } from '@shared/api';
 import { showNotice } from '@shared/model';
+import { WardText } from '@shared/ui';
 import ClipboardPulseIcon from '@assets/icons/section/clipboard-pulse.svg';
-// FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, 어르신 글자 크기 배율은
-// ward-management가 유일한 소스라(useWardFontScaleStore) 이 화면에서도 WardText를 그대로 가져다 씀
-// (순환참조 없음, ward-management는 health를 참조하지 않음).
-import { WardText } from '@features/ward-management/ui';
 import { HealthStatus, useHealthStatusStore } from '../model';
 import { HealthStatusEmojiButton } from './HealthStatusEmojiButton';
 
