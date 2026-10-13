@@ -5,7 +5,7 @@ export type UserRole = 'PROTECTOR' | 'WARD';
 export type AuthLevel = 'ADMIN' | 'USER';
 
 // GET /api/member/me 응답 — 로그인한 회원 본인 정보.
-// 주소가 없는 회원은 baseAddress·detailAddress가 null로 옴
+// 주소가 없는 회원은 baseAddress·detailAddress가 null로 옴. pushEnabled는 서버 기본값이 켜짐(true)
 export interface MemberMe {
   name: string;
   phone: string;

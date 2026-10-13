@@ -5,13 +5,14 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GuardianStackParamList } from '@app/navigation/types';
 import ChevronRightIcon from '@assets/icons/report/chevron-right.svg';
+import { usePushSetting } from '@features/mypage/model';
 import { SettingsToggleRow } from '@features/mypage/ui';
 
 type GuardianStackNavigationProp = NativeStackNavigationProp<GuardianStackParamList>;
 
 export function SettingsScreen() {
   const navigation = useNavigation<GuardianStackNavigationProp>();
-  const [pushEnabled, setPushEnabled] = useState(false);
+  const push = usePushSetting();
   const [locationTermsAgreed, setLocationTermsAgreed] = useState(false);
   const [marketingAgreed, setMarketingAgreed] = useState(false);
 
@@ -25,7 +26,12 @@ export function SettingsScreen() {
       </View>
 
       <View className="px-4">
-        <SettingsToggleRow label="APP 푸시 알림" value={pushEnabled} onValueChange={setPushEnabled} />
+        <SettingsToggleRow
+          label="APP 푸시 알림"
+          value={push.pushEnabled}
+          onValueChange={push.toggle}
+          disabled={push.disabled}
+        />
         <SettingsToggleRow
           label="위치 정보 서비스 이용약관 동의"
           value={locationTermsAgreed}
