@@ -77,7 +77,12 @@ export function pillNameToMealType(pillName: PillName): MealType {
   return mealType;
 }
 
-const WEEKDAY_CODE: Record<Weekday, string> = {
+// takeDays 형식은 백엔드 기준: 매일이면 "EVERYDAY", 아니면 한글 요일을 콤마로 이은 값("월,수,금").
+// 서버(오늘 복약 조회·복약 알림 스케줄러)가 takeDays.equals("EVERYDAY") || takeDays.contains("화") 식으로 판단해서
+// 이 형식이 아니면 오늘 약 목록에서 빠지고 알림도 안 감
+const EVERYDAY = 'EVERYDAY';
+// 예전 앱 버전이 영문 코드("MON,TUE")로 저장한 스케줄도 화면엔 제대로 보이게 읽기만 지원 — 다시 저장하면 위 형식으로 바뀜
+const LEGACY_WEEKDAY_CODE: Record<Weekday, string> = {
   mon: 'MON',
   tue: 'TUE',
   wed: 'WED',
@@ -86,28 +91,26 @@ const WEEKDAY_CODE: Record<Weekday, string> = {
   sat: 'SAT',
   sun: 'SUN',
 };
-const CODE_TO_WEEKDAY: Record<string, Weekday> = {
-  MON: 'mon',
-  TUE: 'tue',
-  WED: 'wed',
-  THU: 'thu',
-  FRI: 'fri',
-  SAT: 'sat',
-  SUN: 'sun',
-};
 
-// takeDays 포맷은 스웨거에 "string"으로만 나와 있어 형식이 명시돼있지 않음 — 콤마로 구분된 영문 3글자 코드로 가정.
 export function daysToTakeDays(days: Weekday[]): string {
+  if (isSameDaySet(days, WEEKDAY_ORDER)) {
+    return EVERYDAY;
+  }
   return WEEKDAY_ORDER.filter(day => days.includes(day))
-    .map(day => WEEKDAY_CODE[day])
+    .map(day => WEEKDAY_LABELS[day])
     .join(',');
 }
 
 export function takeDaysToDays(takeDays: string): Weekday[] {
-  return takeDays
-    .split(',')
-    .map(code => CODE_TO_WEEKDAY[code.trim()])
-    .filter((day): day is Weekday => Boolean(day));
+  const value = takeDays.trim().toUpperCase();
+  if (value === EVERYDAY) {
+    return [...WEEKDAY_ORDER];
+  }
+  // 서버가 contains로 판단하므로 구분자와 상관없이 요일 글자가 들어있으면 포함으로 봄
+  const legacyCodes = value.split(',').map(code => code.trim());
+  return WEEKDAY_ORDER.filter(
+    day => value.includes(WEEKDAY_LABELS[day]) || legacyCodes.includes(LEGACY_WEEKDAY_CODE[day]),
+  );
 }
 
 // takeTime도 형식이 명시돼있지 않아 24시간제 "HH:mm"으로 가정.
