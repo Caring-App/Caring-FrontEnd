@@ -39,8 +39,10 @@ export interface PillScheduleRequest {
   isActive: boolean;
 }
 
+// 시간대는 하나만 — 백엔드 스케줄 1건이 시간대 1개라 여러 개 고르면 목록엔 따로 생기는데, 같이 올린 녹음 파일 하나를
+// 여러 스케줄이 나눠 써서 한 건을 지우거나 녹음을 바꾸면 서버가 그 파일을 지워 나머지 스케줄 음성까지 사라질 수 있음
 export interface MedicationRegistrationData {
-  mealTypes: MealType[];
+  mealType: MealType;
   days: Weekday[];
   time: TimeState;
   reminderInterval: string;
@@ -50,7 +52,6 @@ export interface MedicationRegistrationData {
 }
 
 // 화면에 그려지는 항목 = 백엔드 스케줄 1건(pillScheduleId 1개, 시간대 1개).
-// 등록/수정 시 mealTypes를 여러 개 선택하면 여러 건으로 분해되어 저장됨 (useMedicationListStore 참고).
 export interface MedicationEntry {
   id: number;
   mealType: MealType;

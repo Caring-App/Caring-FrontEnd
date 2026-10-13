@@ -59,6 +59,7 @@ src/
 ## 네이티브 빌드 관련 (Windows 환경 특이사항)
 - **Windows Defender 실시간 보호 때문에 첫 빌드가 극도로 느려짐(6분+)** — 프로젝트 폴더, `~/.gradle`, `~/.android`를 Defender 예외에 이미 등록해둠. 새 환경이면 관리자 PowerShell에서 `Add-MpPreference -ExclusionPath`로 등록 필요
 - `npx react-native run-android`를 Git Bash에서 실행하면 `gradlew.bat`을 못 찾는 경우가 있음 → 안 되면 PowerShell로 시도하거나, `cd android && ./gradlew.bat app:installDebug` 직접 실행
+- `package.json`의 `overrides`로 `react-native-reanimated`(4.4.0)·`react-native-worklets`(0.9.1)를 고정해둠 — nativewind(react-native-css-interop)가 peer로만 쓰는데, 고정 안 하면 npm이 최신(RN 0.86+ 전용)을 골라 nativewind 밑에 RN이 한 벌 더 깔리고 `className` 타입 에러가 쏟아짐. **RN을 0.87 이상으로 올릴 땐 이 고정도 그 RN을 지원하는 버전으로 같이 바꿀 것**
 - 새 네이티브 모듈(SVG, 지도, 소셜로그인 SDK 등) 설치 후에는 **반드시 네이티브 재빌드** 필요 (JS만 새로고침해선 안 됨) — `npx react-native start --reset-cache` + `gradlew app:installDebug`
 - 기기는 보통 무선 adb로 연결(`adb connect <IP>:5555`). **재부팅/와이파이 재연결하면 `adb reverse tcp:8081 tcp:8081`이 풀림** — 흰 화면/"Unable to load script" 뜨면 이것부터 의심
 - 브랜치 전환/대량 파일 이동 직후 Metro가 있는 파일을 없다고 착각하는 캐시 오류가 종종 있음 → `--reset-cache`로 재시작하면 해결됨

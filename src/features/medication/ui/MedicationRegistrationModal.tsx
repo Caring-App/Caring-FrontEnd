@@ -101,11 +101,11 @@ export function MedicationRegistrationModal({
                 <FormLabel>약 이름</FormLabel>
                 <View className="flex-row gap-2">
                   {MEAL_TYPE_OPTIONS.map(option => {
-                    const selected = state.mealTypes.includes(option.value);
+                    const selected = state.mealType === option.value;
                     return (
                       <Pressable
                         key={option.value}
-                        onPress={() => actions.toggleMealType(option.value)}
+                        onPress={() => actions.selectMealType(option.value)}
                         className={`h-[38px] flex-1 items-center justify-center rounded-card border-2 ${
                           selected ? 'border-primary' : 'border-border-link'
                         }`}>
