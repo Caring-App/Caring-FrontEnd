@@ -1,3 +1,6 @@
+export { playAlarmVoice } from './alarmVoice';
+export { handleBackgroundMessage } from './backgroundMessage';
+
 // 알림 목록의 createdAt(ISO 8601, 서버 UTC)을 'YYYY.MM.DD HH:mm' 형태로 표시하기 위한 포맷터.
 export function formatNotificationDate(createdAt: string): string {
   const date = new Date(createdAt);
