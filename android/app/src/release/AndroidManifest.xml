@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- release 빌드에만 합쳐지는 설정 — http 서버 통신 허용(이유는 res/xml/network_security_config.xml 참고) -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:networkSecurityConfig="@xml/network_security_config" />
+</manifest>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  release 빌드 전용. RN gradle 플러그인이 release의 usesCleartextTraffic을 항상 false로 덮어써서 http 통신이 막히는데,
+  백엔드 서버가 아직 http라 로그인부터 실패함 → 테스트 배포(Firebase App Distribution 등)를 위해 http를 허용함.
+  백엔드가 https로 바뀌면 이 파일과 src/release/AndroidManifest.xml을 지울 것 (debug 빌드는 RN이 따로 허용함)
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>
