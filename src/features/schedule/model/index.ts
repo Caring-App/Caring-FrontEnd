@@ -6,3 +6,4 @@ export * from './useScheduleStore';
 export * from './useWardSchedules';
 export * from './useMyTodaySchedules';
 export * from './scheduleFormat';
+export * from './useScheduleVoiceReplay';

@@ -1,23 +1,28 @@
 import React, { useMemo } from 'react';
 import { Pressable, View } from 'react-native';
 import CalendarEventIcon from '@assets/icons/section/calendar-event.svg';
-// FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, 어르신 글자 크기 배율은
-// ward-management가 유일한 소스라(useWardFontScaleStore) 이 화면에서도 그대로 가져다 씀
-// (순환참조 없음, ward-management는 schedule을 참조하지 않음).
-import { WardText } from '@features/ward-management/ui';
-import { formatScheduleTime, isSameDay, to24Hour, useMyTodaySchedules } from '../model';
+import { useTodayDateKey } from '@shared/model';
+import { WardText } from '@shared/ui';
+import {
+  formatScheduleTime,
+  isSameDay,
+  to24Hour,
+  useMyTodaySchedules,
+  useScheduleVoiceReplay,
+} from '../model';
+import { taskDateToDate } from '../utils';
 
 function formatTodayScheduleTitle(today: Date) {
   return `${today.getMonth() + 1}월 ${today.getDate()}일 오늘의 일정`;
 }
 
 // 돌봄대상자 메인 화면의 "일정 관리" 카드. 보호자가 등록해둔 오늘 일정을 시간순으로 보여주고,
-// "일정 다시 듣기"로 음성 안내를 다시 들을 수 있게 함
-// TODO: 실제 TTS 음성 재생 연동 전이라 지금은 버튼 UI만 있고 눌러도 동작하지 않음
+// "일정 다시 듣기"로 오늘 일정의 음성 안내를 시간순으로 다시 들을 수 있게 함(재생 중 다시 누르면 멈춤)
 export function WardScheduleCard() {
   const schedules = useMyTodaySchedules();
-  // 화면이 떠 있는 동안 자정을 넘기는 경우까지는 고려하지 않음(이 컴포넌트 수명 동안엔 고정값으로 취급)
-  const today = useMemo(() => new Date(), []);
+  // 화면을 켜둔 채 자정이 지나면 바뀌어서 오늘 기준으로 다시 거름(목록 재조회는 useMyTodaySchedules가 함)
+  const dateKey = useTodayDateKey();
+  const today = useMemo(() => taskDateToDate(dateKey), [dateKey]);
   const todaySchedules = useMemo(
     () =>
       schedules
@@ -29,6 +34,7 @@ export function WardScheduleCard() {
         }),
     [schedules, today],
   );
+  const { isPlaying, toggleReplay } = useScheduleVoiceReplay(todaySchedules);
 
   return (
     <View className="rounded-card border border-border bg-surface p-4">
@@ -58,9 +64,12 @@ export function WardScheduleCard() {
         </View>
       </View>
 
-      <Pressable className="mt-4 items-center justify-center rounded-card bg-primary py-4">
+      <Pressable
+        onPress={toggleReplay}
+        className="mt-4 items-center justify-center rounded-card bg-primary py-4"
+        accessibilityState={{ busy: isPlaying }}>
         <WardText size="xl" className="font-pretendard-semibold text-white">
-          일정 다시 듣기
+          {isPlaying ? '듣기 멈추기' : '일정 다시 듣기'}
         </WardText>
       </Pressable>
     </View>

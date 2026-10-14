@@ -9,14 +9,9 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { showNotice } from '@shared/model';
-import { FormLabel } from '@shared/ui';
+import { showNotice, useWardFontScaleStore } from '@shared/model';
+import { FormLabel, WardText } from '@shared/ui';
 import { colors } from '@shared/theme/colors';
-// FSD 원칙상 feature끼리 서로 참조하지 않는 게 이상적이지만, 어르신 글자 크기 배율은
-// ward-management가 유일한 소스라(useWardFontScaleStore) 이 화면에서도 그대로 가져다 씀
-// (순환참조 없음, ward-management는 health를 참조하지 않음).
-import { useWardFontScaleStore } from '@features/ward-management/model';
-import { WardText } from '@features/ward-management/ui';
 import { useHealthRecordForm } from '../model';
 
 interface HealthRecordModalProps {

@@ -21,7 +21,7 @@ export const linkConnectionApi = async (payload: LinkConnectionRequest): Promise
 };
 
 // [내 연동 상태] — 어르신(WARD) 토큰 기준. GET /api/connection은 보호자 기준 목록이라 어르신은 연동돼 있어도 항상 []
-// (2026-10-07 두 계정으로 확인) — 그래서 어르신용으로 백엔드에 추가 요청한 API(응답 형식은 합의됨, 배포 전)
+// (2026-10-07 두 계정으로 확인) — 그래서 어르신용으로 백엔드에 추가 요청한 API(2026-10-13 배포)
 export const getMyConnectionApi = async (): Promise<WardConnectionStatus> => {
   const { data } = await axiosInstance.get<WardConnectionStatus>('/api/connection/me');
   return data;

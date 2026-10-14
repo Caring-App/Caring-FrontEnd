@@ -1,10 +1,10 @@
 import React from 'react';
 import { View } from 'react-native';
 import { showNotice } from '@shared/model';
+import { WardText } from '@shared/ui';
 // FSD 원칙상 feature끼리 참조하지 않는 게 이상적이지만, 연동 코드 입력란·버튼은 회원가입 연동 화면(LinkAccountScreen)과
-// 같은 UI라 auth의 것을, 어르신 글자 크기 배율은 ward-management가 유일한 소스라 그대로 가져다 씀(순환참조 없음)
+// 같은 UI라 auth의 것을 그대로 가져다 씀(순환참조 없음)
 import { AuthPrimaryButton, CodeInputField } from '@features/auth/ui';
-import { WardText } from '@features/ward-management/ui';
 import { useLinkAccount } from '../model';
 
 // 보호자와 연동되지 않은 어르신 계정에 메인 화면 대신 보여주는 안내 + 연동 코드 입력.
