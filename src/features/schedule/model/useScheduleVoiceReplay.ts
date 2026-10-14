@@ -24,7 +24,8 @@ export function useScheduleVoiceReplay(schedules: ScheduleEntry[]) {
     }
     const urls = schedules.map(entry => entry.voiceFileUrl).filter(url => !!url);
     if (urls.length === 0) {
-      showNotice('오늘 들을 일정이 없어요');
+      // 일정은 있는데 음성이 없을 수도 있음(음성 안내가 생기기 전에 등록된 일정 등) — "일정 없음"으로 안내하면 헷갈림
+      showNotice(schedules.length === 0 ? '오늘 등록된 일정이 없어요' : '들을 수 있는 일정 안내가 없어요');
       return;
     }
 
