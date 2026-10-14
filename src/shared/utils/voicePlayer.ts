@@ -10,15 +10,23 @@ export type VoicePlayResult = 'ended' | 'stopped' | 'failed';
 // 알림(notification)과 일정(schedule)이 같이 써서 shared에 둠
 const sound = createSound();
 let finishCurrent: ((result: VoicePlayResult) => void) | null = null;
+// 재생 요청·멈춤마다 올림 — 이전 음성을 멈추는 동안(await) 더 새 요청이나 멈춤이 들어오면 이 요청은 시작하지 않음
+let generation = 0;
 
 // 음성 파일 주소를 재생하고, 재생이 끝나거나 멈추거나 실패하면 그 결과로 resolve
 export async function playVoice(url: string): Promise<VoicePlayResult> {
+  const myGeneration = ++generation;
   finishCurrent?.('stopped');
   await sound.stopPlayer().catch(() => {});
+  if (myGeneration !== generation) return 'stopped';
 
   return new Promise<VoicePlayResult>(resolve => {
     const timer = setTimeout(() => finish('ended'), MAX_PLAY_MS);
+    let settled = false;
+    // 한 번만 처리 — 이미 끝난 요청의 재생 실패가 늦게 도착해도 다음 음성의 종료 리스너를 지우지 않게
     function finish(result: VoicePlayResult) {
+      if (settled) return;
+      settled = true;
       clearTimeout(timer);
       sound.removePlaybackEndListener();
       if (finishCurrent === finish) finishCurrent = null;
@@ -35,6 +43,7 @@ export async function playVoice(url: string): Promise<VoicePlayResult> {
 
 // 재생 중인 음성을 멈춤(재생 중이 아니면 아무 일도 안 함)
 export async function stopVoice() {
+  generation += 1;
   finishCurrent?.('stopped');
   await sound.stopPlayer().catch(() => {});
 }
