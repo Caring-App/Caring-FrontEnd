@@ -15,9 +15,14 @@ export function GuardianTabNavigator({ navigation }: NativeStackScreenProps<Guar
   // 담긴 데이터가 없어서 목록으로 보냄. 탭 화면은 보호자 스택의 첫 화면이라 로그인해 있는 동안 항상 떠 있어서 여기서 처리
   // (어르신은 화면이 사실상 홈 하나라 알림을 누르면 그대로 홈이 열림)
   useNotificationOpen(() => {
+    const { routes, index } = navigation.getState();
+    if (routes[index]?.name === 'Notification') {
+      // 이미 알림 목록을 보고 있었으면 화면 포커스가 안 바뀌어 새로 불러오지 않으므로 직접 다시 받아옴
+      // (다른 화면에서 이동하면 알림 목록 화면이 포커스될 때 불러옴)
+      useNotificationStore.getState().fetchNotifications();
+      return;
+    }
     navigation.navigate('Notification');
-    // 이미 알림 목록을 보고 있었으면 화면 포커스가 안 바뀌어 새로 불러오지 않으므로 직접 다시 받아옴
-    useNotificationStore.getState().fetchNotifications();
   });
 
   return (
