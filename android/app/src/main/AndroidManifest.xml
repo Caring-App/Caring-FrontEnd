@@ -1,6 +1,24 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- 어르신 위치를 앱이 백그라운드에 있을 때도 계속 서버로 보고하기 위한 포그라운드 서비스(위치)용 권한.
+         Android 13+에서 지속 알림을 띄우려면 POST_NOTIFICATIONS도 필요함. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- 어르신 오늘 걸음 수를 Health Connect에서 읽어 하루 요약 레포트용으로 서버에 보냄 -->
+    <uses-permission android:name="android.permission.health.READ_STEPS" />
+    <!-- 앱이 화면에 없을 때(위치 공유 백그라운드 서비스)도 걸음 수를 읽기 위한 권한 -->
+    <uses-permission android:name="android.permission.health.READ_HEALTH_DATA_IN_BACKGROUND" />
+
+    <!-- Android 13 이하에서는 Health Connect가 별도 앱이라 설치 여부를 조회할 수 있어야 함 -->
+    <queries>
+      <package android:name="com.google.android.apps.healthdata" />
+    </queries>
 
     <application
       android:name=".MainApplication"
@@ -11,6 +29,17 @@
       android:theme="@style/AppTheme"
       android:usesCleartextTraffic="${usesCleartextTraffic}"
       android:supportsRtl="true">
+      <meta-data
+        android:name="com.naver.maps.map.NCP_KEY_ID"
+        android:value="@string/NAVER_MAP_CLIENT_ID" />
+      <meta-data
+        android:name="com.naver.maps.map.CLIENT_ID"
+        android:value="@string/NAVER_MAP_CLIENT_ID" />
+      <!-- react-native-background-actions가 위치 보고 작업을 실행하는 포그라운드 서비스.
+           foregroundServiceType은 위에서 요청한 권한(FOREGROUND_SERVICE_LOCATION)과 일치해야 함. -->
+      <service
+        android:name="com.asterinet.react.bgactions.RNBackgroundActionsTask"
+        android:foregroundServiceType="location" />
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
@@ -22,6 +51,21 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+        <!-- Health Connect 권한 화면의 "개인정보처리방침" 링크 (Android 13 이하) -->
+        <intent-filter>
+            <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+        </intent-filter>
       </activity>
+      <!-- Health Connect 권한 사용 내역 화면 연결 (Android 14 이상) -->
+      <activity-alias
+        android:name="ViewPermissionUsageActivity"
+        android:exported="true"
+        android:targetActivity=".MainActivity"
+        android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />
+            <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
+        </intent-filter>
+      </activity-alias>
     </application>
 </manifest>

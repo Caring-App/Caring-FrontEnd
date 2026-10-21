@@ -1,0 +1,1 @@
+export { WardNoLinkNotice } from './WardNoLinkNotice';

@@ -1,0 +1,65 @@
+import type { TimeState } from '@shared/types';
+import { alarmTypeToSoundType, soundTypeToAlarmType } from '@shared/utils/alarmType';
+import { ScheduleEntry, ScheduleRegistrationData } from '../model/scheduleRegistrationTypes';
+import { TaskSchedule, TaskScheduleRequest } from '../model/taskScheduleTypes';
+
+export function dateToTaskDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export function taskDateToDate(taskDate: string): Date {
+  const [year, month, day] = taskDate.split('-').map(Number);
+  return new Date(year, (month || 1) - 1, day || 1);
+}
+
+// taskTime/ttsVoiceTime 형식 가정 — TaskSchedule 타입 주석 참고("HH:mm:ss").
+// 초는 항상 00으로 보냄 — 서버 일정 알림 스케줄러가 매 분 0초 시각과 ttsVoiceTime이 정확히 같은 일정만 찾아서,
+// 시간 선택기에서 고른 초가 그대로 저장되면 그 일정 알림은 영영 안 감
+export function timeStateToTaskTime({ hour, minute, amPm }: TimeState): string {
+  const hour24 = (Number(hour) % 12) + (amPm === 'PM' ? 12 : 0);
+  return `${String(hour24).padStart(2, '0')}:${minute}:00`;
+}
+
+export function taskTimeToTimeState(taskTime: string): TimeState {
+  const [hourStr, minuteStr, secondStr] = taskTime.split(':');
+  const hour24 = Number(hourStr) || 0;
+  const amPm: TimeState['amPm'] = hour24 >= 12 ? 'PM' : 'AM';
+  const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12;
+  return { hour: String(hour12).padStart(2, '0'), minute: minuteStr ?? '00', second: secondStr ?? '00', amPm };
+}
+
+// ttsMessage - 등록 폼에 문구를 직접 입력하는 필드가 없어 일정 이름 기반으로 자동 생성.
+export function buildTtsMessage(taskName: string): string {
+  return `${taskName} 일정 시간이에요.`;
+}
+
+export function taskScheduleToEntry(schedule: TaskSchedule): ScheduleEntry {
+  return {
+    id: schedule.taskId,
+    title: schedule.taskName,
+    location: schedule.locationName,
+    placeId: schedule.placeId,
+    date: taskDateToDate(schedule.taskDate),
+    scheduleTime: taskTimeToTimeState(schedule.taskTime),
+    alarmTime: taskTimeToTimeState(schedule.ttsVoiceTime),
+    soundType: alarmTypeToSoundType(schedule.alarmType),
+    voiceFileUrl: schedule.voiceFileUrl ?? '',
+  };
+}
+
+export function buildTaskScheduleRequest(data: ScheduleRegistrationData): TaskScheduleRequest {
+  return {
+    taskName: data.title,
+    locationName: data.location,
+    placeId: data.placeId,
+    taskDate: dateToTaskDate(data.date),
+    taskTime: timeStateToTaskTime(data.scheduleTime),
+    ttsVoiceTime: timeStateToTaskTime(data.alarmTime),
+    ttsMessage: buildTtsMessage(data.title),
+    alarmType: soundTypeToAlarmType(data.soundType),
+    voiceFileUrl: data.voiceFileUrl,
+  };
+}

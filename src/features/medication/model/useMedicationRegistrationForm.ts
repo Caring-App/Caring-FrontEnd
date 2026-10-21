@@ -1,0 +1,175 @@
+import { useEffect, useState } from 'react';
+import type { TimeState } from '@shared/types';
+import { useVoiceRecording } from '@shared/model';
+import { logApiError } from '@shared/api';
+import { isSameDaySet, MEAL_TYPE_LABELS, MEAL_TYPES } from '../utils';
+import { MedicationEntry, MedicationRegistrationData, MedicationSoundType, MealType, Weekday } from './medicationTypes';
+import { useMedicationListStore } from './useMedicationListStore';
+import { showNotice } from '@shared/model';
+
+const INITIAL_TIME: TimeState = { hour: '01', minute: '00', second: '00', amPm: 'AM' };
+
+export const MEAL_TYPE_OPTIONS: { value: MealType; label: string }[] = MEAL_TYPES.map(value => ({
+  value,
+  label: MEAL_TYPE_LABELS[value],
+}));
+
+export const WEEKDAY_OPTIONS: { value: Weekday; label: string }[] = [
+  { value: 'mon', label: '월' },
+  { value: 'tue', label: '화' },
+  { value: 'wed', label: '수' },
+  { value: 'thu', label: '목' },
+  { value: 'fri', label: '금' },
+  { value: 'sat', label: '토' },
+  { value: 'sun', label: '일' },
+];
+
+export const DAY_PRESETS: { key: 'daily' | 'weekday' | 'weekend'; label: string; days: Weekday[] }[] = [
+  { key: 'daily', label: '매일', days: WEEKDAY_OPTIONS.map(option => option.value) },
+  { key: 'weekday', label: '주간', days: ['mon', 'tue', 'wed', 'thu', 'fri'] },
+  { key: 'weekend', label: '주말', days: ['sat', 'sun'] },
+];
+
+export const REMINDER_INTERVAL_OPTIONS = ['5분 후', '10분 후', '15분 후', '20분 후', '30분 후', '1시간 후'];
+
+export const useMedicationRegistrationForm = (
+  wardId: number,
+  visible: boolean,
+  editingMedication: MedicationEntry | null,
+  onClose: () => void,
+) => {
+  // 시간대는 하나만 고름(MedicationRegistrationData 주석 참고)
+  const [mealType, setMealType] = useState<MealType | null>(null);
+  const [days, setDays] = useState<Weekday[]>([]);
+
+  const [time, setTimeState] = useState<TimeState>(INITIAL_TIME);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [hasTime, setHasTime] = useState(false);
+
+  const [reminderInterval, setReminderInterval] = useState(REMINDER_INTERVAL_OPTIONS[0]);
+  const [showReminderOptions, setShowReminderOptions] = useState(false);
+
+  const [soundType, setSoundType] = useState<MedicationSoundType>('tts');
+  const voiceRecording = useVoiceRecording();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!visible) {
+      // 녹음·재생 중에 모달을 닫으면 멈춤
+      voiceRecording.stop();
+      return;
+    }
+    if (editingMedication) {
+      setMealType(editingMedication.mealType);
+      setDays(editingMedication.days);
+      setTimeState(editingMedication.time);
+      setHasTime(true);
+      setReminderInterval(editingMedication.reminderInterval);
+      setSoundType(editingMedication.soundType);
+    } else {
+      setMealType(null);
+      setDays([]);
+      setTimeState(INITIAL_TIME);
+      setHasTime(false);
+      setReminderInterval(REMINDER_INTERVAL_OPTIONS[0]);
+      setSoundType('tts');
+    }
+    setShowTimePicker(false);
+    setShowReminderOptions(false);
+    // TTS 스케줄의 voiceFileUrl은 서버가 Google Cloud TTS로 만든 안내 음성이라 "보호자 녹음"으로 불러오면 안 됨
+    // (불러오면 녹음 없이도 녹음이 있는 것처럼 보이고, 그대로 저장 시 TTS 음성이 VOICE_RECORD로 저장됐음)
+    voiceRecording.reset(editingMedication?.soundType === 'voice' ? editingMedication.voiceFileUrl : null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible, editingMedication]);
+
+  const selectMealType = (meal: MealType) => setMealType(meal);
+
+  const toggleDay = (day: Weekday) =>
+    setDays(prev => (prev.includes(day) ? prev.filter(item => item !== day) : [...prev, day]));
+
+  const activeDayPreset = DAY_PRESETS.find(preset => isSameDaySet(days, preset.days))?.key ?? null;
+
+  const toggleDayPreset = (preset: (typeof DAY_PRESETS)[number]) =>
+    setDays(activeDayPreset === preset.key ? [] : preset.days);
+
+  const toggleTimePicker = () => setShowTimePicker(prev => !prev);
+  const setTime = (next: TimeState) => {
+    setTimeState(next);
+    setHasTime(true);
+  };
+
+  const toggleReminderOptions = () => setShowReminderOptions(prev => !prev);
+  const selectReminderInterval = (option: string) => {
+    setReminderInterval(option);
+    setShowReminderOptions(false);
+  };
+
+  const handleSave = async () => {
+    if (isSubmitting) {
+      return;
+    }
+    if (Number.isNaN(wardId)) {
+      showNotice('', '연동된 어르신 정보를 확인할 수 없습니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+    if (!mealType) {
+      showNotice('', '식사 시간을 선택해주세요.');
+      return;
+    }
+    if (days.length === 0) {
+      showNotice('', '요일을 선택해주세요.');
+      return;
+    }
+    if (!hasTime) {
+      showNotice('', '복용 시간을 선택해주세요.');
+      return;
+    }
+    if (!voiceRecording.validateBeforeSave(soundType)) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const voiceFileUrl = await voiceRecording.resolveVoiceFileUrl(soundType);
+      const data: MedicationRegistrationData = { mealType, days, time, reminderInterval, soundType, voiceFileUrl };
+      if (editingMedication) {
+        await useMedicationListStore.getState().updateMedication(wardId, editingMedication, data);
+      } else {
+        await useMedicationListStore.getState().addMedication(wardId, data);
+      }
+      onClose();
+    } catch (error) {
+      logApiError('복약 스케줄 저장 실패', error);
+      showNotice('', '저장에 실패했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return {
+    state: {
+      mealType,
+      days,
+      activeDayPreset,
+      time,
+      showTimePicker,
+      hasTime,
+      reminderInterval,
+      showReminderOptions,
+      soundType,
+      recording: voiceRecording.controls,
+      isSubmitting,
+    },
+    actions: {
+      selectMealType,
+      toggleDay,
+      toggleDayPreset,
+      toggleTimePicker,
+      setTime,
+      toggleReminderOptions,
+      selectReminderInterval,
+      setSoundType,
+      handleSave,
+    },
+  };
+};

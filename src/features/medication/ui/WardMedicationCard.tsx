@@ -1,0 +1,79 @@
+import React from 'react';
+import { ActivityIndicator, Pressable, View } from 'react-native';
+import PrescriptionIcon from '@assets/icons/section/prescription2.svg';
+import CapsuleOnIcon from '@assets/icons/medication/capsule-on.svg';
+import CapsuleOffIcon from '@assets/icons/medication/capsule-off.svg';
+import { showNotice } from '@shared/model';
+import { colors } from '@shared/theme/colors';
+import { WardText } from '@shared/ui';
+import { MealType, useTodayPills } from '../model';
+import { MEAL_TYPE_LABELS, MEAL_TYPES } from '../utils';
+
+// 돌봄대상자 메인 화면의 "복약 관리" 카드. 오늘 복약 기록은 서버(/api/pill/today) 기준이라 매일 새로 시작하고,
+// 보호자가 꺼둔 시간대·오늘 복용 요일이 아닌 시간대는 흐리게 표시되며 누를 수 없음.
+// 복용 확인은 되돌릴 수 없어서(서버에 취소 API 없음) 누르면 한 번 더 확인받음
+export function WardMedicationCard() {
+  const { pillsBySlot, isLoading, confirmingSlot, confirmPill, error } = useTodayPills();
+  // 복용 확인은 되돌릴 수 없어서(서버에 취소 API 없음) 한 번 더 확인받음
+  const askConfirmPill = (slot: MealType) => {
+    showNotice(
+      `${MEAL_TYPE_LABELS[slot]} 약을 드셨나요?`,
+      '확인을 누르면 보호자에게 복용 완료 알림이 가요. 확인 후에는 되돌릴 수 없어요.',
+      [
+        { text: '아니요', style: 'cancel' },
+        { text: '먹었어요', onPress: () => confirmPill(slot) },
+      ],
+    );
+  };
+
+  return (
+    <View className="rounded-card border border-border bg-surface p-4">
+      <View className="flex-row items-center gap-2">
+        <PrescriptionIcon width={20} height={20} />
+        <WardText size="xl" className="font-pretendard-bold text-text-primary">
+          복약 관리
+        </WardText>
+      </View>
+
+      <View className="mt-4 rounded-card border border-border bg-surface p-4">
+        {isLoading ? (
+          <ActivityIndicator size="small" color={colors.primary} />
+        ) : (
+          <View className="flex-row justify-around">
+            {MEAL_TYPES.map(slot => {
+              const pills = pillsBySlot[slot] ?? [];
+              const isScheduled = pills.length > 0;
+              const isTaken = isScheduled && pills.every(pill => pill.taken);
+              return (
+                <Pressable
+                  key={slot}
+                  onPress={() => askConfirmPill(slot)}
+                  disabled={!isScheduled || isTaken || confirmingSlot !== null}
+                  className={`items-center gap-1 ${isScheduled ? '' : 'opacity-30'}`}
+                  accessibilityState={{ disabled: !isScheduled || isTaken, checked: isTaken }}>
+                  <WardText size="md" className="font-pretendard-semibold text-text-primary">
+                    {MEAL_TYPE_LABELS[slot]}
+                  </WardText>
+                  <View className="h-[60px] w-[60px] items-center justify-center">
+                    {confirmingSlot === slot ? (
+                      <ActivityIndicator size="small" color={colors.primary} />
+                    ) : isTaken ? (
+                      <CapsuleOnIcon width={60} height={60} />
+                    ) : (
+                      <CapsuleOffIcon width={60} height={60} />
+                    )}
+                  </View>
+                </Pressable>
+              );
+            })}
+          </View>
+        )}
+        {!!error && (
+          <WardText size="sm" className="mt-3 text-center text-text-danger">
+            {error}
+          </WardText>
+        )}
+      </View>
+    </View>
+  );
+}

@@ -1,7 +1,8 @@
 buildscript {
     ext {
         buildToolsVersion = "36.0.0"
-        minSdkVersion = 24
+        // Health Connect(걸음 수, react-native-health-connect)가 Android 8.0(API 26) 이상에서만 동작
+        minSdkVersion = 26
         compileSdkVersion = 36
         targetSdkVersion = 36
         ndkVersion = "27.1.12297006"
@@ -15,7 +16,15 @@ buildscript {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        // FCM(@react-native-firebase) — app/google-services.json을 읽어 Firebase 설정을 만듦
+        classpath("com.google.gms:google-services:4.4.2")
     }
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+allprojects {
+    repositories {
+        maven { url "https://repository.map.naver.com/archive/maven" }
+    }
+}

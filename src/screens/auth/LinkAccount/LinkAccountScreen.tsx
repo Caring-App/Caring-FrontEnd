@@ -1,0 +1,78 @@
+import React from 'react';
+import { View, Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '@app/navigation/types';
+
+import { useLinkAccount } from '@features/account-link/model';
+import { CodeInputField, AuthPrimaryButton } from '@features/auth/ui';
+import { CaringLogoHorizontal } from '@shared/ui/AppHeader/CaringLogo';
+import { colors } from '@shared/theme/colors';
+import RssIcon from '@assets/icons/action/rss.svg';
+
+type Props = NativeStackScreenProps<AuthStackParamList, 'LinkAccount'>;
+
+export default function LinkAccountScreen({ navigation }: Props) {
+  const { code, setCode, handlePaste, handleSubmit, isValidCode, isSubmitting, submitError } = useLinkAccount();
+
+  const handleNext = async () => {
+    if (!isValidCode || isSubmitting) return;
+    const result = await handleSubmit();
+    if (result) {
+      navigation.navigate('LinkAccountComplete', { protectorName: result.protectorName });
+    }
+  };
+
+  return (
+    <SafeAreaView className="flex-1 bg-surface" edges={['top', 'bottom']}>
+      {/* 상단 헤더 */}
+      <View className="px-5 pt-3">
+        <CaringLogoHorizontal />
+      </View>
+
+      <View className="flex-1 justify-center px-6">
+        <Text className="text-center font-pretendard-bold text-2xl text-text-strong">
+          Caring은{'\n'}개인의 고유 코드를 사용하여{'\n'}보호자와의{'\n'}간편한 연동을 제공합니다
+        </Text>
+
+        {/* 연동 코드 입력 카드 */}
+        <View className="mt-8 rounded-card border border-border bg-surface p-4">
+          <View className="mb-2 flex-row items-center gap-2">
+            <RssIcon width={20} height={20} color={colors.primary} />
+            <Text className="font-pretendard-bold text-xl text-text-primary">연동 코드 입력</Text>
+          </View>
+          <Text className="mb-4 font-pretendard-medium text-xs text-text-muted">
+            보호자 마이페이지 {'>'} 연동 코드 확인 {'>'} 코드 복사
+          </Text>
+
+          {/* 연동 코드 입력란 (안쪽 테두리 박스) */}
+          <CodeInputField
+            value={code}
+            onChangeText={setCode}
+            buttonLabel="붙여넣기"
+            onButtonPress={handlePaste}
+            placeholder="연동 코드를 입력하세요"
+            autoCapitalize="characters"
+          />
+        </View>
+
+        <Text className="mt-10 text-center font-pretendard-bold text-lg text-text-primary">
+          연동을 진행할{'\n'}보호자의 연동 코드를{'\n'}입력해주세요!
+        </Text>
+
+        {!!submitError && (
+          <Text className="mt-4 text-center text-xs text-text-danger">{submitError}</Text>
+        )}
+      </View>
+
+      <View className="px-6 pb-6 pt-2">
+        <AuthPrimaryButton
+          label="다음"
+          onPress={handleNext}
+          disabled={!isValidCode}
+          isLoading={isSubmitting}
+        />
+      </View>
+    </SafeAreaView>
+  );
+}
