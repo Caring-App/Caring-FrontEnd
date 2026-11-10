@@ -78,7 +78,7 @@ src/
 - 사용자가 명시적으로 "네가 직접 확인해봐" 등으로 요청한 경우에만 예외적으로 기기 실행/스크린샷 검증을 수행할 것
 
 ## Git 컨벤션
-- 브랜치명: `type/kebab-description` (`feature/`, `fix/`, `chore/`, `refactor/`)
+- 브랜치명: `type/kebab-description` (`feature/`, `fix/`, `chore/`, `refactor/`, `docs/`)
 - 커밋 메시지: `type: 설명` (Conventional Commits 스타일, 기존 로그 참고)
 - 작업 시작 전 항상 `develop`을 최신으로 받고 그 위에서 새 브랜치 생성
 - 작업 단위로 커밋 분리(한 커밋에 여러 관심사 섞지 않기) — 이 저장소는 여러 팀원이 각자 브랜치로 작업 후 develop에 PR 머지하는 방식
